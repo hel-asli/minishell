@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:21:14 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/07/31 00:25:04 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/01 00:08:08 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,10 @@
 int	count_words(char const *s, char c)
 {
 	int		count;
-	size_t	i;
 
 	if (!s)
 		return (0);
 	count = 0;
-	i = 0;
 	while (*s)
 	{
 		if (*s != c)

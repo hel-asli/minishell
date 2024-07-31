@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   str_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:04:29 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/07/31 00:24:38 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/01 00:08:37 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	ft_striteri(char *s, void (*f)(unsigned int, char*))
 int	ft_atoi(const char *str)
 {
 	int			signe;
-	long long	tmp; 
+	long long	tmp;
 	long long	result;
 
 	result = 0;
