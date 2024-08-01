@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/01 03:04:27 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/01 07:06:00 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,11 @@ int	main(int ac, char **av, char **env)
 	while (true)
 	{
 		line = readline("minishell: ");
-		printf("%s\n", line);
-		add_history(line);
-		if (!quotes_syntax_check(line))
+		// printf("%s\n", line);
+		// add_history(line);
+		if (line[0] == '\0')
+			readline("minishell: ");
+		else if (!quotes_syntax_check(line))
 			fprintf(stderr, "syntax error\n");
 		else
 			printf("%s\n", line);
