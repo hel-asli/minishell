@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+         #
+#    By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/30 23:25:40 by hel-asli          #+#    #+#              #
-#    Updated: 2024/08/01 02:37:52 by hel-asli         ###   ########.fr        #
+#    Updated: 2024/08/01 06:48:35 by oel-feng         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,5 +31,7 @@ clean :
 
 fclean : clean
 	$(RM) $(NAME)
+
+re : fclean all
 
 .PHONY : clean
