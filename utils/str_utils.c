@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:04:29 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/07/31 00:24:38 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/07/31 00:36:40 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,20 +40,6 @@ char	*ft_strdup(const char *str)
 	}
 	d[i] = '\0';
 	return (d);
-}
-
-void	ft_striteri(char *s, void (*f)(unsigned int, char*))
-{
-	unsigned int	i;
-
-	if (!s || !f)
-		return ;
-	i = 0;
-	while (s[i])
-	{
-		f(i, &s[i]);
-		i++;
-	}
 }
 
 int	ft_atoi(const char *str)
