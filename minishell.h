@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/01 03:05:19 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/01 16:45:59 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,13 @@
 # include <sys/errno.h>
 # include <stdbool.h>
 # include <readline/readline.h>
+# include <readline/history.h>
 
 /**			utils fcts			**/
 char	**ft_split(char const *s, char c);
 int		ft_atoi(const char *str);
 size_t	ft_strlen(const char *str);
 char	*ft_strdup(const char *str);
+void	ft_putstr_fd(char *s, int fd);
 
 #endif

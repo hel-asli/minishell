@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/01 07:06:00 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/01 16:46:54 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,12 @@ bool quotes_syntax_check(char *line)
 	return (!check);
 }
 
+void err_handle(char *str)
+{
+	ft_putstr_fd(str, STDERR_FILENO);
+	exit(EXIT_FAILURE);
+}
+
 int	main(int ac, char **av, char **env)
 {
 	char	*line;
@@ -43,10 +49,14 @@ int	main(int ac, char **av, char **env)
 	while (true)
 	{
 		line = readline("minishell: ");
-		// printf("%s\n", line);
-		// add_history(line);
+		if (!line)
+		{
+			free(line);
+			err_handle("readline fail");
+		}
+		add_history(line);
 		if (line[0] == '\0')
-			readline("minishell: ");
+			continue;
 		else if (!quotes_syntax_check(line))
 			fprintf(stderr, "syntax error\n");
 		else

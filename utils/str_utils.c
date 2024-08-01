@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:04:29 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/01 03:04:07 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/01 16:45:51 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,4 +69,15 @@ int	ft_atoi(const char *str)
 		str++;
 	}
 	return (result * signe);
+}
+
+void	ft_putstr_fd(char *s, int fd)
+{
+	size_t	size;
+
+	if (s)
+	{
+		size = ft_strlen(s);
+		write(fd, s, size);
+	}
 }
