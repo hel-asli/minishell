@@ -1,51 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   str_utils.c                                        :+:      :+:    :+:   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/31 00:04:29 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/01 16:45:51 by hel-asli         ###   ########.fr       */
+/*   Created: 2024/08/01 23:44:04 by hel-asli          #+#    #+#             */
+/*   Updated: 2024/08/01 23:44:08 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-size_t	ft_strlen(const char *str)
-{
-	size_t	len;
-
-	len = 0;
-	while (*str++ != '\0')
-		len++;
-	return (len);
-}
-
-char	*ft_strdup(const char *str)
-{
-	size_t	i;
-	size_t	len;
-	char	*d;
-
-	len = ft_strlen(str);
-	d = (char *)malloc(sizeof(char) * len +1);
-	i = 0;
-	if (!d)
-		return (NULL);
-	while (i < len)
-	{
-		d[i] = str[i];
-		i++;
-	}
-	d[i] = '\0';
-	return (d);
-}
-
 int	ft_atoi(const char *str)
 {
 	int			signe;
-	long long	tmp;
+	long long	tmp; 
 	long long	result;
 
 	result = 0;
@@ -69,15 +39,4 @@ int	ft_atoi(const char *str)
 		str++;
 	}
 	return (result * signe);
-}
-
-void	ft_putstr_fd(char *s, int fd)
-{
-	size_t	size;
-
-	if (s)
-	{
-		size = ft_strlen(s);
-		write(fd, s, size);
-	}
 }

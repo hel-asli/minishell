@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:21:14 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/01 00:08:08 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/01 23:37:58 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	count_words(char const *s, char c)
+int	count_words(char const *s)
 {
 	int		count;
 
@@ -21,10 +21,10 @@ int	count_words(char const *s, char c)
 	count = 0;
 	while (*s)
 	{
-		if (*s != c)
+		if ((*s != 9 && *s != 32))
 		{
 			count++;
-			while (*s != c && *s)
+			while ((*s != 32 && *s != 9) && *s)
 				s++;
 		}
 		else
@@ -47,7 +47,7 @@ char	**ft_free(char **split)
 	return (NULL);
 }
 
-char	*split_word(char *str, char c)
+char	*split_word(char *str)
 {
 	int		i;
 	int		j;
@@ -55,7 +55,7 @@ char	*split_word(char *str, char c)
 
 	i = 0;
 	j = 0;
-	while (str[i] && str[i] != c)
+	while (str[i] && (str[i] != 32 && str[i] != 9))
 		i++;
 	word = (char *)malloc(sizeof(char) * (i + 1));
 	if (!word)
@@ -69,28 +69,28 @@ char	*split_word(char *str, char c)
 	return (word);
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split(char const *s)
 {
 	int		i;
 	char	**split;
 
 	i = 0;
-	split = (char **)malloc(sizeof(char *) * (count_words(s, c) + 1));
+	split = (char **)malloc(sizeof(char *) * (count_words(s) + 1));
 	if (!split || !s)
 		return (NULL);
 	while (*s)
 	{
-		while (*s && *s == c)
+		while (*s && (*s == 9 || *s == 32))
 			s++;
 		if (*s)
 		{
-			split[i] = split_word((char *)s, c);
+			split[i] = split_word((char *)s);
 			if (!split[i])
 				return (ft_free(split));
 			i++;
 			s++;
 		}
-		while (*s && *s != c)
+		while (*s && (*s != 9 && *s != 32))
 			s++;
 	}
 	split[i] = NULL;
