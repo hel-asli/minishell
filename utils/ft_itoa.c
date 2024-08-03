@@ -6,11 +6,11 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:44:24 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/01 23:44:27 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/03 00:04:09 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../Include/utils.h"
 
 static unsigned int	count_numbers(int n)
 {

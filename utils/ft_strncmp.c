@@ -6,11 +6,11 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 00:51:24 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/02 02:31:04 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/03 00:04:31 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../Include/utils.h"
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {

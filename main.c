@@ -6,12 +6,12 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/02 02:52:51 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/03 03:32:11 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#include "minishell.h"
+#include "Include/minishell.h"
+#include "Include/utils.h"
 
 bool quotes_syntax_check(char *line)
 {
@@ -134,6 +134,7 @@ char *add_spaces(char *line)
 	return (new_line);
 }
 
+
 int other_syntax_check(char *line)
 {
 	int i = 0;
@@ -146,17 +147,17 @@ int other_syntax_check(char *line)
 		if (!ft_strcmp(sp[i], ">>") || !ft_strcmp(sp[i], "<<") || !ft_strcmp(sp[i], ">") || !ft_strcmp(sp[i], "<"))
 		{
 			if (i > 0 && (sp[i - 1] == NULL || sp[i + 1] == NULL))
-					return (1);
+					return (ft_free(sp), 1);
 			else
 				if (sp[i + 1] == NULL)
-					return (1);
+					return (ft_free(sp), 1);
 		}
 		else if (!ft_strcmp(sp[i], "|"))
 		{
 			if (i == 0)
-				return (2);
+				return (ft_free(sp), 2);
 			else if (sp[i+1] == NULL)
-				return (2);
+				return (ft_free(sp), 2);
 		}
 		i++;
 	}
@@ -191,6 +192,8 @@ int	main(int ac, char **av, char **env)
 			printf("bash: syntax error near unexpected token `newline'\n");
 		else if (n == 2)
 			printf("bash: syntax error near unexpected token `|'\n");
+
 		free(line);
 	}
+	return (0);
 }

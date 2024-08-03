@@ -6,11 +6,11 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:44:39 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/01 23:44:50 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/03 00:04:13 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../Include/utils.h"
 
 void	ft_putendl_fd(char *s, int fd)
 {
