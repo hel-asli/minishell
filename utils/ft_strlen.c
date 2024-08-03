@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:47:37 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/03 00:04:20 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/03 03:59:36 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,4 +20,24 @@ size_t	ft_strlen(const char *str)
 	while (*str++ != '\0')
 		len++;
 	return (len);
+}
+
+bool is_space(char c)
+{
+	return (c == 32 || c == 9);
+}
+
+bool empty_str(char *line)
+{
+	int i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (!is_space(line[i]))
+			return (false);
+		i++;
+	}
+
+	return (true);
 }

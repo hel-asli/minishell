@@ -1,27 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/03 06:10:10 by hel-asli         ###   ########.fr       */
+/*   Created: 2024/08/03 03:55:58 by hel-asli          #+#    #+#             */
+/*   Updated: 2024/08/03 04:03:49 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "../Include/utils.h"
 
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <limits.h>
-# include <sys/errno.h>
-# include <stdbool.h>
-# include <readline/readline.h>
-# include <readline/history.h>
+void err_handle(char *str)
+{
+	ft_putendl_fd(str, STDERR_FILENO);
+	exit(EXIT_FAILURE);
+}
 
-void parse_input(char *line);
-
-#endif
+void err_exit(char *str)
+{
+	perror(str);
+	exit(EXIT_FAILURE);
+}
