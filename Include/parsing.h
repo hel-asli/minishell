@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:51:16 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/03 23:46:40 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/04 07:12:58 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,19 @@
 typedef enum e_syntax
 {
 	SYNTAX_OK,
+	INVALID_HEREDOC,
 	INVALID_REDIRECTINO,
 	UNCLOSED_QUOTES,
 	INVALIDE_PIPE,
-	LONG_APPEND,
-	LONG_HEREDOC,
+	INVALID_APPEND,
 }	t_syntax;
 
 
 #define SYNTAX_REDIRECTION "Error: Invalid redirection"
 #define SYNTAX_QUOTES "Error: Unclosed quotes"
 #define SYNTAX_PIPE "Error: Invalid pipe usage"
-#define SYNTAX_LONG_APPEND "Error: Invalid append redirection (>>)"
-#define SYNTAX_LONG_HEREDOC "Error: Invalid here-document (<<)"
+#define SYNTAX_INVALID_APPEND "Error: Invalid append redirection (>>)"
+#define SYNTAX_HEREDOC "Error: Invalid here-document (<<)"
 
 char		*read_input(const char *prompt);
 size_t		ft_strlen(const char *str);
