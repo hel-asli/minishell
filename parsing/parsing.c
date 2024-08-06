@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/06 16:51:59 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/06 21:14:18 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,12 +179,11 @@ char *add_spaces(char *line)
 	return (free(line), new_line);
 }
 
-void space_to_gar(t_parsing *parsing)
-{
-	int i;
-	bool in_quotes = false;
-	
-}
+// void space_to_gar(t_parsing *parsing)
+// {
+// 	int i;
+// 	bool in_quotes = false;
+// }
 
 // void space_to_gar(t_parsing *parsing)
 // {
@@ -260,7 +259,7 @@ int parse_input(t_parsing *parsing)
 		free(new_line);
 		return (1);
 	}
-	space_to_gar(parsing);
+	// space_to_gar(parsing);
 	printf("after => %s\n", parsing->line);
 	// space_to_gar(parsing);
 	// printf("back => %s\n", parsing->line);

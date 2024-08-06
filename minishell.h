@@ -56,6 +56,7 @@ typedef struct s_parsing
 char	**ft_split(char const *s);
 char	**ft_free(char **split);
 int		ft_atoi(const char *str);
+char	*ft_itoa(int n);
 size_t	ft_strlen(const char *str);
 char	*ft_strdup(const char *str);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);

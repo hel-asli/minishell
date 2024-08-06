@@ -3,15 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/05 23:52:57 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/06 21:28:06 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
+
+void	update_shlvl(t_env *env)
+{
+	int shlvl;
+
+	while (ft_strcmp(env->key, "SHLVL"))
+		env = env->next;
+	shlvl = ft_atoi(env->value) + 1;
+	env->value = ft_itoa(shlvl);
+}
 
 void built_env(t_env **env, char **ev)
 {
@@ -49,6 +59,7 @@ int	main(int ac, char **av, char **ev)
 
 	env = NULL;
 	built_env(&env, ev);
+	update_shlvl(env);
 	print_env(env);
 	env_clear(&env);
 	read_input(&parsing, "minishell : ");
