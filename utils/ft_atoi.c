@@ -6,11 +6,11 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:44:04 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/03 00:04:03 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/05 20:46:36 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Include/utils.h"
+#include "../minishell.h"
 
 int	ft_atoi(const char *str)
 {

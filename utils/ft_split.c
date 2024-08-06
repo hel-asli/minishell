@@ -6,11 +6,11 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:21:14 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/03 00:34:29 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/05 20:46:36 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Include/utils.h"
+#include "../minishell.h"
 
 int	count_words(char const *s)
 {

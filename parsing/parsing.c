@@ -6,11 +6,11 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/05 00:39:29 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/06 16:51:59 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Include/parsing.h"
+#include "../minishell.h"
 
 bool quotes_syntax_check(char *line)
 {
@@ -179,12 +179,74 @@ char *add_spaces(char *line)
 	return (free(line), new_line);
 }
 
-int parse_input(char *line)
+void space_to_gar(t_parsing *parsing)
+{
+	int i;
+	bool in_quotes = false;
+	
+}
+
+// void space_to_gar(t_parsing *parsing)
+// {
+//     int i;
+//     bool in_quotes = false;
+//     char quote_type = 0;
+//     char nested_quote = 0;
+
+
+//     i = 0;
+//     while (parsing->line[i])
+//     {
+//         if (!in_quotes && (parsing->line[i] == '"' || parsing->line[i] == '\''))
+//         {
+//             in_quotes = true;
+//             quote_type = parsing->line[i];
+//         }
+//         else if (in_quotes && parsing->line[i] == quote_type)
+//         {
+//             if (!nested_quote)
+//                 in_quotes = false;
+//             else
+//                 nested_quote = 0;
+//         }
+//         else if (in_quotes && !nested_quote && 
+//                  (parsing->line[i] == '"' || parsing->line[i] == '\'') && 
+//                  parsing->line[i] != quote_type)
+//         {
+//             nested_quote = parsing->line[i];
+//             parsing->line[i] *= -1;
+//         }
+//         else if (in_quotes)
+//         {
+//             parsing->line[i] *= -1;
+//         }
+//         i++;
+//     }
+// }
+
+// void gar_to_space(t_parsing *parsing)
+// {	
+// 	int i;
+// 	bool in_quotes = false;
+
+// 	i = 0;
+// 	while (parsing->line[i])
+// 	{
+// 		if (parsing->line[i] == '"' || parsing->line[i] == '\'')
+// 			in_quotes = !in_quotes;
+// 		else if (in_quotes)
+// 			parsing->line[i] *= -1;
+// 		i++;
+// 	}
+// }
+
+
+int parse_input(t_parsing *parsing)
 {
 	char *new_line;
 	t_syntax syntax;
-
-	new_line = add_spaces(line);
+	new_line = add_spaces(parsing->line);
+	parsing->line = new_line;
 	if (!new_line)
 		return (-1);
 	if (!quotes_syntax_check(new_line))
@@ -198,27 +260,31 @@ int parse_input(char *line)
 		free(new_line);
 		return (1);
 	}
-
+	space_to_gar(parsing);
+	printf("after => %s\n", parsing->line);
+	// space_to_gar(parsing);
+	// printf("back => %s\n", parsing->line);
 	return (0);
 }
 
-char *read_input(const char *prompt)
+char *read_input(t_parsing *parsing, const char *prompt)
 {
-	char	*line;
-
+	// char	*line;
 	while (true)
 	{
-		line = readline(prompt);
-		add_history(line);
-		if (!line)
+		parsing->line = readline(prompt);
+		add_history(parsing->line);
+		if (!parsing->line)
 			err_handle("exit");
-		if (!ft_strlen(line) || empty_str(line))
+		if (!ft_strlen(parsing->line) || empty_str(parsing->line))
 		{
-			free(line);
+			free(parsing->line);
 			continue ;
 		}
-		if (parse_input(line) == 1)
+		if (parse_input(parsing) == 1)
 			continue;
+		// printf("-- %s --\n", parsing->line);
+		free(parsing->line);
 	}
-	return (line);
+	return (parsing->line);
 }
