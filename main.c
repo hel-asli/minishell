@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/06 21:28:06 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/06 22:39:16 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ int	main(int ac, char **av, char **ev)
 	t_env 	*env;
 	if (ac != 1)
 		exit(EXIT_FAILURE);
-
+	if (ev == NULL || *ev == NULL)
+		err_handle("Error: No environment found.");
 	env = NULL;
 	built_env(&env, ev);
 	update_shlvl(env);
