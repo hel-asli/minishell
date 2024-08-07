@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+         #
+#    By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/30 23:25:40 by hel-asli          #+#    #+#              #
-#    Updated: 2024/08/05 23:05:48 by hel-asli         ###   ########.fr        #
+#    Updated: 2024/08/07 03:11:22 by oel-feng         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 INCLUDE_DIR = Include
-# LDFLAGS = -g -fsanitize=address
+LDFLAGS = -g -fsanitize=address
 # UTILS_SRCS = utils/ft_split.c  utils/ft_itoa.c utils/ft_strncmp.c \
 # 			utils/ft_putendl_fd.c utils/ft_strstr.c utils/ft_strlen.c \
 # 			utils/ft_atoi.c utils/error.c utils/ft_lst.c utils/ft_env_split.c
@@ -22,7 +22,7 @@ INCLUDE_DIR = Include
 SRCS = main.c utils/ft_split.c  utils/ft_itoa.c utils/ft_strncmp.c \
 		utils/ft_putendl_fd.c utils/ft_strstr.c utils/ft_strlen.c \
 		utils/ft_atoi.c utils/error.c utils/ft_lst.c utils/ft_env_split.c \
-		parsing/parsing.c
+		parsing/parsing.c utils/ft_split_v2.c
 
 HEADER = minishell.h
 OBJS = $(SRCS:.c=.o)

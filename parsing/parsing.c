@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/06 16:51:59 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/07 03:49:22 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,50 +179,49 @@ char *add_spaces(char *line)
 	return (free(line), new_line);
 }
 
-void space_to_gar(t_parsing *parsing)
-{
-	int i;
-	bool in_quotes = false;
-	
-}
-
 // void space_to_gar(t_parsing *parsing)
 // {
-//     int i;
-//     bool in_quotes = false;
-//     char quote_type = 0;
-//     char nested_quote = 0;
-
-
-//     i = 0;
-//     while (parsing->line[i])
-//     {
-//         if (!in_quotes && (parsing->line[i] == '"' || parsing->line[i] == '\''))
-//         {
-//             in_quotes = true;
-//             quote_type = parsing->line[i];
-//         }
-//         else if (in_quotes && parsing->line[i] == quote_type)
-//         {
-//             if (!nested_quote)
-//                 in_quotes = false;
-//             else
-//                 nested_quote = 0;
-//         }
-//         else if (in_quotes && !nested_quote && 
-//                  (parsing->line[i] == '"' || parsing->line[i] == '\'') && 
-//                  parsing->line[i] != quote_type)
-//         {
-//             nested_quote = parsing->line[i];
-//             parsing->line[i] *= -1;
-//         }
-//         else if (in_quotes)
-//         {
-//             parsing->line[i] *= -1;
-//         }
-//         i++;
-//     }
+// 	int i;
+// 	bool in_quotes = false;
 // }
+
+void space_to_gar(char *line)
+{
+    int i;
+    bool in_quotes = false;
+    char quote_type = 0;
+    char nested_quote = 0;
+
+
+    i = 0;
+    while (line[i])
+    {
+        if (!in_quotes && (line[i] == '"' || line[i] == '\''))
+        {
+            in_quotes = true;
+            quote_type = line[i];
+        }
+        else if (in_quotes && line[i] == quote_type)
+        {
+            if (!nested_quote)
+                in_quotes = false;
+            else
+                nested_quote = 0;
+        }
+        else if (in_quotes && !nested_quote && 
+                 (line[i] == '"' || line[i] == '\'') && 
+                 line[i] != quote_type)
+        {
+            nested_quote = line[i];
+            line[i] *= -1;
+        }
+        else if (in_quotes)
+        {
+            line[i] *= -1;
+        }
+        i++;
+    }
+}
 
 // void gar_to_space(t_parsing *parsing)
 // {	
@@ -241,9 +240,38 @@ void space_to_gar(t_parsing *parsing)
 // }
 
 
+
+void pipes_cmds(t_commands **cmds, char **pipes)
+{
+	int i = -1;
+	char **tab;
+	while (pipes[++i])
+	{
+		tab = ft_split(pipes[i]);
+		for (int j = 0; tab[j]; j++)
+			space_to_gar(tab[j]);
+		ft_back_addlst(cmds, ft_newlist(tab[0], tab));
+	}
+}
+
+static void print_cmds(t_commands *cmds)
+{
+	// t_env *cur = env;
+	while (cmds)
+	{
+		printf("-----------------\n");
+		printf("%s=", cmds->cmd);
+		for(int i = 0; cmds->args[i]; i++)
+			printf("%s^^", cmds->args[i]);
+		printf("\n");
+		cmds = cmds->next;
+	}
+}
+
 int parse_input(t_parsing *parsing)
 {
 	char *new_line;
+	char **pipes;
 	t_syntax syntax;
 	new_line = add_spaces(parsing->line);
 	parsing->line = new_line;
@@ -260,7 +288,12 @@ int parse_input(t_parsing *parsing)
 		free(new_line);
 		return (1);
 	}
-	space_to_gar(parsing);
+	space_to_gar(parsing->line);
+	parsing->cmnds = NULL;
+	pipes = ft_split_v2(parsing->line, 124);
+	space_to_gar(parsing->line);
+	pipes_cmds(&parsing->cmnds, pipes);
+	print_cmds(parsing->cmnds);
 	printf("after => %s\n", parsing->line);
 	// space_to_gar(parsing);
 	// printf("back => %s\n", parsing->line);
