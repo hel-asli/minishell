@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:47:37 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/05 20:46:36 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/08 02:35:42 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@ size_t	ft_strlen(const char *str)
 	return (len);
 }
 
-bool is_space(char c)
+bool	is_space(char c)
 {
 	return (c == 32 || c == 9);
 }
 
-bool empty_str(char *line)
+bool	empty_str(char *line)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (line[i])
@@ -38,6 +38,5 @@ bool empty_str(char *line)
 			return (false);
 		i++;
 	}
-
 	return (true);
 }

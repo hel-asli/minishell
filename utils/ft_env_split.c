@@ -3,21 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env_split.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 02:56:49 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/05 20:47:04 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/08 03:01:07 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char **ft_env_split(char *str)
+char	**ft_env_split(char *str)
 {
-	char **sp;
-	int i = 0;
-	int j = 0;
+	char	**sp;
+	int		i;
+	int		j;
 
+	i = 0;
+	j = 0;
 	sp = malloc(sizeof(char *) * 3);
 	if (!sp)
 		return (NULL);
@@ -30,7 +32,7 @@ char **ft_env_split(char *str)
 	while (str[i] && str[i] != '=')
 		sp[0][j++] = str[i++];
 	sp[0][j] = '\0';
-	if (str[i] == '=')		
+	if (str[i] == '=')
 		i++;
 	j = 0;
 	sp[1] = malloc(sizeof(char) * (ft_strlen(str) - i + 1));

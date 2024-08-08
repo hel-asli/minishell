@@ -3,39 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_helper.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 00:21:37 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/08 00:23:15 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/08 02:42:53 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-bool is_redirection(char *token)
+bool	is_redirection(char *token)
 {
-	return (!ft_strcmp(token, ">>") || !ft_strcmp(token, ">") || !ft_strcmp(token, "<"));
+	return (!ft_strcmp(token, ">>")
+		|| !ft_strcmp(token, ">") || !ft_strcmp(token, "<"));
 }
 
-bool check_redirection(char **tokens, int i)
+bool	check_redirection(char **tokens, int i)
 {
 	if (tokens[i + 1] == NULL)
 		return (false);
-	if (tokens[i + 1] && (is_redirection(tokens[i + 1]) || !ft_strcmp(tokens[i + 1], "<<") || !ft_strcmp(tokens[i + 1], "|")))
+	if (tokens[i + 1] && (is_redirection(tokens[i + 1])
+			|| !ft_strcmp(tokens[i + 1], "<<")
+			|| !ft_strcmp(tokens[i + 1], "|")))
 		return (false);
 	return (true);
 }
 
-bool check_heredoc(char **tokens, int i)
+bool	check_heredoc(char **tokens, int i)
 {
 	if (tokens[i + 1] == NULL)
 		return (false);
-	if (tokens[i + 1] && (is_redirection(tokens[i + 1]) || !ft_strcmp(tokens[i + 1], "<<") || !ft_strcmp(tokens[i + 1], "|")))
+	if (tokens[i + 1] && (is_redirection(tokens[i + 1])
+			|| !ft_strcmp(tokens[i + 1], "<<")
+			|| !ft_strcmp(tokens[i + 1], "|")))
 		return (false);
 	return (true);
 }
 
-bool check_pipe(char **tokens, int i)
+bool	check_pipe(char **tokens, int i)
 {
 	if (i == 0 || tokens[i + 1] == NULL)
 		return (false);
@@ -44,7 +49,7 @@ bool check_pipe(char **tokens, int i)
 	return (true);
 }
 
-void syntax_err_msg(t_syntax syntax)
+void	syntax_err_msg(t_syntax syntax)
 {
 	if (syntax == INVALID_REDIRECTINO)
 		ft_putendl_fd(SYNTAX_REDIRECTION, STDERR_FILENO);
