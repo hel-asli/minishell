@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lst.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 03:10:56 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/07 03:29:40 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/07 23:20:13 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ t_commands	*ft_last(t_commands *node)
 	return (node);
 }
 
-t_commands *ft_newlist(char *cmd, char **args)
+t_commands *ft_newlist(char *cmd, char **args, t_redirect *red)
 {
 	t_commands *node;
 
@@ -89,6 +89,7 @@ t_commands *ft_newlist(char *cmd, char **args)
 		return (NULL);
 	node->cmd = cmd;
 	node->args = args;
+	node->redirect = red;
 	node->next = NULL;
 	return (node);
 }
@@ -110,4 +111,45 @@ void env_clear(t_env **env)
 		// cur = tmp;
 	}
 	*env = NULL;
+}
+
+
+void	ft_lst_add_redir(t_redirect **lst, t_redirect *new)
+{
+	t_redirect *last;
+
+	if (lst)
+	{
+		if (*lst == NULL)
+		{
+			*lst = new;
+		}
+		else
+		{
+			last = ft_last_redir(*lst);
+			last->next = new;
+		}
+	}
+}
+
+t_redirect	*ft_last_redir(t_redirect *node)
+{
+	if (!node)
+		return (NULL);
+	while (node->next != NULL)
+		node = node->next;
+	return (node);
+}
+
+t_redirect *ft_new_redir(char *type, char *file)
+{
+	t_redirect *node;
+
+	node = malloc(sizeof(t_commands));
+	if (!node)
+		return (NULL);
+	node->type = type;
+	node->file = file;
+	node->next = NULL;
+	return (node);
 }

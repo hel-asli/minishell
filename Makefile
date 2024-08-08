@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+         #
+#    By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/30 23:25:40 by hel-asli          #+#    #+#              #
-#    Updated: 2024/08/07 03:11:22 by oel-feng         ###   ########.fr        #
+#    Updated: 2024/08/08 00:26:18 by hel-asli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ LDFLAGS = -g -fsanitize=address
 SRCS = main.c utils/ft_split.c  utils/ft_itoa.c utils/ft_strncmp.c \
 		utils/ft_putendl_fd.c utils/ft_strstr.c utils/ft_strlen.c \
 		utils/ft_atoi.c utils/error.c utils/ft_lst.c utils/ft_env_split.c \
-		parsing/parsing.c utils/ft_split_v2.c
+		parsing/parsing.c utils/ft_split_v2.c parsing/syntax_helper.c
 
 HEADER = minishell.h
 OBJS = $(SRCS:.c=.o)

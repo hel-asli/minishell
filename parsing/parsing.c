@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/07 03:49:22 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/08 01:50:18 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,57 +30,6 @@ bool quotes_syntax_check(char *line)
 		i++;
 	}
 	return (!in_quotes);
-}
-
-void print_splited(char **line)
-{
-	int i = 0;
-	while (line[i])
-	{
-		printf("-- %s\n", line[i]);
-		i++;
-	}
-}
-bool is_redirection(char *token)
-{
-	return (!ft_strcmp(token, ">>") || !ft_strcmp(token, ">") || !ft_strcmp(token, "<"));
-}
-
-bool check_redirection(char **tokens, int i)
-{
-	if (tokens[i + 1] == NULL)
-		return (false);
-	if (tokens[i + 1] && (is_redirection(tokens[i + 1]) || !ft_strcmp(tokens[i + 1], "<<") || !ft_strcmp(tokens[i + 1], "|")))
-		return (false);
-	return (true);
-}
-
-bool check_heredoc(char **tokens, int i)
-{
-	if (tokens[i + 1] == NULL)
-		return (false);
-	if (tokens[i + 1] && (is_redirection(tokens[i + 1]) || !ft_strcmp(tokens[i + 1], "<<") || !ft_strcmp(tokens[i + 1], "|")))
-		return (false);
-	return (true);
-}
-
-bool check_pipe(char **tokens, int i)
-{
-	if (i == 0 || tokens[i + 1] == NULL)
-		return (false);
-	else if (i > 0 && !ft_strcmp(tokens[i - 1], "|"))
-		return (false);
-	return (true);
-}
-
-
-int check_long(char **tokens, int i)
-{
-	if (tokens[i + 1] && !ft_strcmp(tokens[i], ">>") && (!ft_strcmp(tokens[i + 1], ">>") || !ft_strcmp(tokens[i + 1], ">")))
-		return (1);
-	else if (tokens[i + 1] && !ft_strcmp(tokens[i], "<<") && (!ft_strcmp(tokens[i + 1], "<<") || !ft_strcmp(tokens[i + 1], "<")))
-		return (2);
-	return (0);
 }
 
 t_syntax other_syntax_check(char *line)
@@ -113,19 +62,6 @@ t_syntax other_syntax_check(char *line)
 	return (ft_free(tokens), result);
 }
 
-void syntax_err_msg(t_syntax syntax)
-{
-	if (syntax == INVALID_REDIRECTINO)
-		ft_putendl_fd(SYNTAX_REDIRECTION, STDERR_FILENO);
-	else if (syntax == UNCLOSED_QUOTES)
-		ft_putendl_fd(SYNTAX_QUOTES, STDERR_FILENO);
-	else if (syntax == INVALIDE_PIPE)
-		ft_putendl_fd(SYNTAX_PIPE, STDERR_FILENO);
-	else if (syntax == INVALID_APPEND)
-		ft_putendl_fd(SYNTAX_INVALID_APPEND, STDERR_FILENO);
-	else if (syntax == INVALID_HEREDOC)
-		ft_putendl_fd(SYNTAX_HEREDOC, STDERR_FILENO);
-}
 size_t count_len(char *line)
 {
 	size_t len = ft_strlen(line);
@@ -179,12 +115,6 @@ char *add_spaces(char *line)
 	return (free(line), new_line);
 }
 
-// void space_to_gar(t_parsing *parsing)
-// {
-// 	int i;
-// 	bool in_quotes = false;
-// }
-
 void space_to_gar(char *line)
 {
     int i;
@@ -223,49 +153,104 @@ void space_to_gar(char *line)
     }
 }
 
-// void gar_to_space(t_parsing *parsing)
-// {	
-// 	int i;
-// 	bool in_quotes = false;
-
-// 	i = 0;
-// 	while (parsing->line[i])
-// 	{
-// 		if (parsing->line[i] == '"' || parsing->line[i] == '\'')
-// 			in_quotes = !in_quotes;
-// 		else if (in_quotes)
-// 			parsing->line[i] *= -1;
-// 		i++;
-// 	}
-// }
-
-
-
-void pipes_cmds(t_commands **cmds, char **pipes)
+void pipes_cmds(t_commands **commands, char **pipes)
 {
-	int i = -1;
+	int i = 0;
 	char **tab;
-	while (pipes[++i])
+	int arg_count = 0;
+	char **arg;
+	t_redirect *redirect = NULL;
+	int k = 0;
+	int j = 0;
+	while (pipes[i])
 	{
+		printf("%d -- > %s\n", i , pipes[i]);
 		tab = ft_split(pipes[i]);
-		for (int j = 0; tab[j]; j++)
-			space_to_gar(tab[j]);
-		ft_back_addlst(cmds, ft_newlist(tab[0], tab));
+		if (!tab)
+			puts("ook");
+		j = 0;
+		printf("j : %d\n", j);
+		arg_count = 0;
+		printf("arg_count : %d\n", arg_count);
+		while (tab[j])
+		{
+			if (tab[j + 1] && (is_redirection(tab[j]) || !ft_strcmp(tab[j], "<<")))
+			{
+				ft_lst_add_redir(&redirect, ft_new_redir(tab[j], tab[j + 1]));
+				j += 2;
+			}
+			else
+			{
+				arg_count++;
+				j++;
+			}
+		}
+		printf("--> %d\n", arg_count);
+		arg = malloc(sizeof(char *) * (arg_count + 1));
+		if (!arg)
+			return ; 
+		j = 0;
+		k = 0;
+		printf("--- %d\n", j);
+		while (tab[j])
+		{
+			if (tab[j + 1] && (is_redirection(tab[j]) || !ft_strcmp(tab[j], "<<")))
+				j += 2;
+			else
+			{
+				puts("iter");
+				arg[k++] = ft_strdup(tab[j++]);
+			}
+		}
+		arg[k] = NULL;
+		ft_back_addlst(commands, ft_newlist(arg[0], arg, redirect));
+		free(tab);
+		i++;
 	}
 }
 
-static void print_cmds(t_commands *cmds)
+void print_cmds(t_commands *cmds)
 {
-	// t_env *cur = env;
-	while (cmds)
-	{
-		printf("-----------------\n");
-		printf("%s=", cmds->cmd);
-		for(int i = 0; cmds->args[i]; i++)
-			printf("%s^^", cmds->args[i]);
-		printf("\n");
-		cmds = cmds->next;
-	}
+    while (cmds)
+    {
+        printf("----------------------------------------------\n");
+        printf("cmd : %s\n", cmds->cmd);
+        
+        printf("args : ");
+        if (cmds->args)
+        {
+            int i = 0;
+            while (cmds->args[i])
+            {
+                printf("%s ", cmds->args[i]);
+                i++;
+            }
+        }
+        else
+        {
+            printf("(None) args . ");
+        }
+        printf("\n");
+        
+        t_redirect *red = cmds->redirect;    
+        printf("redirections : \n");
+        if (!red)
+        {
+            printf("(None) redirection . \n");
+        }
+        else
+        {
+            while (red)
+            {
+                printf("type : %s\n", red->type);
+                printf("file : %s\n", red->file);
+                red = red->next;
+            }
+        }
+        
+        printf("----------------------------------------------\n");
+        cmds = cmds->next;    
+    }
 }
 
 int parse_input(t_parsing *parsing)
@@ -275,6 +260,7 @@ int parse_input(t_parsing *parsing)
 	t_syntax syntax;
 	new_line = add_spaces(parsing->line);
 	parsing->line = new_line;
+	// parsing->cmnds->redirect = NULL;
 	if (!new_line)
 		return (-1);
 	if (!quotes_syntax_check(new_line))
@@ -291,12 +277,11 @@ int parse_input(t_parsing *parsing)
 	space_to_gar(parsing->line);
 	parsing->cmnds = NULL;
 	pipes = ft_split_v2(parsing->line, 124);
-	space_to_gar(parsing->line);
+	for (int i = 0; pipes[i]; i++)
+		printf("%s\n", pipes[i]);
+	// space_to_gar(parsing->line);
 	pipes_cmds(&parsing->cmnds, pipes);
 	print_cmds(parsing->cmnds);
-	printf("after => %s\n", parsing->line);
-	// space_to_gar(parsing);
-	// printf("back => %s\n", parsing->line);
 	return (0);
 }
 
@@ -316,7 +301,6 @@ char *read_input(t_parsing *parsing, const char *prompt)
 		}
 		if (parse_input(parsing) == 1)
 			continue;
-		// printf("-- %s --\n", parsing->line);
 		free(parsing->line);
 	}
 	return (parsing->line);

@@ -31,10 +31,18 @@ typedef enum e_syntax
 	INVALID_APPEND,
 }	t_syntax;
 
+typedef struct s_redirect
+{
+	char *type;
+	char *file;
+	struct s_redirect *next;
+} t_redirect;
+
 typedef struct s_commands
 {
 	char *cmd;
 	char **args;
+	t_redirect *redirect;
 	struct s_commands *next;
 } t_commands; 
 
@@ -43,6 +51,12 @@ typedef struct s_parsing
 	char *line;
 	t_commands *cmnds;
 } t_parsing;
+
+typedef struct s_shell
+{
+	t_env *env;
+	t_commands *commands;
+} t_shell;
 
 
 # include <unistd.h>
@@ -85,7 +99,8 @@ void	set_env(t_env **env);
 #define SYNTAX_HEREDOC "minishell: Invalid here-document (<<)"
 
 char		*read_input(t_parsing *parsing,const char *prompt);
-t_commands *ft_newlist(char *cmd, char **args);
+// t_commands *ft_newlist(char *cmd, char **args);
+t_commands *ft_newlist(char *cmd, char **args, t_redirect *red);
 size_t		ft_strlen(const char *str);
 void		err_handle(char *str);
 bool		is_space(char c);
@@ -101,5 +116,14 @@ char	**ft_split_v2(const char *s, char c);
 void		ft_putstr_fd(char *s, int fd);
 bool		ft_strstr(char *str, char *del);
 void		ft_putendl_fd(char *s, int fd);
+void		ft_lst_add_redir(t_redirect **lst, t_redirect *new);
+t_redirect	*ft_new_redir(char *type, char *file);
+t_redirect	*ft_last_redir(t_redirect *node);
+
+bool is_redirection(char *token);
+bool check_redirection(char **tokens, int i);
+bool check_heredoc(char **tokens, int i);
+bool check_pipe(char **tokens, int i);
+void syntax_err_msg(t_syntax syntax);
 
 #endif
