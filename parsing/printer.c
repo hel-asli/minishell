@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   printer.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/08/08 03:09:48 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/08 05:09:52 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,19 +29,18 @@ void	pipes_cmds(t_commands **commands, char **pipes)
 	redirect = NULL;
 	while (pipes[i])
 	{
-		printf("%d -- > %s\n", i, pipes[i]);
 		tab = ft_split(pipes[i]);
 		if (!tab)
 			puts("ook");
 		j = 0;
-		printf("j : %d\n", j);
 		arg_count = 0;
-		printf("arg_count : %d\n", arg_count);
 		while (tab[j])
 		{
+			space_to_gar(tab[j]);
 			if (tab[j + 1] && (is_redirection(tab[j])
 					|| !ft_strcmp(tab[j], "<<")))
 			{
+				space_to_gar(tab[j + 1]);
 				ft_lst_add_redir(&redirect, ft_new_redir(tab[j], tab[j + 1]));
 				j += 2;
 			}
@@ -51,13 +50,11 @@ void	pipes_cmds(t_commands **commands, char **pipes)
 				j++;
 			}
 		}
-		printf("--> %d\n", arg_count);
 		arg = malloc(sizeof(char *) * (arg_count + 1));
 		if (!arg)
 			return ;
 		j = 0;
 		k = 0;
-		printf("--- %d\n", j);
 		while (tab[j])
 		{
 			if (tab[j + 1] && (is_redirection(tab[j])
@@ -65,7 +62,6 @@ void	pipes_cmds(t_commands **commands, char **pipes)
 				j += 2;
 			else
 			{
-				puts("iter");
 				arg[k++] = ft_strdup(tab[j++]);
 			}
 		}

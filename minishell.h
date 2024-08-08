@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/08 03:20:38 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/08 05:04:10 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,5 +125,6 @@ bool		check_redirection(char **tokens, int i);
 bool		check_heredoc(char **tokens, int i);
 bool		check_pipe(char **tokens, int i);
 void		syntax_err_msg(t_syntax syntax);
+void		space_to_gar(char *line);
 
 #endif

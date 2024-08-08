@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/08 03:03:17 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/08 05:11:59 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,8 +131,7 @@ int	parse_input(t_parsing *parsing)
 	space_to_gar(parsing->line);
 	parsing->cmnds = NULL;
 	pipes = ft_split_v2(parsing->line, 124);
-	for (int i = 0; pipes[i]; i++)
-		printf("%s\n", pipes[i]);
+	parsing->cmnds = NULL;
 	pipes_cmds(&parsing->cmnds, pipes);
 	print_cmds(parsing->cmnds);
 	return (0);
