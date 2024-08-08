@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/08 04:47:51 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/08 05:02:08 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ int	parse_input(t_parsing *parsing)
 		return (syntax_err_msg(syntax), free(new_line), 1);
 	space_to_gar(parsing->line);
 	parsing->cmnds = NULL;
+	space_to_gar(parsing->line);
 	pipes = ft_split_v2(parsing->line, 124);
 	for (int i = 0; pipes[i]; i++)
 		printf("%s\n", pipes[i]);
