@@ -1,0 +1,12 @@
+.
+..
+.git
+.gitignore
+Makefile
+README.md
+hello
+main.c
+minishell
+minishell.h
+parsing
+utils
