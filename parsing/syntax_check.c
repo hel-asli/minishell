@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:45:49 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/08/08 04:48:55 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/08 04:55:18 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ bool	quotes_syntax_check(char *line)
 	return (!in_quotes);
 }
 
-t_syntax	other_syntax_check(char *line, int i)
+t_syntax	other_syntax_check(char *line)
 {
 	int			i;
 	t_syntax	result;
