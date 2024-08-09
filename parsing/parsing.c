@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/08 05:11:59 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/09 03:52:16 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,39 @@ char	*add_spaces(char *line)
 	new_line[j] = '\0';
 	return (free(line), new_line);
 }
+
+// void space_to_gar(char *line)
+// {
+//     int i = 0;
+//     bool in_quotes = false;
+//     char quote_type = 0;
+
+//     while (line[i])
+//     {
+//         if (line[i] == '"' || line[i] == '\'')
+//         {
+//             if (!in_quotes)
+//             {
+//                 in_quotes = true;
+//                 quote_type = line[i];
+//             }
+//             else if (line[i] == quote_type)
+//             {
+//                 in_quotes = false;
+//             }
+//             else
+//             {
+//                 line[i] *= -1;
+//             }
+//         }
+//         else if (in_quotes)
+//         {
+//             line[i] *= -1;
+//         }
+//         i++;
+//     }
+// }
+
 
 void	space_to_gar(char *line)
 {

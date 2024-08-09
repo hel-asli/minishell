@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/08/09 01:31:21 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/09 04:35:40 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,13 +78,89 @@ char **args_allocation(char **tab, size_t arg_count)
 	args[k] = NULL;
 	return (args);
 }
+size_t arr_len(char **tab)
+{
+	size_t i;
 
+	i = 0;
+	while (tab[i])
+		i++;
+	return (i);
+}
+
+bool ft_strchr(char *str, char c)
+{
+	int i = 0;
+	while (str[i])
+	{
+		if (str[i] == c)
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+char *get_env(char *key, t_env *env)
+{
+	t_env *tmp;
+
+	tmp = env;
+	while (env)
+	{
+		if (!ft_strcmp(env->key, key))
+			return (env->value);
+		env = env->next;
+	}
+
+	return (NULL);
+}
+char **expand_args(char **args)
+{
+	// size_t len = arr_len(args);
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	int n = 0;
+	int o = 0;
+	char *env_key = NULL;
+	// char *env_value = NULL;
+	while (args[i])
+	{
+		if (ft_strchr(args[i], '$'))
+		{
+			while (args[i][j] && args[i][j] != '$')
+				j++;
+			if (args[i][j] == '$')
+				j++;
+			o = j;
+			while (args[i][j] && args[i][j] != ' ' && args[i][j] != '\t')
+			{
+				j++;
+				k++;
+			}
+			env_key = malloc(sizeof(char) * (k  + 1));
+			if (!env_key)
+				err_handle("Allocation Fail");
+			while (args[i][o] && args[i][o] != ' ' && args[i][o] != '\t')
+			{
+				env_key[n] = args[i][o];
+				n++;
+				o++;
+			}
+			env_key[n] = 0;
+			// env_value = get_env(env_key, env);
+			printf("key : %s\n", env_key);
+		}
+		i++;
+	}
+	return (args);
+}
 void	pipes_cmds(t_commands **commands, char **pipes)
 {
 	int			i;
 	int			k;
 	char		**tab;
-	char		**arg;
+	char		**args;
 	t_redirect	*redirect;
 
 	k = 0;
@@ -98,8 +174,10 @@ void	pipes_cmds(t_commands **commands, char **pipes)
 		for (int j = 0; tab[j] ; j++)
 			space_to_gar(tab[j]);
 		redirect = build_redirection(tab);
-		arg = args_allocation(tab, count_arg_size(tab)); 
-		ft_back_addlst(commands, ft_newlist(arg[0], arg, redirect));
+		args = args_allocation(tab, count_arg_size(tab)); 
+
+		args = expand_args(args);
+		ft_back_addlst(commands, ft_newlist(args[0], args, redirect));
 		free(tab);
 	}
 }

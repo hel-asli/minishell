@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/08 05:04:10 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/09 04:50:22 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_commands
 	char				*cmd;
 	char				**args;
 	t_redirect			*redirect;
+	t_env				*env;
 	struct s_commands	*next;
 }	t_commands;
 
@@ -64,6 +65,7 @@ typedef struct s_shell
 {
 	t_env		*env;
 	t_commands	*commands;
+	t_parsing	parsing;
 }	t_shell;
 
 // void parse_input(char *line);
