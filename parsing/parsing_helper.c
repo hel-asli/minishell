@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/08/09 04:35:40 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/10 00:37:43 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,53 @@ char *get_env(char *key, t_env *env)
 
 	return (NULL);
 }
-char **expand_args(char **args)
+
+
+void	print_env(t_env *env)
+{
+	while (env)
+	{
+		printf("-----------------\n");
+		printf("%s=", env->key);
+		printf("%s\n", env->value);
+		env = env->next;
+	}
+}
+
+char **ft_realloc(char **args, char **tab, int index)
+{
+	size_t args_len = arr_len(args) - 1;
+	size_t tab_len = arr_len(tab);
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	char **arr = malloc(sizeof(char **) * (args_len + tab_len + 1));
+	if (!arr)
+		err_handle("Allocation Fail");
+	
+	while (args[k])
+	{
+		if (k != index)
+		{
+			arr[i] = ft_strdup(args[k]);
+			i++;
+		}
+		k++;
+	}
+	while (tab[j])
+	{
+		arr[i] = ft_strdup(tab[j]);
+		i++;
+		j++;
+	}
+
+	arr[i] = NULL;
+	ft_free(args);
+	ft_free(tab);
+	return (arr);
+}
+
+char **expand_args(char **args, t_env *env)
 {
 	// size_t len = arr_len(args);
 	int i = 0;
@@ -123,7 +169,7 @@ char **expand_args(char **args)
 	int n = 0;
 	int o = 0;
 	char *env_key = NULL;
-	// char *env_value = NULL;
+	char *env_value = NULL;
 	while (args[i])
 	{
 		if (ft_strchr(args[i], '$'))
@@ -148,14 +194,23 @@ char **expand_args(char **args)
 				o++;
 			}
 			env_key[n] = 0;
-			// env_value = get_env(env_key, env);
-			printf("key : %s\n", env_key);
+			env_value = get_env(env_key, env);
+			if (count_words(env_value) == 1)
+			{
+				free(args[i]);
+				args[i] = env_value;
+			}
+			else if (count_words(env_value) > 1)
+			{
+				printf("i : %d\n", i);
+				args = ft_realloc(args, ft_split(env_value), i);
+			}
 		}
 		i++;
 	}
 	return (args);
 }
-void	pipes_cmds(t_commands **commands, char **pipes)
+void	pipes_cmds(t_shell **shell, char **pipes)
 {
 	int			i;
 	int			k;
@@ -176,8 +231,8 @@ void	pipes_cmds(t_commands **commands, char **pipes)
 		redirect = build_redirection(tab);
 		args = args_allocation(tab, count_arg_size(tab)); 
 
-		args = expand_args(args);
-		ft_back_addlst(commands, ft_newlist(args[0], args, redirect));
+		args = expand_args(args, (*shell)->env);
+		ft_back_addlst(&(*shell)->commands, ft_newlist(args[0], args, redirect));
 		free(tab);
 	}
 }

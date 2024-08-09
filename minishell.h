@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/09 04:50:22 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/10 00:15:54 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,9 @@ char		**ft_env_split(char *str);
 void		ft_lstadd_back(t_env **lst, t_env *new);
 t_env		*ft_lstnew(char *key, char *value);
 void		env_clear(t_env **env);
-void		pipes_cmds(t_commands **commands, char **pipes);
+void		pipes_cmds(t_shell **shell, char **pipes);
 void		set_env(t_env **env);
-void		print_cmds(t_commands *cmds);
+void		print_cmds(t_commands *commands);
 
 
 # define SYNTAX_REDIRECTION "minishell: Invalid redirection"
@@ -101,7 +101,7 @@ void		print_cmds(t_commands *cmds);
 # define SYNTAX_HEREDOC "minishell: Invalid here-document (<<)"
 // t_commands *ft_newlist(char *cmd, char **args);
 // parsing
-char		*read_input(t_parsing *parsing, const char *prompt);
+char		*read_input(t_shell *parsing, const char *prompt);
 t_commands	*ft_newlist(char *cmd, char **args, t_redirect *red);
 size_t		ft_strlen(const char *str);
 void		err_handle(char *str);
@@ -128,5 +128,6 @@ bool		check_heredoc(char **tokens, int i);
 bool		check_pipe(char **tokens, int i);
 void		syntax_err_msg(t_syntax syntax);
 void		space_to_gar(char *line);
+int		count_words(char const *s);
 
 #endif
