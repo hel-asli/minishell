@@ -1,74 +1,106 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   printer.c                                          :+:      :+:    :+:   */
+/*   parsing_helper.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/08/08 05:09:52 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/09 01:31:21 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+size_t count_arg_size(char **args)
+{
+	int	i;
+	size_t count;
+
+	i = 0;
+	count = 0;
+	while (args[i])	
+	{
+		if (is_redirection(args[i]) || !ft_strcmp(args[i], "<<"))
+			i += 2;
+		else
+		{
+			count++;
+			i++;
+		}
+	}
+
+	return (count);
+}
+t_redirect *build_redirection(char **args)
+{
+	int i = 0;
+	t_redirect *redirect;
+
+	redirect = NULL;
+	while (args[i])
+	{
+		if (args[i + 1] && (is_redirection(args[i])
+				|| !ft_strcmp(args[i], "<<")))
+		{
+			ft_lst_add_redir(&redirect, ft_new_redir(args[i], args[i + 1]));
+			i += 2;
+		}
+		else
+			i++;
+	}
+
+	return (redirect);
+}
+
+char **args_allocation(char **tab, size_t arg_count)
+{
+	char	**args;
+	int		i;
+	size_t		k;
+
+	args = malloc(sizeof(char *) * (arg_count + 1));
+	if (!args)
+		err_handle("Allocation Faile!!");
+	i = 0;
+	k = 0;
+	while (tab[i])
+	{
+		if (tab[i + 1] && (is_redirection(tab[i])
+				|| !ft_strcmp(tab[i], "<<")))
+			i += 2;
+		else
+		{
+			args[k++] = ft_strdup(tab[i]);
+			i++;
+		}
+	}
+	args[k] = NULL;
+	return (args);
+}
+
 void	pipes_cmds(t_commands **commands, char **pipes)
 {
 	int			i;
-	int			j;
 	int			k;
 	char		**tab;
 	char		**arg;
-	int			arg_count;
 	t_redirect	*redirect;
 
-	i = 0;
-	j = 0;
 	k = 0;
-	arg_count = 0;
+	i = -1;
 	redirect = NULL;
-	while (pipes[i])
+	while (pipes[++i])
 	{
 		tab = ft_split(pipes[i]);
 		if (!tab)
-			puts("ook");
-		j = 0;
-		arg_count = 0;
-		while (tab[j])
-		{
+			err_handle("Allocation Faile");
+		for (int j = 0; tab[j] ; j++)
 			space_to_gar(tab[j]);
-			if (tab[j + 1] && (is_redirection(tab[j])
-					|| !ft_strcmp(tab[j], "<<")))
-			{
-				space_to_gar(tab[j + 1]);
-				ft_lst_add_redir(&redirect, ft_new_redir(tab[j], tab[j + 1]));
-				j += 2;
-			}
-			else
-			{
-				arg_count++;
-				j++;
-			}
-		}
-		arg = malloc(sizeof(char *) * (arg_count + 1));
-		if (!arg)
-			return ;
-		j = 0;
-		k = 0;
-		while (tab[j])
-		{
-			if (tab[j + 1] && (is_redirection(tab[j])
-					|| !ft_strcmp(tab[j], "<<")))
-				j += 2;
-			else
-			{
-				arg[k++] = ft_strdup(tab[j++]);
-			}
-		}
-		arg[k] = NULL;
+		redirect = build_redirection(tab);
+		arg = args_allocation(tab, count_arg_size(tab)); 
 		ft_back_addlst(commands, ft_newlist(arg[0], arg, redirect));
 		free(tab);
-		i++;
 	}
 }
 
