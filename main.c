@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/08 03:18:28 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/10 00:08:25 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,6 @@ void	built_env(t_env **env, char **ev)
 }
 
 // t_env *cur = env;
-void	print_env(t_env *env)
-{
-	while (env)
-	{
-		printf("-----------------\n");
-		printf("%s=", env->key);
-		printf("%s\n", env->value);
-		env = env->next;
-	}
-}
 
 void	set_env(t_env **env)
 {
@@ -54,18 +44,18 @@ void	set_env(t_env **env)
 
 int	main(int ac, char **av, char **ev)
 {
-	t_env		*env;
-	t_parsing	parsing;
+	t_shell shell;
 
 	(void)av;
 	if (ac != 1)
 		exit(EXIT_FAILURE);
-	env = NULL;
+	shell.env = NULL;
+	shell.commands = NULL;
 	if (ev == NULL || *ev == NULL)
-		set_env(&env);
+		set_env(&shell.env);
 	else
-		built_env(&env, ev);
-	print_env(env);
-	env_clear(&env);
-	read_input(&parsing, "minishell : ");
+		built_env(&shell.env, ev);
+	puts("hehhe");
+	// env_clear(&env);
+	read_input(&shell, "minishell : ");
 }
