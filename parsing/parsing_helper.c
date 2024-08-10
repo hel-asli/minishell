@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/08/10 00:37:43 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/08/10 01:14:14 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ char **expand_args(char **args, t_env *env)
 			if (args[i][j] == '$')
 				j++;
 			o = j;
-			while (args[i][j] && args[i][j] != ' ' && args[i][j] != '\t')
+			while (args[i][j] && args[i][j] != ' ' && args[i][j] != '\t' && args[i][j] != '$')
 			{
 				j++;
 				k++;
@@ -187,7 +187,7 @@ char **expand_args(char **args, t_env *env)
 			env_key = malloc(sizeof(char) * (k  + 1));
 			if (!env_key)
 				err_handle("Allocation Fail");
-			while (args[i][o] && args[i][o] != ' ' && args[i][o] != '\t')
+			while (args[i][o] && args[i][o] != ' ' && args[i][o] != '\t' && args[i][j] != '$')
 			{
 				env_key[n] = args[i][o];
 				n++;
@@ -195,6 +195,7 @@ char **expand_args(char **args, t_env *env)
 			}
 			env_key[n] = 0;
 			env_value = get_env(env_key, env);
+			printf("---> %s\n", args[i]);
 			if (count_words(env_value) == 1)
 			{
 				free(args[i]);
@@ -210,6 +211,7 @@ char **expand_args(char **args, t_env *env)
 	}
 	return (args);
 }
+
 void	pipes_cmds(t_shell **shell, char **pipes)
 {
 	int			i;
