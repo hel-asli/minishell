@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 03:10:56 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/08 02:35:13 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/23 22:25:42 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,23 @@ t_env	*ft_lstlast(t_env *env)
 {
 	if (!env)
 		return (NULL);
-	while (env->next != NULL)
+	while (env && env->next != NULL)
 		env = env->next;
 	return (env);
 }
 
 void	ft_lstadd_back(t_env **lst, t_env *new)
 {
-	t_env	*last;
-
 	if (lst)
 	{
 		if (*lst == NULL)
-		{
 			*lst = new;
-		}
 		else
-		{
-			last = ft_lstlast(*lst);
-			last->next = new;
-		}
+			ft_lstlast(*lst)->next = new;
 	}
 }
 
-t_env	*ft_lstnew(char *key, char *value)
+t_env	*ft_lstnew(char *key, char *value, bool equal)
 {
 	t_env	*node;
 
@@ -48,6 +41,7 @@ t_env	*ft_lstnew(char *key, char *value)
 		return (NULL);
 	node->key = key;
 	node->value = value;
+	node->equal = equal;
 	node->next = NULL;
 	return (node);
 }

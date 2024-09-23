@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/10 00:04:41 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/23 04:30:38 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,85 +72,248 @@ char	*add_spaces(char *line)
 	return (free(line), new_line);
 }
 
-// void space_to_gar(char *line)
-// {
-//     int i = 0;
-//     bool in_quotes = false;
-//     char quote_type = 0;
-
-//     while (line[i])
-//     {
-//         if (line[i] == '"' || line[i] == '\'')
-//         {
-//             if (!in_quotes)
-//             {
-//                 in_quotes = true;
-//                 quote_type = line[i];
-//             }
-//             else if (line[i] == quote_type)
-//             {
-//                 in_quotes = false;
-//             }
-//             else
-//             {
-//                 line[i] *= -1;
-//             }
-//         }
-//         else if (in_quotes)
-//         {
-//             line[i] *= -1;
-//         }
-//         i++;
-//     }
-// }
-
-
-void	space_to_gar(char *line)
+bool is_special(char c)
 {
-	int		i;
-	bool	in_quotes;
-	char	quote_type;
-	char	nested_quote;
+	return (c == '|' || c == '<' || c == '>' || c == 32);
+}
 
-	i = 0;
-	quote_type = 0;
-	nested_quote = 0;
-	in_quotes = false;
-	while (line[i])
+bool is_rev_special(char c)
+{
+	return (c == ('|' * -1) || c == ('<' * -1) || c == ('>' * -1) || c == (-32));
+}
+
+void space_to_gar(char *line)
+{
+    int i = 0;
+    bool in_quotes = false;
+    char quote_type = 0;
+
+    while (line[i])
+    {
+        if (line[i] == '"' || line[i] == '\'')
+        {
+            if (!in_quotes)
+            {
+                in_quotes = true;
+                quote_type = line[i];
+            }
+            else if (line[i] == quote_type)
+            {
+                in_quotes = false;
+            }
+            else
+            {
+				if (line[i] > -1 && line[i] < 127 && is_special(line[i]))
+				{
+					line[i] *= -1;
+				}
+            }
+        }
+        else if (in_quotes)
+        {
+			if (line[i] > -1 && line[i] < 127 && (is_special(line[i])))
+			{
+					line[i] *= -1;
+			}
+        }
+        i++;
+    }
+}
+
+char* del_quote(char *str)
+{
+    int     i;
+    char *ptr;
+    char    type = '\0';
+    bool    in_quote;
+    i = 0;
+    int j = 0;
+
+    in_quote = false;
+    ptr = malloc(sizeof(char) * strlen(str) + 1);
+    while (str[i])
+    {
+        if (!in_quote && (str[i] == '\'' || str[i] == '"'))
+        {
+            in_quote = !in_quote;
+            type = str[i];
+        }
+        else if (in_quote && type == str[i])
+            in_quote = false;
+        else
+            ptr[j++] = str[i];
+        i++;
+    }
+    ptr[j] = '\0';
+	free(str);
+    return (ptr);
+}
+
+bool in_quotes(char *str)
+{
+	int i = 0;
+	while (str[i])
 	{
-		if (!in_quotes && (line[i] == '"' || line[i] == '\''))
-		{
-			in_quotes = true;
-			quote_type = line[i];
-		}
-		else if (in_quotes && line[i] == quote_type)
-		{
-			if (!nested_quote)
-				in_quotes = false;
-			else
-				nested_quote = 0;
-		}
-		else if (in_quotes && !nested_quote
-			&& (line[i] == '"' || line[i] == '\'')
-			&& line[i] != quote_type)
-		{
-			nested_quote = line[i];
-			line[i] *= -1;
-		}
-		else if (in_quotes)
-		{
-			line[i] *= -1;
-		}
+		if (str[i] == '\'' || str[i] == '"')
+			return (true);
 		i++;
+	}
+	return (false);
+}
+
+void del_quotes(t_shell *shell)
+{
+	t_commands *commands;
+	t_redirect *red;
+	int i = 0;
+
+	commands = shell->commands;
+	while (commands)
+	{
+		if (commands->cmd)
+		{
+			commands->cmd = del_quote(commands->cmd);
+		}
+		i = 0;
+		while (commands->args[i])
+		{
+			commands->args[i] =  del_quote(commands->args[i]);
+			i++;
+		}
+		red = commands->redirect;
+		while (red)
+		{
+			if (red->type == HEREDOC_INPUT && !in_quotes(red->file))
+				red->expanded = true;
+			red->file = del_quote(red->file);
+			red = red->next;
+		}
+		commands = commands->next;
 	}
 }
 
+void heredoc_helper(char *delimter, int fd, bool expanded, t_env *env)
+{
+	char *line;
+	while (true)
+	{
+			line = readline("> ");
+			if (!line)
+				break ;
+			if (!ft_strcmp(line, delimter))
+				break ;
+			if (expanded)	
+			{
+				line = expand_arg(line, env);
+				if (!line)
+					line = ft_strdup("\n");
+			}
+			printf("line : [%s]\n", line);
+			write(fd, line, ft_strlen(line));
+			write(fd, "\n", 1);
+	}
+}
+void heredoc(t_shell *shell)
+{
+	t_commands *cmd = shell->commands;
+	t_redirect *red = NULL;
+	int heredoc_read;
+	int heredoc_write;
+
+	while (cmd)
+	{
+		int *nbr = malloc(sizeof(int));
+		long nb = (long)nbr;
+		char *name = ft_strjoin(ft_strdup("/tmp/.heredoc"), ft_itoa(nb));
+		if (!name)
+			err_handle("malloc");
+		red = cmd->redirect;
+		while (red)
+		{
+			heredoc_write = open(name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+			heredoc_read = open(name, O_RDONLY, 0644);
+
+			if (red->type == HEREDOC_INPUT)
+			{
+				heredoc_helper(red->file, heredoc_write, red->expanded, shell->env);
+			}
+			close(heredoc_write);
+			red->heredoc_read = heredoc_read;
+			unlink(name);
+			red = red->next;
+		}
+		cmd = cmd->next;
+	}
+}
+
+int calc_heredoc(t_redirect *redirect)
+{
+	int i = 0;
+	t_redirect *tmp;
+
+	tmp = redirect;
+	while (tmp)
+	{
+		if (tmp->type == HEREDOC_INPUT)
+			i++;
+		tmp = tmp->next;
+	}
+
+	return (i);
+}
+
+t_redirect *heredoc_del(t_redirect *red, int heredoc_lenght)
+{
+	t_redirect *new_red = NULL;
+	int i  = heredoc_lenght;
+
+	while (red)	
+	{
+		if (red->type == HEREDOC_INPUT && i > 1)
+		{
+			red = red->next;
+			i--;
+		}
+		else
+		{
+			ft_lst_add_redir(&new_red, ft_new_redir_v2(red->type, red->file, red->expanded));
+			red = red->next;
+		}
+	}
+	return (new_red);
+}
+
+void redirection_helper(t_shell *shell)
+{
+	t_commands *cmds;
+	t_redirect *red;
+	int heredoc_length;
+	t_redirect  *new_red;
+
+	heredoc_length = 0;
+	cmds = shell->commands;
+	while (cmds)
+	{
+		red = cmds->redirect;
+		if (red)
+			heredoc_length = calc_heredoc(red);
+		if (heredoc_length > 1)
+		{
+			new_red = heredoc_del(red, heredoc_length);
+			// clear old_redirection. 
+			cmds->redirect = new_red;
+		}
+		cmds = cmds->next;
+	}
+}
 int	parse_input(t_shell *shell)
 {
 	char		*new_line;
 	char		**pipes;
 	t_syntax	syntax;
-
+	printf("-> %s\n", shell->parsing.line);
+	space_to_gar(shell->parsing.line); // save space and | inside "" . 
+	printf("-> %s\n", shell->parsing.line);
 	new_line = add_spaces(shell->parsing.line);
 	shell->parsing.line = new_line;
 	if (!new_line)
@@ -161,21 +324,25 @@ int	parse_input(t_shell *shell)
 		syntax = other_syntax_check(new_line);
 	if (syntax != SYNTAX_OK)
 		return (syntax_err_msg(syntax), free(new_line), 1);
-	space_to_gar(shell->parsing.line);
 	pipes = ft_split_v2(shell->parsing.line, 124);
-	pipes_cmds(&shell, pipes);
+	process_pipe_cmds(&shell, pipes);
+	heredoc(shell);
+	redirection_helper(shell);
+	// left just the last heredoc in commands;
 	print_cmds(shell->commands);
 	return (0);
 }
 
-char	*read_input(t_shell *shell, const char *prompt)
+char	*read_input(t_shell *shell, const char *prompt, char **ev)
 {
+	(void)ev;
 	while (true)
 	{
+		shell->commands = NULL;
 		shell->parsing.line = readline(prompt);
-		add_history(shell->parsing.line);
 		if (!shell->parsing.line)
 			err_handle("exit");
+		add_history(shell->parsing.line);
 		if (!ft_strlen(shell->parsing.line) || empty_str(shell->parsing.line))
 		{
 			free(shell->parsing.line);
@@ -183,6 +350,7 @@ char	*read_input(t_shell *shell, const char *prompt)
 		}
 		if (parse_input(shell) == 1)
 			continue ;
+		// execution_start(shell, ev);
 		free(shell->parsing.line);
 	}
 	return (shell->parsing.line);

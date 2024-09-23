@@ -6,28 +6,33 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/10 00:15:54 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/23 04:31:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
 # include <limits.h>
-# include <sys/errno.h>
-# include <stdbool.h>
-# include <readline/readline.h>
+# include <stdio.h>
 # include <readline/history.h>
+# include <readline/readline.h>
+# include <sys/wait.h>
+# include <stdbool.h>
+# include <stdlib.h>
+# include <sys/errno.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <string.h>
+# include <stdarg.h>
 
-typedef struct s_env
-{
-	char			*key;
-	char			*value;
-	struct s_env	*next;
-}	t_env;
+
+# define RED "\033[0;31m"
+# define SYNTAX_QUOTES "minishell: Unclosed quotes"
+# define SYNTAX_PIPE "minishell: Invalid pipe usage"
+# define SYNTAX_REDIRECTION "minishell: Invalid redirection"
+# define SYNTAX_HEREDOC "minishell: Invalid here-document (<<)"
+# define SYNTAX_INVALID_APPEND "minishell: Invalid append redirection (>>)"
 
 typedef enum e_syntax
 {
@@ -37,97 +42,138 @@ typedef enum e_syntax
 	UNCLOSED_QUOTES,
 	INVALIDE_PIPE,
 	INVALID_APPEND,
-}	t_syntax;
+}						t_syntax;
+
+typedef enum e_red
+{
+	INPUT,
+	HEREDOC_INPUT,
+	OUT_APPEND,
+	OUT_TRUNC,
+} t_red;
+
+typedef struct s_env
+{
+	char				*key;
+	char				*value;
+	bool				equal;
+	struct s_env		*next;
+}						t_env;
+
 
 typedef struct s_redirect
 {
-	char				*type;
+	t_red				type;
 	char				*file;
+	int					heredoc_write;
+	int					heredoc_read;
+	bool				expanded;
 	struct s_redirect	*next;
-}	t_redirect;
+}						t_redirect;
 
 typedef struct s_commands
 {
 	char				*cmd;
 	char				**args;
 	t_redirect			*redirect;
+
 	t_env				*env;
 	struct s_commands	*next;
-}	t_commands;
+}						t_commands;
 
 typedef struct s_parsing
 {
-	char		*line;
-	t_commands	*cmnds;
-}	t_parsing;
+	char				*line;
+}						t_parsing;
 
 typedef struct s_shell
 {
-	t_env		*env;
-	t_commands	*commands;
-	t_parsing	parsing;
-}	t_shell;
+	t_env				*env;
+	t_commands			*commands;
+	t_parsing			parsing;
+	t_env				*export;
+	int					exit_status;
+}						t_shell;
 
-// void parse_input(char *line);
-//// utils 
-char		**ft_split(char const *s);
-char		**ft_free(char **split);
-int			ft_atoi(const char *str);
-size_t		ft_strlen(const char *str);
-char		*ft_strdup(const char *str);
-int			ft_strncmp(const char *s1, const char *s2, size_t n);
-size_t		ft_strlcpy(char *dest, const char *src, size_t size);
-char		*ft_substr(char const *s, unsigned int start, size_t len);
-int			ft_strcmp(const char *s1, const char *s2);
-void		ft_putstr_fd(char *s, int fd);
-void		ft_putendl_fd(char *s, int fd);
-void		err_handle(char *str);
-bool		is_space(char c);
-bool		empty_str(char *line);
-bool		ft_strstr(char *str, char *del);
-char		**ft_env_split(char *str);
-void		ft_lstadd_back(t_env **lst, t_env *new);
-t_env		*ft_lstnew(char *key, char *value);
-void		env_clear(t_env **env);
-void		pipes_cmds(t_shell **shell, char **pipes);
-void		set_env(t_env **env);
-void		print_cmds(t_commands *commands);
+//utils
+char					*ft_itoa(int n);
+bool					is_space(char c);
+bool					ft_isalpha(int c);
+bool					ft_isdigit(int c);
+bool					ft_isalnum(int c);
+int						ft_atoi(char *str);
+bool					empty_str(char *line);
+void					err_handle(char *str);
+void					env_clear(t_env **env);
+char					**ft_free(char **split);
+long long				ft_exit_atol(char *str);
+char					**ft_env_split(char *str);
+char					**ft_split(char const *s);
+size_t					ft_strlen(const char *str);
+char					*ft_strdup(const char *str);
+bool					ft_strchr(char *str, char c);
+char					*my_strchr_v2(char *s, int c);
+char					*ft_strtok(char *str, char c);
+void					ft_putstr_fd(char *s, int fd);
+void					ft_putendl_fd(char *s, int fd);
+char					*get_env(char *key, t_env *env);
+char					*ft_strjoin(char *s1, char *s2);
+bool					ft_strstr(char *str, char *del);
+char					**ft_split_v2(const char *s, char c);
+char					*non_free_strjoin(char *s1, char *s2);
+void					ft_lstadd_back(t_env **lst, t_env *new);
+char					*ft_strndup(const char *str, int index);
+int						ft_strcmp(const char *s1, const char *s2);
+int						ft_fprintf(int fd, const char *format, ...);
+t_env					*ft_lstnew(char *key, char *value, bool equal);
+size_t					ft_strlcpy(char *dest, const char *src, size_t size);
+int						ft_strncmp(const char *s1, const char *s2, size_t n);
+char					*ft_substr(char const *s, unsigned int start, size_t len);
+t_redirect				*ft_new_redir_v2(t_red type, char *file, bool expanded);
+bool					in_quotes(char *str);
+bool					is_rev_special(char c);
+void					gar_protect(char *str);
+bool					ft_is_ascii(char c);
 
+//parsing
+void					space_to_gar(char *line);
+t_commands				*ft_last(t_commands *node);
+bool					is_redirection(char *token);
+t_syntax				other_syntax_check(char *line);
+bool					quotes_syntax_check(char *line);
+void					syntax_err_msg(t_syntax syntax);
+t_redirect				*ft_last_redir(t_redirect *node);
+bool					check_pipe(char **tokens, int i);
+void					print_cmds(t_commands *commands);
+bool					check_heredoc(char **tokens, int i);
+t_redirect				*ft_new_redir(char *type, char *file);
+bool					check_redirection(char **tokens, int i);
+void					process_pipe_cmds(t_shell **shell, char **pipes);
+void					ft_back_addlst(t_commands **lst, t_commands *new);
+void					ft_lst_add_redir(t_redirect **lst, t_redirect *new);
+char					*read_input(t_shell *parsing, const char *prompt, char **ev);
+t_commands				*ft_newlist(char *cmd, char **args, t_redirect *red);
+bool					is_ascii(char *str);
+char					*del_quote(char *str);
 
-# define SYNTAX_REDIRECTION "minishell: Invalid redirection"
-# define SYNTAX_QUOTES "minishell: Unclosed quotes"
-# define SYNTAX_PIPE "minishell: Invalid pipe usage"
-# define SYNTAX_INVALID_APPEND "minishell: Invalid append redirection (>>)"
-# define SYNTAX_HEREDOC "minishell: Invalid here-document (<<)"
-// t_commands *ft_newlist(char *cmd, char **args);
-// parsing
-char		*read_input(t_shell *parsing, const char *prompt);
-t_commands	*ft_newlist(char *cmd, char **args, t_redirect *red);
-size_t		ft_strlen(const char *str);
-void		err_handle(char *str);
-bool		is_space(char c);
-bool		empty_str(char *line);
-bool		quotes_syntax_check(char *line);
-char		**ft_split(char const *s);
-int			ft_strncmp(const char *s1, const char *s2, size_t n);
-int			ft_strcmp(const char *s1, const char *s2);
-void		ft_back_addlst(t_commands **lst, t_commands *new);
-t_commands	*ft_last(t_commands *node);
-t_syntax	other_syntax_check(char *line);
-char		**ft_free(char **split);
-char		**ft_split_v2(const char *s, char c);
-void		ft_putstr_fd(char *s, int fd);
-bool		ft_strstr(char *str, char *del);
-void		ft_putendl_fd(char *s, int fd);
-void		ft_lst_add_redir(t_redirect **lst, t_redirect *new);
-t_redirect	*ft_new_redir(char *type, char *file);
-t_redirect	*ft_last_redir(t_redirect *node);
-bool		is_redirection(char *token);
-bool		check_redirection(char **tokens, int i);
-bool		check_heredoc(char **tokens, int i);
-bool		check_pipe(char **tokens, int i);
-void		syntax_err_msg(t_syntax syntax);
-void		space_to_gar(char *line);
-int		count_words(char const *s);
+// execution
+bool					my_pwd(void);
+bool					my_env(t_env **env);
+void					exit_error(int flag);
+bool					my_exit(t_commands **cmnds);
+bool					my_echo(t_commands **cmnds);
+t_env					*export_lstlast(t_env *export);
+bool					my_cd(t_commands **cmnds, t_env **env);
+void					export_env(t_env **env, t_env **export);
+void					build_export(t_env **export, char **ev);
+void					execution_start(t_shell *shell, char **ev);
+void					env_update(t_env **env, char *key, char *value);
+int 					execute(t_commands **cmnds, char **ev, int *tmp);
+bool					my_unset(t_commands **cmnds, t_env **env, t_env **export);
+bool				    my_export(t_commands **cmnds, t_env **env, t_env **export);
+bool					builtins_check(t_commands **cmnds, t_env **env, t_env **export);
+char					*expand_arg(char *arg, t_env *env);
+char					*get_env(char *key, t_env *env);
+void					save_quotes(char *str);
 
 #endif

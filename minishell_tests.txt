@@ -84,7 +84,7 @@ ec""ho test
 ec''ho test
 ""echo test
 ''echo test
-echo"" test
+''echo test
 echo'' test
 echo "" test
 echo '' test
@@ -711,3 +711,25 @@ cd dir_does_not_exist; echo $?
 cd file_does_not_exist; echo $?
 cd valid_infile_1; echo $?
 ls dir_does_not_exist; echo $?
+
+
+// cases to handle 
+
+==> export a="ls -l -a"
+==> $dd $a
+
+
+----------------------------------------------
+minishell: '"''"'
+minishell: Unclosed quotes
+minishell: '"''"''
+minishell: Unclosed quotes
+minishell: '"''"'
+minishell: Unclosed quotes
+minishell: '"''"'
+
+TODO :
+// use enum instead of type (char *)
+// sort redirection . based on priorty
+// open redirection files parsing .
+// heredoc . 

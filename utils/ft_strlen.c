@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:47:37 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/08 02:35:42 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/08/20 15:34:12 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ size_t	ft_strlen(const char *str)
 	size_t	len;
 
 	len = 0;
+	if (!str)
+		return (0);
 	while (*str++ != '\0')
 		len++;
 	return (len);

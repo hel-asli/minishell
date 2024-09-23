@@ -1,23 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strstr.c                                        :+:      :+:    :+:   */
+/*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/01 23:45:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/17 19:24:16 by oel-feng         ###   ########.fr       */
+/*   Created: 2024/08/24 04:05:18 by oel-feng          #+#    #+#             */
+/*   Updated: 2024/08/24 04:06:53 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-bool	ft_strstr(char *str, char *del)
+char	*my_strchr_v2(char *s, int c)
 {
-	size_t	i;
-
-	i = 0;
-	while (str[i] && del[i] && str[i] == del[i])
-		i++;
-	return (i == ft_strlen(del));
+	while ((char)c != *s)
+	{
+		if (!*s)
+			return (0);
+		s++;
+	}
+	return ((char *)s);
 }

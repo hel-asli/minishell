@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strstr.c                                        :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/01 23:45:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/17 19:24:16 by oel-feng         ###   ########.fr       */
+/*   Created: 2024/08/17 10:43:00 by oel-feng          #+#    #+#             */
+/*   Updated: 2024/08/18 23:57:51 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-bool	ft_strstr(char *str, char *del)
+bool	my_pwd(void)
 {
-	size_t	i;
+	char	*cwd;
+	char	buff[PATH_MAX + 1];
 
-	i = 0;
-	while (str[i] && del[i] && str[i] == del[i])
-		i++;
-	return (i == ft_strlen(del));
+	cwd = getcwd(buff, PATH_MAX + 1);
+	if (!cwd)
+		return (ft_putendl_fd("Error getting pwd", STDERR_FILENO), true);
+	printf("%s\n", cwd);
+	return (true);
 }

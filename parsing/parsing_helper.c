@@ -6,13 +6,13 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/08/10 01:14:14 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/13 23:50:26y hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-size_t count_arg_size(char **args)
+size_t count_non_redirection_arg_size(char **args)
 {
 	int	i;
 	size_t count;
@@ -32,6 +32,7 @@ size_t count_arg_size(char **args)
 
 	return (count);
 }
+
 t_redirect *build_redirection(char **args)
 {
 	int i = 0;
@@ -40,8 +41,7 @@ t_redirect *build_redirection(char **args)
 	redirect = NULL;
 	while (args[i])
 	{
-		if (args[i + 1] && (is_redirection(args[i])
-				|| !ft_strcmp(args[i], "<<")))
+		if (args[i + 1] && (is_redirection(args[i]) ||  !ft_strcmp(args[i], "<<")))
 		{
 			ft_lst_add_redir(&redirect, ft_new_redir(args[i], args[i + 1]));
 			i += 2;
@@ -52,6 +52,7 @@ t_redirect *build_redirection(char **args)
 
 	return (redirect);
 }
+
 
 char **args_allocation(char **tab, size_t arg_count)
 {
@@ -78,6 +79,7 @@ char **args_allocation(char **tab, size_t arg_count)
 	args[k] = NULL;
 	return (args);
 }
+
 size_t arr_len(char **tab)
 {
 	size_t i;
@@ -100,18 +102,15 @@ bool ft_strchr(char *str, char c)
 	return (false);
 }
 
+
 char *get_env(char *key, t_env *env)
 {
-	t_env *tmp;
-
-	tmp = env;
 	while (env)
 	{
 		if (!ft_strcmp(env->key, key))
-			return (env->value);
+			return (ft_strdup(env->value));
 		env = env->next;
 	}
-
 	return (NULL);
 }
 
@@ -127,113 +126,298 @@ void	print_env(t_env *env)
 	}
 }
 
-char **ft_realloc(char **args, char **tab, int index)
+char *str_add_char(char *str, char c)
 {
-	size_t args_len = arr_len(args) - 1;
-	size_t tab_len = arr_len(tab);
 	int i = 0;
-	int j = 0;
-	int k = 0;
-	char **arr = malloc(sizeof(char **) * (args_len + tab_len + 1));
-	if (!arr)
-		err_handle("Allocation Fail");
-	
-	while (args[k])
+	char *ptr = malloc(sizeof(char) * (ft_strlen(str) + 2));
+	if (!ptr)
+		return (NULL);
+	while (str[i])
 	{
-		if (k != index)
-		{
-			arr[i] = ft_strdup(args[k]);
-			i++;
-		}
-		k++;
-	}
-	while (tab[j])
-	{
-		arr[i] = ft_strdup(tab[j]);
+		ptr[i] = str[i];
 		i++;
-		j++;
 	}
-
-	arr[i] = NULL;
-	ft_free(args);
-	ft_free(tab);
-	return (arr);
+	ptr[i++] = c;
+	ptr[i] = '\0';
+	free(str);
+	return (ptr);
 }
 
-char **expand_args(char **args, t_env *env)
+bool is_valid(char c)
 {
-	// size_t len = arr_len(args);
-	int i = 0;
-	int j = 0;
-	int k = 0;
-	int n = 0;
-	int o = 0;
+	if ((c >= 'a' && c < 'z') || (c >= 'A' && c <= 'Z'))
+		return (true);
+	else if ((c >= '0' && c <= '9') || c == '_' || c == '$')
+		return (true);
+
+	return (false);
+}
+
+char *expand_arg(char *arg, t_env *env)
+{
+	char *new_value = ft_strdup("");
+	bool in_single = false;
+	bool in_double = false;
 	char *env_key = NULL;
 	char *env_value = NULL;
+	if (!new_value)
+		err_handle("allocation");
+	int j = 0;
+	int i = 0;
+	while (arg[i])
+	{
+		if (arg[i] == '\'' && !in_double)
+		{
+			in_single = !in_single; 
+			i++;
+		}
+		else if (arg[i] == '"' && !in_single)
+		{
+			in_double = !in_double;
+			i++;
+		}
+		else if (arg[i] == '$' && !in_single)
+		{
+			i++;
+			if ((arg[i] == '"' || arg[i] == '\'') && !in_double && !in_single)
+				continue;
+			if (arg[i] == '$')
+			{
+				new_value = ft_strjoin(new_value, ft_strdup("1337"));
+				i++;
+			}
+			else
+			{
+				j = i;
+				while (arg[i] && is_valid(arg[i]) && arg[i] != '$')
+					i++;
+				if (i == j)
+					new_value = str_add_char(new_value, '$');
+				else
+				{
+					env_key = ft_strndup(&arg[j], i - j);
+					env_value = get_env(env_key, env);
+					if (!env_value)
+						env_value = ft_strdup("");
+					new_value = ft_strjoin(new_value, env_value);
+					free(env_key);
+				}
+			}
+		}
+		else
+		{
+			new_value = str_add_char(new_value, arg[i]);
+			i++;	
+		}
+	}
+	if (new_value[0] == 0)
+		return (NULL);
+	return (new_value);
+}
+
+bool check_var(char *arg)
+{
+	int i = 0;
+	bool in_quotes = false;
+
+	while (arg[i])
+	{
+		if (arg[i] == '"')
+			in_quotes = !in_quotes;
+		if (!in_quotes && arg[i] == '$' && is_valid(arg[i + 1]))	
+			return true;
+		i++;
+	}
+	return (false);
+}
+
+char ** re_build_arg(char **args, char **sp)
+{
+	size_t len;
+    len = arr_len(args) + arr_len(sp);
+    int j = 0;
+    int k = 0;
+    char **ptr = malloc(sizeof(char *) * (len + 1)); 
+    if (!ptr)
+        err_handle("malloc");
+    while (args[j])
+    {
+        ptr[j] = args[j];
+        j++;
+    }
+    while (sp[k])
+    {
+		gar_protect(sp[k]);
+     	ptr[j++] = ft_strdup(sp[k]);
+        k++;
+    }
+    ptr[j] = NULL;
+    return (ptr);
+}
+
+char **add_arr(char **args, char *str)
+{
+	size_t len;
+
+	if (!args)
+		len = 0;
+	else
+		len = arr_len(args);
+	char **new = malloc((sizeof(char *) * (len + 2)));
+	if (!new)
+		return (NULL);
+	size_t i = 0;
+	while (i < len)
+	{
+		new[i] = ft_strdup(args[i]);
+		i++;
+	}
+	if (str)
+		new[i++] = ft_strdup(str);
+	new[i] = NULL;
+	return (new);
+}
+
+void save_quotes(char *str)
+{
+	int i = 0;
+	char dbl;
+	char sgl; 
+
+	dbl = '"' * -1;
+	sgl = '\'' * -1;
+	while (str[i])
+	{
+		if (str[i] == '"' || str[i] == '\'')
+			str[i] *= -1;
+		else if (str[i] == dbl || str[i] == sgl)
+			str[i] *= -1;
+		i++;
+	}
+}
+
+void gar_protect(char *str)
+{
+	for (int i = 0; str[i]; i++)
+	{
+		if (str[i] > -128 && str[i] < 0 &&  is_rev_special(str[i]))
+		{
+			printf("%c\n", str[i]);
+			str[i] *= -1;
+		}
+	}
+}
+
+char **expand_args (char **args, t_env *env)
+{
+	int i = 0;
+	char *new_arg = NULL;
+	char **sp = NULL;
+	char **tab = malloc(sizeof(char *) * 1);
+	tab[0] = NULL;
 	while (args[i])
 	{
 		if (ft_strchr(args[i], '$'))
+		{	
+			space_to_gar(args[i]);
+			printf("--> %s\n", args[i]);
+			new_arg = expand_arg(args[i], env);
+			printf("new_arg: %s\n", new_arg);
+			if (!new_arg)
+			{
+				i++;
+				continue;
+			}
+			if (check_var(args[i]) && ft_strchr(new_arg, ' '))
+			{
+				space_to_gar(new_arg);
+				sp = ft_split(new_arg);
+				tab = re_build_arg(tab, sp);
+				ft_free(sp);
+			}
+			else
+			{
+				printf("hello : %s\n", new_arg);
+				// space_to_gar(new_arg);
+				gar_protect(new_arg);
+				printf("world : %s\n", new_arg);
+				// puts("ook");
+				tab = add_arr(tab, new_arg);
+			}
+		}
+		else
 		{
-			while (args[i][j] && args[i][j] != '$')
-				j++;
-			if (args[i][j] == '$')
-				j++;
-			o = j;
-			while (args[i][j] && args[i][j] != ' ' && args[i][j] != '\t' && args[i][j] != '$')
-			{
-				j++;
-				k++;
-			}
-			env_key = malloc(sizeof(char) * (k  + 1));
-			if (!env_key)
-				err_handle("Allocation Fail");
-			while (args[i][o] && args[i][o] != ' ' && args[i][o] != '\t' && args[i][j] != '$')
-			{
-				env_key[n] = args[i][o];
-				n++;
-				o++;
-			}
-			env_key[n] = 0;
-			env_value = get_env(env_key, env);
-			printf("---> %s\n", args[i]);
-			if (count_words(env_value) == 1)
-			{
-				free(args[i]);
-				args[i] = env_value;
-			}
-			else if (count_words(env_value) > 1)
-			{
-				printf("i : %d\n", i);
-				args = ft_realloc(args, ft_split(env_value), i);
-			}
+			// space_to_gar(args[i]);
+			printf("kkk: %s\n", args[i]);
+			args[i] = del_quote(args[i]);
+			gar_protect(args[i]);
+			tab = add_arr(tab, args[i]);
 		}
 		i++;
 	}
-	return (args);
+	return (tab);
 }
 
-void	pipes_cmds(t_shell **shell, char **pipes)
+bool check_file(char *file)
+{
+	bool test = false;
+	int i = 0;
+
+	while (file[i])
+	{
+		if (file[i] == '\'')
+			test = !test;
+		if (!test && file[i] == '$' && is_valid(file[i + 1]))
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+void expand_redirect(t_redirect *redirect, t_env *env)
+{
+	t_redirect *tmp;
+	
+	tmp = redirect;
+
+	while (tmp)
+	{
+		if (tmp->type != HEREDOC_INPUT)
+		{
+			if (check_file(tmp->file))
+			{
+					tmp->file = expand_arg(tmp->file, env);
+			}
+		}
+		tmp = tmp->next;
+	}
+}
+
+
+void	process_pipe_cmds(t_shell **shell, char **pipes)
 {
 	int			i;
-	int			k;
 	char		**tab;
 	char		**args;
 	t_redirect	*redirect;
 
-	k = 0;
 	i = -1;
 	redirect = NULL;
 	while (pipes[++i])
 	{
+		printf("---> %s\n", pipes[i]);
 		tab = ft_split(pipes[i]);
 		if (!tab)
 			err_handle("Allocation Faile");
 		for (int j = 0; tab[j] ; j++)
-			space_to_gar(tab[j]);
+		{
+			gar_protect(tab[j]);
+			printf("hereeee : %s\n", tab[j]);
+		}
 		redirect = build_redirection(tab);
-		args = args_allocation(tab, count_arg_size(tab)); 
-
+		args = args_allocation(tab, count_non_redirection_arg_size(tab)); 
 		args = expand_args(args, (*shell)->env);
+		expand_redirect(redirect, (*shell)->env);
 		ft_back_addlst(&(*shell)->commands, ft_newlist(args[0], args, redirect));
 		free(tab);
 	}
@@ -247,14 +431,16 @@ void	print_cmds(t_commands *cmds)
 	while (cmds)
 	{
 		printf("----------------------------------------------\n");
-		printf("cmd : %s\n", cmds->cmd);
+		if (!cmds->cmd)
+			printf("NULL\n");
+		printf("cmd : {%s}\n", cmds->cmd);
 		printf("args : ");
 		if (cmds->args)
 		{
 			i = 0;
 			while (cmds->args[i])
 			{
-				printf("%s ", cmds->args[i]);
+				printf("{%s} ", cmds->args[i]);
 				i++;
 			}
 		}
@@ -264,12 +450,13 @@ void	print_cmds(t_commands *cmds)
 		red = cmds->redirect;
 		printf("redirections : \n");
 		if (!red)
-			printf("(None) redirection . \n");
+			printf("(None)\n");
 		else
 		{
 			while (red)
 			{
-				printf("type : %s\n", red->type);
+				printf("type : %u\n", red->type);
+				printf("expanded : %d\n", red->expanded);
 				printf("file : %s\n", red->file);
 				red = red->next;
 			}

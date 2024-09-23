@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strstr.c                                        :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/01 23:45:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/17 19:24:16 by oel-feng         ###   ########.fr       */
+/*   Created: 2024/08/17 16:38:37 by oel-feng          #+#    #+#             */
+/*   Updated: 2024/08/17 19:10:12 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-bool	ft_strstr(char *str, char *del)
+bool	my_env(t_env **env)
 {
-	size_t	i;
+	t_env	*curr;
 
-	i = 0;
-	while (str[i] && del[i] && str[i] == del[i])
-		i++;
-	return (i == ft_strlen(del));
+	curr = *env;
+	while (curr)
+	{
+		printf("%s=%s\n", curr->key, curr->value);
+		curr = curr->next;
+	}
+	return (true);
 }
