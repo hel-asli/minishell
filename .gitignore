@@ -1,3 +1,6 @@
 *.o
 minishell
 *.tldr
+.vscode
+test.c
+small.c
