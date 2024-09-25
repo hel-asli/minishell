@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/23 04:31:48 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/25 02:32:06 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ typedef struct s_redirect
 {
 	t_red				type;
 	char				*file;
-	int					heredoc_write;
-	int					heredoc_read;
+	int					heredoc_fd;
+	bool				is_ambgious;
 	bool				expanded;
 	struct s_redirect	*next;
 }						t_redirect;
@@ -92,6 +92,7 @@ typedef struct s_shell
 	t_commands			*commands;
 	t_parsing			parsing;
 	t_env				*export;
+	char				**ev_execve;
 	int					exit_status;
 }						t_shell;
 
@@ -104,6 +105,7 @@ bool					ft_isalnum(int c);
 int						ft_atoi(char *str);
 bool					empty_str(char *line);
 void					err_handle(char *str);
+void					err_exit(char *str);
 void					env_clear(t_env **env);
 char					**ft_free(char **split);
 long long				ft_exit_atol(char *str);
@@ -172,7 +174,7 @@ int 					execute(t_commands **cmnds, char **ev, int *tmp);
 bool					my_unset(t_commands **cmnds, t_env **env, t_env **export);
 bool				    my_export(t_commands **cmnds, t_env **env, t_env **export);
 bool					builtins_check(t_commands **cmnds, t_env **env, t_env **export);
-char					*expand_arg(char *arg, t_env *env);
+char					*expand_arg(char *arg, t_env *env, t_shell *shell);
 char					*get_env(char *key, t_env *env);
 void					save_quotes(char *str);
 

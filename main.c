@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/31 11:09:29 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/25 02:26:45 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,15 +50,10 @@ int	main(int ac, char **av, char **ev)
 		exit(EXIT_FAILURE);
 	shell.env = NULL;
 	shell.commands = NULL;
+	shell.exit_status = -1;
 	if (ev == NULL || *ev == NULL)
-	{
 		set_env(&shell.env);
-		set_env(&shell.export);
-	}
 	else
-	{
 		built_env(&shell.env, ev);
-		build_export(&shell.export, ev);
-	}
 	read_input(&shell, "minishell: ", ev);
 }

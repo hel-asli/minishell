@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/13 23:50:26y hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/25 02:33:46 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char **args_allocation(char **tab, size_t arg_count)
 	char	**args;
 	int		i;
 	size_t		k;
-
+	printf("[%zu]\n", arg_count);
 	args = malloc(sizeof(char *) * (arg_count + 1));
 	if (!args)
 		err_handle("Allocation Faile!!");
@@ -153,7 +153,7 @@ bool is_valid(char c)
 	return (false);
 }
 
-char *expand_arg(char *arg, t_env *env)
+char *expand_arg(char *arg, t_env *env, t_shell *shell)
 {
 	char *new_value = ft_strdup("");
 	bool in_single = false;
@@ -184,6 +184,11 @@ char *expand_arg(char *arg, t_env *env)
 			if (arg[i] == '$')
 			{
 				new_value = ft_strjoin(new_value, ft_strdup("1337"));
+				i++;
+			}
+			else if (arg[i] == '?')
+			{
+				new_value = ft_strjoin(new_value, ft_itoa(shell->exit_status));
 				i++;
 			}
 			else
@@ -296,21 +301,38 @@ void save_quotes(char *str)
 	}
 }
 
+void match_rev(char *line, int i)
+{
+	if (line)
+	{
+		if (line[i] == 1)
+			line[i] = '|';
+		else if (line[i] == 2)
+			line[i] = '<';
+		else if (line[i] ==  3)
+			line[i] = '>';
+		else if (line[i] == 4)
+			line[i] = 32;
+		else if (line[i] >= 15 && line[i] <= 19)
+			line[i] -= 6;
+	}
+}
+
 void gar_protect(char *str)
 {
 	for (int i = 0; str[i]; i++)
 	{
-		if (str[i] > -128 && str[i] < 0 &&  is_rev_special(str[i]))
-		{
-			printf("%c\n", str[i]);
-			str[i] *= -1;
-		}
+		if (is_rev_special(str[i]))
+			match_rev(str, i);
 	}
 }
 
-char **expand_args (char **args, t_env *env)
+char **expand_args (char **args, t_shell *shell)
 {
 	int i = 0;
+	t_shell *tmp_shell;
+
+	tmp_shell = shell; 
 	char *new_arg = NULL;
 	char **sp = NULL;
 	char **tab = malloc(sizeof(char *) * 1);
@@ -321,7 +343,7 @@ char **expand_args (char **args, t_env *env)
 		{	
 			space_to_gar(args[i]);
 			printf("--> %s\n", args[i]);
-			new_arg = expand_arg(args[i], env);
+			new_arg = expand_arg(args[i], tmp_shell->env, shell);
 			printf("new_arg: %s\n", new_arg);
 			if (!new_arg)
 			{
@@ -374,26 +396,52 @@ bool check_file(char *file)
 	return (false);
 }
 
-void expand_redirect(t_redirect *redirect, t_env *env)
+// bool check_ambgious(char *str)
+// {
+// 	int i = 0;
+// 	bool 
+
+// 	while (str[i])
+// 	{
+
+// 	}
+// }
+
+void expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 {
 	t_redirect *tmp;
+	char	*new_file;
 	
 	tmp = redirect;
-
 	while (tmp)
 	{
 		if (tmp->type != HEREDOC_INPUT)
 		{
-			if (check_file(tmp->file))
-			{
-					tmp->file = expand_arg(tmp->file, env);
-			}
+					new_file = expand_arg(tmp->file, env, shell);
+					printf("new_file : %s\n", new_file);
+					if (!new_file)
+						tmp->is_ambgious = true;
+					else if (check_var(tmp->file) && ft_strchr(new_file, 32))
+						tmp->is_ambgious = true;
+					tmp->file = new_file;
 		}
 		tmp = tmp->next;
 	}
 }
 
-
+void print_args(char **args)
+{
+	if (args)
+	{
+		for (int i = 0; args[i]; i++)
+			printf("=> {%s}", args[i]);
+		if (!args[0])
+			printf("--> {%s}\n", args[0]);
+		printf("\n");
+	}
+	else
+		printf("args -> NULL\n");
+}
 void	process_pipe_cmds(t_shell **shell, char **pipes)
 {
 	int			i;
@@ -416,8 +464,10 @@ void	process_pipe_cmds(t_shell **shell, char **pipes)
 		}
 		redirect = build_redirection(tab);
 		args = args_allocation(tab, count_non_redirection_arg_size(tab)); 
-		args = expand_args(args, (*shell)->env);
-		expand_redirect(redirect, (*shell)->env);
+		print_args(args);
+		args = expand_args(args, *shell);
+		print_args(args);
+		expand_redirect(redirect, (*shell)->env, *shell);
 		ft_back_addlst(&(*shell)->commands, ft_newlist(args[0], args, redirect));
 		free(tab);
 	}
@@ -457,7 +507,8 @@ void	print_cmds(t_commands *cmds)
 			{
 				printf("type : %u\n", red->type);
 				printf("expanded : %d\n", red->expanded);
-				printf("file : %s\n", red->file);
+				printf("is_ambigous : %d\n", red->is_ambgious);
+				printf("file : {%s}\n", red->file);
 				red = red->next;
 			}
 		}

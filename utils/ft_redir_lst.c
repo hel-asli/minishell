@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:29:29 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/21 03:52:34 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/24 22:56:11 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,10 @@ t_commands	*ft_newlist(char *cmd, char **args, t_redirect *red)
 	node = malloc(sizeof(t_commands));
 	if (!node)
 		return (NULL);
-	node->cmd = ft_strdup(cmd);
+	if (!cmd)
+		node->cmd = cmd;
+	else
+		node->cmd = ft_strdup(cmd);
 	node->args = args;
 	node->redirect = red;
 	node->next = NULL;
@@ -90,7 +93,8 @@ t_redirect	*ft_new_redir(char *type, char *file)
 		node->type = OUT_TRUNC;
 	else if (!ft_strcmp(">>", type))
 		node->type = OUT_APPEND;
-	node->file = del_quote(file);
+	node->file = file;
+	node->is_ambgious = false;
 	node->next = NULL;
 	return (node);
 }

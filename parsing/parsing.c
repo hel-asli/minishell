@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/23 04:30:38 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/25 02:47:11 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,29 @@ char	*add_spaces(char *line)
 
 bool is_special(char c)
 {
-	return (c == '|' || c == '<' || c == '>' || c == 32);
+	return (c == '|' || c == '<' || c == '>' || is_space(c));
 }
 
 bool is_rev_special(char c)
 {
-	return (c == ('|' * -1) || c == ('<' * -1) || c == ('>' * -1) || c == (-32));
+	return (c == 1 || c == 2 || c == 3 || c == 4 || (c >= 15 && c <= 19));
+}
+
+void match_char(char *line, int i)
+{
+	if (line)
+	{
+		if (line[i] == '|')
+			line[i] = 1;
+		else if (line[i] == '<')
+			line[i] = 2;
+		else if (line[i] == '>')
+			line[i] = 3;
+		else if (line[i] == 32)
+			line[i] = 4;
+		else if (line[i] >= 9 && line[i] <= 13)
+			line[i] += 6;
+	}
 }
 
 void space_to_gar(char *line)
@@ -103,18 +120,14 @@ void space_to_gar(char *line)
             }
             else
             {
-				if (line[i] > -1 && line[i] < 127 && is_special(line[i]))
-				{
-					line[i] *= -1;
-				}
+				if (is_special(line[i]))
+					match_char(line, i);
             }
         }
         else if (in_quotes)
         {
-			if (line[i] > -1 && line[i] < 127 && (is_special(line[i])))
-			{
-					line[i] *= -1;
-			}
+			if (is_special(line[i]))
+				match_char(line, i);
         }
         i++;
     }
@@ -192,9 +205,13 @@ void del_quotes(t_shell *shell)
 	}
 }
 
-void heredoc_helper(char *delimter, int fd, bool expanded, t_env *env)
+void heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 {
 	char *line;
+	t_env  *env;
+
+	line = NULL;
+	env = shell->env;
 	while (true)
 	{
 			line = readline("> ");
@@ -204,7 +221,7 @@ void heredoc_helper(char *delimter, int fd, bool expanded, t_env *env)
 				break ;
 			if (expanded)	
 			{
-				line = expand_arg(line, env);
+				line = expand_arg(line, env, shell);
 				if (!line)
 					line = ft_strdup("\n");
 			}
@@ -232,14 +249,12 @@ void heredoc(t_shell *shell)
 		{
 			heredoc_write = open(name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 			heredoc_read = open(name, O_RDONLY, 0644);
-
+			if (unlink(name) < 0)
+				err_exit("unlink");
 			if (red->type == HEREDOC_INPUT)
-			{
-				heredoc_helper(red->file, heredoc_write, red->expanded, shell->env);
-			}
+				heredoc_helper(red->file, heredoc_write, red->expanded, shell);
 			close(heredoc_write);
-			red->heredoc_read = heredoc_read;
-			unlink(name);
+			red->heredoc_fd = heredoc_read;
 			red = red->next;
 		}
 		cmd = cmd->next;
@@ -328,7 +343,6 @@ int	parse_input(t_shell *shell)
 	process_pipe_cmds(&shell, pipes);
 	heredoc(shell);
 	redirection_helper(shell);
-	// left just the last heredoc in commands;
 	print_cmds(shell->commands);
 	return (0);
 }
@@ -338,7 +352,6 @@ char	*read_input(t_shell *shell, const char *prompt, char **ev)
 	(void)ev;
 	while (true)
 	{
-		shell->commands = NULL;
 		shell->parsing.line = readline(prompt);
 		if (!shell->parsing.line)
 			err_handle("exit");
