@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/26 03:05:33 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/26 11:37:23 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ void execution_start(t_shell *shell, char **ev)
         }
         while (shell->commands)
         {
-            if (shell->commands->redirect)
-                handle_redirections(shell->commands->redirect);
+            // if (shell->commands->redirect)
+            //     handle_redirections(shell->commands->redirect);
             if (execute(&shell->commands, ev, &tmp) != 0)
             {
                 ft_putstr_fd("Error executing\n", 2);

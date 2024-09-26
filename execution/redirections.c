@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:36:02 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/26 03:11:26 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/26 11:34:46 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ int handle_redirections(t_redirect *redirects)
 				return (ft_fprintf(2, "Error: dup2 failed\n"), -1);
 			close(fd);
 		}
-
 		curr = curr->next;
 	}
 	return 0;
