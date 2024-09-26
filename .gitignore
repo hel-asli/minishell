@@ -4,4 +4,4 @@ minishell
 .vscode
 test.c
 small.c
-execution/old_exec.c
+tests.c
