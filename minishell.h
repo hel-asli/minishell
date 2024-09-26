@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/26 02:48:37 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/26 03:18:44 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,27 +37,27 @@
 typedef enum e_syntax
 {
 	SYNTAX_OK,
-	INVALID_HEREDOC,
-	INVALID_REDIRECTINO,
-	UNCLOSED_QUOTES,
 	INVALIDE_PIPE,
 	INVALID_APPEND,
+	UNCLOSED_QUOTES,
+	INVALID_HEREDOC,
+	INVALID_REDIRECTINO,
 }						t_syntax;
 
 typedef enum e_red
 {
 	INPUT,
-	HEREDOC_INPUT,
-	OUT_APPEND,
 	OUT_TRUNC,
+	OUT_APPEND,
+	HEREDOC_INPUT,
 } t_red;
 
 typedef struct s_env
 {
 	char				*key;
-	char				*value;
 	bool				equal;
 	struct s_env		*next;
+	char				*value;
 }						t_env;
 
 
@@ -65,20 +65,19 @@ typedef struct s_redirect
 {
 	t_red				type;
 	char				*file;
+	struct s_redirect	*next;
+	bool				expanded;
 	int					heredoc_fd;
 	bool				is_ambgious;
-	bool				expanded;
-	struct s_redirect	*next;
 }						t_redirect;
 
 typedef struct s_commands
 {
 	char				*cmd;
-	char				**args;
-	t_redirect			*redirect;
-
 	t_env				*env;
 	struct s_commands	*next;
+	char				**args;
+	t_redirect			*redirect;
 }						t_commands;
 
 typedef struct s_parsing
@@ -89,9 +88,9 @@ typedef struct s_parsing
 typedef struct s_shell
 {
 	t_env				*env;
-	t_commands			*commands;
-	t_parsing			parsing;
 	t_env				*export;
+	t_parsing			parsing;
+	t_commands			*commands;
 	char				**ev_execve;
 	int					exit_status;
 }						t_shell;
@@ -103,9 +102,12 @@ bool					ft_isalpha(int c);
 bool					ft_isdigit(int c);
 bool					ft_isalnum(int c);
 int						ft_atoi(char *str);
+void					err_exit(char *str);
+bool					in_quotes(char *str);
 bool					empty_str(char *line);
 void					err_handle(char *str);
-void					err_exit(char *str);
+bool					is_rev_special(char c);
+void					gar_protect(char *str);
 void					env_clear(t_env **env);
 char					**ft_free(char **split);
 long long				ft_exit_atol(char *str);
@@ -121,6 +123,8 @@ void					ft_putendl_fd(char *s, int fd);
 char					*get_env(char *key, t_env *env);
 char					*ft_strjoin(char *s1, char *s2);
 bool					ft_strstr(char *str, char *del);
+char					*ft_strcpy(char *dest, char *src);
+char					*ft_strcat(char *dest, char *src);
 char					**ft_split_v2(const char *s, char c);
 char					*non_free_strjoin(char *s1, char *s2);
 void					ft_lstadd_back(t_env **lst, t_env *new);
@@ -128,16 +132,14 @@ char					*ft_strndup(const char *str, int index);
 int						ft_strcmp(const char *s1, const char *s2);
 int						ft_fprintf(int fd, const char *format, ...);
 t_env					*ft_lstnew(char *key, char *value, bool equal);
-size_t					ft_strlcpy(char *dest, const char *src, size_t size);
 int						ft_strncmp(const char *s1, const char *s2, size_t n);
-char					*ft_substr(char const *s, unsigned int start, size_t len);
+size_t					ft_strlcpy(char *dest, const char *src, size_t size);
 t_redirect				*ft_new_redir_v2(t_red type, char *file, bool expanded);
-bool					in_quotes(char *str);
-bool					is_rev_special(char c);
-void					gar_protect(char *str);
-bool					ft_is_ascii(char c);
+char					*ft_substr(char const *s, unsigned int start, size_t len);
 
 //parsing
+bool					is_ascii(char *str);
+char					*del_quote(char *str);
 void					space_to_gar(char *line);
 t_commands				*ft_last(t_commands *node);
 bool					is_redirection(char *token);
@@ -153,30 +155,28 @@ bool					check_redirection(char **tokens, int i);
 void					process_pipe_cmds(t_shell **shell, char **pipes);
 void					ft_back_addlst(t_commands **lst, t_commands *new);
 void					ft_lst_add_redir(t_redirect **lst, t_redirect *new);
-char					*read_input(t_shell *parsing, const char *prompt, char **ev);
 t_commands				*ft_newlist(char *cmd, char **args, t_redirect *red);
-bool					is_ascii(char *str);
-char					*del_quote(char *str);
+char					*read_input(t_shell *parsing, const char *prompt, char **ev);
 
 // execution
 bool					my_pwd(void);
 bool					my_env(t_env **env);
 void					exit_error(int flag);
+void					save_quotes(char *str);
 bool					my_exit(t_commands **cmnds);
 bool					my_echo(t_commands **cmnds);
 t_env					*export_lstlast(t_env *export);
+char					*get_env(char *key, t_env *env);
 bool					my_cd(t_commands **cmnds, t_env **env);
 void					export_env(t_env **env, t_env **export);
 void					build_export(t_env **export, char **ev);
+int 					handle_redirections(t_redirect *redirect);
 void					execution_start(t_shell *shell, char **ev);
 void					env_update(t_env **env, char *key, char *value);
 int 					execute(t_commands **cmnds, char **ev, int *tmp);
+char					*expand_arg(char *arg, t_env *env, t_shell *shell);
 bool					my_unset(t_commands **cmnds, t_env **env, t_env **export);
 bool				    my_export(t_commands **cmnds, t_env **env, t_env **export);
 bool					builtins_check(t_commands **cmnds, t_env **env, t_env **export);
-char					*expand_arg(char *arg, t_env *env, t_shell *shell);
-char					*get_env(char *key, t_env *env);
-void					save_quotes(char *str);
-int 					handle_redirections(t_redirect *redirect);
 
 #endif

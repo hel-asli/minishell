@@ -6,12 +6,13 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 00:49:12 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/26 03:07:59 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/26 03:19:48 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+// Debug Code 
 char *find_command(char *cmd, char **ev)
 {
     char *path;
@@ -88,9 +89,6 @@ int execute(t_commands **cmds, char **ev, int *tmp)
                 return (ft_putstr_fd("Error 1: dup2 or close failed\n", 2), 1);
             if (pip && (dup2(fd[1], 1) == -1 || close(fd[1]) == -1 || close(fd[0]) == -1))
                 return (ft_putstr_fd("Error 2: dup2 or close failed for pipe\n", 2), 1);
-            // Handle redirections before executing the command
-            if (curr->redirect && handle_redirections(curr->redirect) != 0)
-                exit(1); // Exit if redirection fails
             cmd_path = find_command(curr->cmd, ev);
             if (cmd_path == NULL)
             {

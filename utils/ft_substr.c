@@ -6,11 +6,25 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:36:03 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/08/08 02:36:42 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/26 03:15:50 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+char	*ft_strcpy(char *dest, char *src)
+{
+	int	i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
 
 size_t	ft_strlcpy(char *dest, const char *src, size_t size)
 {
