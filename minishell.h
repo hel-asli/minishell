@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/25 02:32:06 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/26 02:48:37 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,5 +177,6 @@ bool					builtins_check(t_commands **cmnds, t_env **env, t_env **export);
 char					*expand_arg(char *arg, t_env *env, t_shell *shell);
 char					*get_env(char *key, t_env *env);
 void					save_quotes(char *str);
+int 					handle_redirections(t_redirect *redirect);
 
 #endif

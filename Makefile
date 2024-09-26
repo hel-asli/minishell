@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+         #
+#    By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/30 23:25:40 by hel-asli          #+#    #+#              #
-#    Updated: 2024/09/25 05:51:26 by hel-asli         ###   ########.fr        #
+#    Updated: 2024/09/26 02:48:16 by oel-feng         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ SRCS = main.c utils/ft_split.c utils/ft_itoa.c utils/ft_strncmp.c \
 		execution/execution.c builtins/env.c builtins/pwd.c builtins/echo.c \
 		builtins/unset.c builtins/exit.c builtins/export.c builtins/cd.c \
 		utils/ascii_check.c utils/ft_strtok.c utils/ft_strchr.c execution/exec.c \
-		utils/ft_fprintf.c \
+		utils/ft_fprintf.c execution/redirections.c \
 
 HEADER = minishell.h
 OBJS = $(SRCS:.c=.o)

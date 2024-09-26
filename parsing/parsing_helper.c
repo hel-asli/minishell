@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_helper.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/25 02:33:46 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/26 02:43:15 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char **args_allocation(char **tab, size_t arg_count)
 	char	**args;
 	int		i;
 	size_t		k;
-	printf("[%zu]\n", arg_count);
+	// printf("[%zu]\n", arg_count);
 	args = malloc(sizeof(char *) * (arg_count + 1));
 	if (!args)
 		err_handle("Allocation Faile!!");
@@ -342,9 +342,9 @@ char **expand_args (char **args, t_shell *shell)
 		if (ft_strchr(args[i], '$'))
 		{	
 			space_to_gar(args[i]);
-			printf("--> %s\n", args[i]);
+			// printf("--> %s\n", args[i]);
 			new_arg = expand_arg(args[i], tmp_shell->env, shell);
-			printf("new_arg: %s\n", new_arg);
+			// printf("new_arg: %s\n", new_arg);
 			if (!new_arg)
 			{
 				i++;
@@ -359,10 +359,10 @@ char **expand_args (char **args, t_shell *shell)
 			}
 			else
 			{
-				printf("hello : %s\n", new_arg);
+				// printf("hello : %s\n", new_arg);
 				// space_to_gar(new_arg);
 				gar_protect(new_arg);
-				printf("world : %s\n", new_arg);
+				// printf("world : %s\n", new_arg);
 				// puts("ook");
 				tab = add_arr(tab, new_arg);
 			}
@@ -370,7 +370,7 @@ char **expand_args (char **args, t_shell *shell)
 		else
 		{
 			// space_to_gar(args[i]);
-			printf("kkk: %s\n", args[i]);
+			// printf("kkk: %s\n", args[i]);
 			args[i] = del_quote(args[i]);
 			gar_protect(args[i]);
 			tab = add_arr(tab, args[i]);
@@ -418,7 +418,7 @@ void expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 		if (tmp->type != HEREDOC_INPUT)
 		{
 					new_file = expand_arg(tmp->file, env, shell);
-					printf("new_file : %s\n", new_file);
+					// printf("new_file : %s\n", new_file);
 					if (!new_file)
 						tmp->is_ambgious = true;
 					else if (check_var(tmp->file) && ft_strchr(new_file, 32))
@@ -453,20 +453,20 @@ void	process_pipe_cmds(t_shell **shell, char **pipes)
 	redirect = NULL;
 	while (pipes[++i])
 	{
-		printf("---> %s\n", pipes[i]);
+		// printf("---> %s\n", pipes[i]);
 		tab = ft_split(pipes[i]);
 		if (!tab)
 			err_handle("Allocation Faile");
 		for (int j = 0; tab[j] ; j++)
 		{
 			gar_protect(tab[j]);
-			printf("hereeee : %s\n", tab[j]);
+			// printf("hereeee : %s\n", tab[j]);
 		}
 		redirect = build_redirection(tab);
 		args = args_allocation(tab, count_non_redirection_arg_size(tab)); 
-		print_args(args);
+		// print_args(args);
 		args = expand_args(args, *shell);
-		print_args(args);
+		// print_args(args);
 		expand_redirect(redirect, (*shell)->env, *shell);
 		ft_back_addlst(&(*shell)->commands, ft_newlist(args[0], args, redirect));
 		free(tab);

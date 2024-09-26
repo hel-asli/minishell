@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/08/25 04:31:17 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/26 03:05:33 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ bool	builtins_check(t_commands **cmnds, t_env **env, t_env **export)
 	t_commands	*curr;
 
 	curr = *cmnds;
-	// remove_extra_quotes(curr);
 	if (!ft_strcmp(curr->cmd, "cd"))
 		return (my_cd(cmnds, env));
 	else if (!ft_strcmp(curr->cmd, "echo"))
@@ -39,7 +38,7 @@ bool	builtins_check(t_commands **cmnds, t_env **env, t_env **export)
 void execution_start(t_shell *shell, char **ev)
 {
     int tmp;
-    
+
     if (builtins_check(&shell->commands, &shell->env, &shell->export))
         return;
     else {
@@ -51,6 +50,8 @@ void execution_start(t_shell *shell, char **ev)
         }
         while (shell->commands)
         {
+            if (shell->commands->redirect)
+                handle_redirections(shell->commands->redirect);
             if (execute(&shell->commands, ev, &tmp) != 0)
             {
                 ft_putstr_fd("Error executing\n", 2);

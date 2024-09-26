@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/25 02:47:11 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/26 03:00:05 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,9 +326,9 @@ int	parse_input(t_shell *shell)
 	char		*new_line;
 	char		**pipes;
 	t_syntax	syntax;
-	printf("-> %s\n", shell->parsing.line);
+	// printf("-> %s\n", shell->parsing.line);
 	space_to_gar(shell->parsing.line); // save space and | inside "" . 
-	printf("-> %s\n", shell->parsing.line);
+	// printf("-> %s\n", shell->parsing.line);
 	new_line = add_spaces(shell->parsing.line);
 	shell->parsing.line = new_line;
 	if (!new_line)
@@ -343,7 +343,7 @@ int	parse_input(t_shell *shell)
 	process_pipe_cmds(&shell, pipes);
 	heredoc(shell);
 	redirection_helper(shell);
-	print_cmds(shell->commands);
+	// print_cmds(shell->commands);
 	return (0);
 }
 
@@ -363,7 +363,7 @@ char	*read_input(t_shell *shell, const char *prompt, char **ev)
 		}
 		if (parse_input(shell) == 1)
 			continue ;
-		// execution_start(shell, ev);
+		execution_start(shell, ev);
 		free(shell->parsing.line);
 	}
 	return (shell->parsing.line);
