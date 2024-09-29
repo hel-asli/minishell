@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 00:49:12 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/29 15:56:39 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/29 16:02:22 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,8 @@ int execute(t_commands **cmds, char **ev, int *tmp)
             return (ft_putstr_fd("Error: fork failed\n", 2), 1);
         if (pid == 0)
         {
-            // if (curr->redirect)
-            //     handle_redirections(curr->redirect);
+            if (curr->redirect)
+                handle_redirections(curr->redirect);
             if (dup2(*tmp, 0) == -1 || close(*tmp) == -1)
                 return (ft_putstr_fd("Error 1: dup2 or close failed\n", 2), 1);
             if (pip && (dup2(fd[1], 1) == -1 || close(fd[1]) == -1 || close(fd[0]) == -1))
