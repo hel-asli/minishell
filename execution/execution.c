@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/29 15:59:36 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/29 16:27:39 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,6 @@ void execution_start(t_shell *shell, char **ev)
 
     while (shell->commands)
     {
-        if (shell->commands->cmd != NULL && builtins_check(&shell->commands, &shell->env, &shell->export))
-        {
-            shell->commands = shell->commands->next;
-            continue;
-        }
-        
         tmp = dup(0);
         if (tmp == -1)
         {
@@ -54,7 +48,7 @@ void execution_start(t_shell *shell, char **ev)
             return;
         }
 
-        if (execute(&shell->commands, ev, &tmp) != 0)
+        if (execute(shell, &shell->commands, ev, &tmp) != 0)
         {
             ft_putstr_fd("Error executing\n", 2);
             break;

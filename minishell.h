@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/26 03:18:44 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/29 16:09:17 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ void					build_export(t_env **export, char **ev);
 int 					handle_redirections(t_redirect *redirect);
 void					execution_start(t_shell *shell, char **ev);
 void					env_update(t_env **env, char *key, char *value);
-int 					execute(t_commands **cmnds, char **ev, int *tmp);
+int 					execute(t_shell *shell, t_commands **cmnds, char **ev, int *tmp);
 char					*expand_arg(char *arg, t_env *env, t_shell *shell);
 bool					my_unset(t_commands **cmnds, t_env **env, t_env **export);
 bool				    my_export(t_commands **cmnds, t_env **env, t_env **export);
