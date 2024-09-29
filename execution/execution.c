@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/29 15:51:52 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/29 15:59:36 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,26 +39,27 @@ void execution_start(t_shell *shell, char **ev)
 {
     int tmp;
 
-	fprintf(stderr, "%s\n", shell->commands->cmd);
-    if (shell->commands->cmd != NULL && builtins_check(&shell->commands, &shell->env, &shell->export))
-        return;
-    else {
+    while (shell->commands)
+    {
+        if (shell->commands->cmd != NULL && builtins_check(&shell->commands, &shell->env, &shell->export))
+        {
+            shell->commands = shell->commands->next;
+            continue;
+        }
+        
         tmp = dup(0);
         if (tmp == -1)
         {
             ft_putstr_fd("Error: Failed to duplicate file descriptor\n", 2);
             return;
         }
-        while (shell->commands)
+
+        if (execute(&shell->commands, ev, &tmp) != 0)
         {
-            // if (shell->commands->redirect)
-            //     handle_redirections(shell->commands->redirect);
-            if (execute(&shell->commands, ev, &tmp) != 0)
-            {
-                ft_putstr_fd("Error executing\n", 2);
-                break;
-            }
+            ft_putstr_fd("Error executing\n", 2);
+            break;
         }
+        
         close(tmp);
     }
 }
