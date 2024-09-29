@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/26 11:37:23 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/29 15:51:52 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ void execution_start(t_shell *shell, char **ev)
 {
     int tmp;
 
-    if (builtins_check(&shell->commands, &shell->env, &shell->export))
+	fprintf(stderr, "%s\n", shell->commands->cmd);
+    if (shell->commands->cmd != NULL && builtins_check(&shell->commands, &shell->env, &shell->export))
         return;
     else {
         tmp = dup(0);

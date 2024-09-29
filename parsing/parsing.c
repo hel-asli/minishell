@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/26 03:00:05 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/09/28 02:51:41 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -349,7 +349,6 @@ int	parse_input(t_shell *shell)
 
 char	*read_input(t_shell *shell, const char *prompt, char **ev)
 {
-	(void)ev;
 	while (true)
 	{
 		shell->parsing.line = readline(prompt);
