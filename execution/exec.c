@@ -6,13 +6,11 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 00:49:12 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/29 16:28:13 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/03 00:55:32 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-// Debug Code 
 char *find_command(char *cmd, char **ev)
 {
     char *path;
@@ -23,22 +21,12 @@ char *find_command(char *cmd, char **ev)
     if (cmd == NULL)
         return NULL;
 
+    // Check if the command is an absolute or relative path
     if (my_strchr_v2(cmd, '/') != NULL) {
         if (access(cmd, X_OK) == 0)
             return ft_strdup(cmd);
         else
             return (ft_fprintf(2, "Error: Command not found: %s\n", cmd), NULL);
-    }
-    char *standard_paths[] = {"/usr/bin/", "/bin/"};
-    for (int i = 0; i < 2; i++) {
-        full_path = malloc(strlen(standard_paths[i]) + strlen(cmd) + 1);
-        if (!full_path)
-            return NULL;
-        full_path = non_free_strjoin(standard_paths[i], cmd);
-        if (access(full_path, X_OK) == 0) {
-            return full_path;
-        }
-        free(full_path);
     }
     for (int i = 0; ev[i]; i++) {
         if (ft_strncmp(ev[i], "PATH=", 5) == 0) {
@@ -53,8 +41,9 @@ char *find_command(char *cmd, char **ev)
                     free(path_copy);
                     return NULL;
                 }
-                full_path = non_free_strjoin(dir, "/");
-                full_path = non_free_strjoin(full_path, cmd);
+                ft_strcpy(full_path, dir);
+                ft_strcat(full_path, "/");
+                ft_strcat(full_path, cmd);
                 if (access(full_path, X_OK) == 0) {
                     free(path_copy);
                     return full_path;
@@ -83,15 +72,19 @@ int execute(t_shell *shell, t_commands **cmds, char **ev, int *tmp)
         pip = (curr->next != NULL);
         if (pip && pipe(fd) == -1)
             return (ft_putstr_fd("Error: pipe failed\n", 2), 1);
+        if (curr->cmd && builtins_check(&curr, &shell->env, &shell->export))
+        {
+            curr = curr->next;
+            continue;
+        }
         pid = fork();
         if (pid == -1)
             return (ft_putstr_fd("Error: fork failed\n", 2), 1);
+        
         if (pid == 0)
         {
             if (curr->redirect)
                 handle_redirections(curr->redirect);
-            if (curr->cmd && builtins_check(&curr, &shell->env, &shell->export))
-                exit(0);
             if (dup2(*tmp, 0) == -1 || close(*tmp) == -1)
                 return (ft_putstr_fd("Error 1: dup2 or close failed\n", 2), 1);
             if (pip && (dup2(fd[1], 1) == -1 || close(fd[1]) == -1 || close(fd[0]) == -1))

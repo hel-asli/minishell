@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:55:49 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/02 15:53:26 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/09/29 17:32:50 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,20 +88,22 @@ bool	is_valid_export(char *str)
 	return (true);
 }
 
-void    export_print(t_env *export)
+void    export_print(t_env **exp)
 {
+	t_env	*export;
+
+	export = *exp;
 	while (export)
 	{
 		if (export->value)
 			printf("declare -x %s=\"%s\"\n", export->key, export->value);
 		else if (export->equal == true)
-			printf("declare -x %s\"\"\n", export->key);
+			printf("declare -x %s=\"\"\n", export->key);
 		else
 			printf("declare -x %s\n", export->key);
 		export = export->next;
 	}
 }
-
 
 void	build_export(t_env **export, char **ev)
 {
@@ -113,11 +115,15 @@ void	build_export(t_env **export, char **ev)
 	while (ev[i])
 	{
 		sp = ft_env_split(ev[i]);
-		ft_lstadd_back(export, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1]), false));
+		if (sp[1] == NULL) // Check if value is NULL
+			ft_lstadd_back(export, ft_lstnew(ft_strdup(sp[0]), NULL, false));
+		else
+			ft_lstadd_back(export, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1]), false));
 		ft_free(sp);
 		i++;
 	}
 }
+
 void	export_env(t_env **env, t_env **export)
 {
 	t_env	*curr;
@@ -133,15 +139,16 @@ void	export_env(t_env **env, t_env **export)
 bool    my_export(t_commands **cmnds, t_env **env, t_env **export)
 {
 	t_commands	*curr;
-	// bool		equal;
 	int			i;
-	char		*key;
-	char		*value;
 
 	i = 1;
 	curr = *cmnds;
-	if (!curr->args[i])
-		return (sort_export(export), export_print(*export), true);
+	if (!curr->args[i]) // If no arguments, print the exported list
+	{
+		sort_export(export);
+		export_print(export);
+		return (true);
+	}
 	while (curr->args[i])
 	{
 		if (!is_valid_export(curr->args[i]))
@@ -149,15 +156,13 @@ bool    my_export(t_commands **cmnds, t_env **env, t_env **export)
 			printf("minishell: export: `%s': not a valid identifier\n", curr->args[i]);
 			return (true);
 		}
-		key = ft_strdup(curr->args[i]);
-		value = NULL;
+		char *key = ft_strdup(curr->args[i]);
+		char *value = NULL;
 		if (ft_strstr(curr->args[i], "="))
 		{
 			value = ft_strdup((char *)ft_strstr(curr->args[i], "=") + 1);
 			key = ft_substr(curr->args[i], 0, ft_strlen(curr->args[i]) - ft_strlen(value) - 1);
 		}
-		// else
-		// 	equal = true;
 		if (!env_key_exist(env, key))
 		{
 			ft_lstadd_back(env, ft_lstnew(key, value, true));
@@ -168,6 +173,9 @@ bool    my_export(t_commands **cmnds, t_env **env, t_env **export)
 			env_update(env, key, value);
 			env_update(export, key, value);
 		}
+		free(key); // Free key to prevent memory leak
+		if (value)
+			free(value); // Free value if it was allocated
 		i++;
 	}
 	return (sort_export(export), true);

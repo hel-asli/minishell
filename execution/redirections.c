@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:36:02 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/26 11:34:46 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/03 00:52:51 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,31 +19,27 @@ int handle_redirections(t_redirect *redirects)
 
 	while (curr)
 	{
+		if (curr->is_ambgious)
+			return (ft_fprintf(2, "Error: Ambiguous redirection for file %s\n", curr->file), -1);
 		if (curr->type == OUT_TRUNC)
 		{
 			fd = open(curr->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd == -1)
-				return (ft_fprintf(2, "Error: Cannot open file %s\n", curr->file), -1);
-			if (dup2(fd, STDOUT_FILENO) == -1)
-				return (ft_fprintf(2, "Error: dup2 failed\n"), -1);
+			if (fd == -1 || dup2(fd, STDOUT_FILENO) == -1)
+				return (ft_fprintf(2, "Error\n"), -1);
 			close(fd);
 		}
 		else if (curr->type == OUT_APPEND)
 		{
 			fd = open(curr->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fd == -1)
-				return (ft_fprintf(2, "Error: Cannot open file %s\n", curr->file), -1);
-			if (dup2(fd, STDOUT_FILENO) == -1)
-				return (ft_fprintf(2, "Error: dup2 failed\n"), -1);
+			if (fd == -1 || dup2(fd, STDOUT_FILENO) == -1)
+				return (ft_fprintf(2, "Error\n"), -1);
 			close(fd);
 		}
 		else if (curr->type == INPUT)
 		{
-			fd = open(curr->file, O_RDONLY);
-			if (fd == -1)
-				return (ft_fprintf(2, "Error: Cannot open file %s\n", curr->file), -1);
-			if (dup2(fd, STDIN_FILENO) == -1)
-				return (ft_fprintf(2, "Error: dup2 failed\n"), -1);
+			fd = open(curr->file, O_RDONLY);;
+			if (fd == -1 || dup2(fd, STDIN_FILENO) == -1)
+				return (ft_fprintf(2, "Error\n"), -1);
 			close(fd);
 		}
 		curr = curr->next;

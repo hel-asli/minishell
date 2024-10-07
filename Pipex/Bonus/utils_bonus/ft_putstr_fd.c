@@ -1,26 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/17 16:38:37 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/03 00:50:27 by oel-feng         ###   ########.fr       */
+/*   Created: 2024/05/25 14:35:31 by hel-asli          #+#    #+#             */
+/*   Updated: 2024/06/16 04:31:51 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../pipex_bonus.h"
 
-bool	my_env(t_env **env)
+size_t	ft_strlen(char *str)
 {
-	t_env	*curr;
+	size_t	n;
 
-	curr = *env;
-	while (curr)
-	{
-		printf("%s=%s\n", curr->key, curr->value);
-		curr = curr->next;
-	}
-	return (true);
+	n = 0;
+	while (*str++)
+		n++;
+	return (n);
+}
+
+void	ft_putstr_fd(char *str, int fd)
+{
+	if (fd < 0)
+		return ;
+	while (*str)
+		write(fd, str++, 1);
 }

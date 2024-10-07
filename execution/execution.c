@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/29 16:27:39 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/03 00:53:33 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,11 @@ void execution_start(t_shell *shell, char **ev)
             ft_putstr_fd("Error: Failed to duplicate file descriptor\n", 2);
             return;
         }
-
         if (execute(shell, &shell->commands, ev, &tmp) != 0)
         {
             ft_putstr_fd("Error executing\n", 2);
             break;
         }
-        
         close(tmp);
     }
 }
