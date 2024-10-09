@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/29 16:09:17 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:44:54 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,18 @@ typedef struct s_parsing
 	char				*line;
 }						t_parsing;
 
+typedef struct s_exec
+{
+	char				**ev_execve;
+	int					**fds;
+	pid_t				*ids;
+	pid_t				nbr;
+}						t_exec;
+
 typedef struct s_shell
 {
 	t_env				*env;
-	t_env				*export;
+	t_exec				exec;
 	t_parsing			parsing;
 	t_commands			*commands;
 	char				**ev_execve;
@@ -106,6 +114,7 @@ void					err_exit(char *str);
 bool					in_quotes(char *str);
 bool					empty_str(char *line);
 void					err_handle(char *str);
+char 					**list_arr(t_env *env);
 bool					is_rev_special(char c);
 void					gar_protect(char *str);
 void					env_clear(t_env **env);
@@ -115,6 +124,7 @@ char					**ft_env_split(char *str);
 char					**ft_split(char const *s);
 size_t					ft_strlen(const char *str);
 char					*ft_strdup(const char *str);
+int						ft_lstsize(t_commands *lst);
 bool					ft_strchr(char *str, char c);
 char					*my_strchr_v2(char *s, int c);
 char					*ft_strtok(char *str, char c);
@@ -131,6 +141,7 @@ void					ft_lstadd_back(t_env **lst, t_env *new);
 char					*ft_strndup(const char *str, int index);
 int						ft_strcmp(const char *s1, const char *s2);
 int						ft_fprintf(int fd, const char *format, ...);
+char					*ft_strjoin_char(char *s1, char *s2, char c);
 t_env					*ft_lstnew(char *key, char *value, bool equal);
 int						ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t					ft_strlcpy(char *dest, const char *src, size_t size);
@@ -153,30 +164,31 @@ bool					check_heredoc(char **tokens, int i);
 t_redirect				*ft_new_redir(char *type, char *file);
 bool					check_redirection(char **tokens, int i);
 void					process_pipe_cmds(t_shell **shell, char **pipes);
+char					*read_input(t_shell *parsing, const char *prompt);
 void					ft_back_addlst(t_commands **lst, t_commands *new);
 void					ft_lst_add_redir(t_redirect **lst, t_redirect *new);
 t_commands				*ft_newlist(char *cmd, char **args, t_redirect *red);
-char					*read_input(t_shell *parsing, const char *prompt, char **ev);
 
 // execution
 bool					my_pwd(void);
 bool					my_env(t_env **env);
 void					exit_error(int flag);
 void					save_quotes(char *str);
-bool					my_exit(t_commands **cmnds);
-bool					my_echo(t_commands **cmnds);
+bool					my_exit(t_commands *cmnds);
+bool					my_echo(t_commands *cmnds);
 t_env					*export_lstlast(t_env *export);
+void					execution_start(t_shell *shell);
 char					*get_env(char *key, t_env *env);
-bool					my_cd(t_commands **cmnds, t_env **env);
+char 					*find_command(char *cmd, t_env *env);
+bool					my_cd(t_commands *cmnds, t_env **env);
 void					export_env(t_env **env, t_env **export);
 void					build_export(t_env **export, char **ev);
 int 					handle_redirections(t_redirect *redirect);
-void					execution_start(t_shell *shell, char **ev);
 void					env_update(t_env **env, char *key, char *value);
 int 					execute(t_shell *shell, t_commands **cmnds, char **ev, int *tmp);
 char					*expand_arg(char *arg, t_env *env, t_shell *shell);
 bool					my_unset(t_commands **cmnds, t_env **env, t_env **export);
 bool				    my_export(t_commands **cmnds, t_env **env, t_env **export);
-bool					builtins_check(t_commands **cmnds, t_env **env, t_env **export);
+bool					builtins_check(t_commands *cmnds, t_env **env);
 
 #endif

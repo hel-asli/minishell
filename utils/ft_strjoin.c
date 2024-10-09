@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 05:22:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/24 23:13:52 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:46:36 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (!s1)
 		return (ft_strdup(s2));
 	ptr = malloc(sizeof(char) * ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (!ptr)
+		err_handle("Malloc Failure");
 	i = 0;
 	j = 0;
-
 	while (s1[i])
 	{
 		ptr[i] = s1[i];
@@ -34,6 +35,31 @@ char	*ft_strjoin(char *s1, char *s2)
 	ptr[i] = '\0';
 	free(s1);
 	free(s2);
+	return (ptr);
+}
+
+char	*ft_strjoin_char(char *s1, char *s2, char c)
+{
+	char	*ptr;
+	int		i;
+	int		j;
+
+	if (!s1)
+		return (ft_strdup(s2));
+	ptr = malloc(sizeof(char) * ft_strlen(s1) + ft_strlen(s2) + 2);
+	if (!ptr)
+		err_handle("Malloc Failure");
+	i = 0;
+	j = 0;
+	while (s1[i])
+	{
+		ptr[i] = s1[i];
+		i++;
+	}
+	ptr[i++] = c;
+	while (s2[j])
+		ptr[i++] = s2[j++];
+	ptr[i] = '\0';
 	return (ptr);
 }
 

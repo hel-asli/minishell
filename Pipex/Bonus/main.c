@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 04:02:23 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/07/03 04:23:50 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:08:42 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	close_pipes(int **fds, int size)
 			err_exit("close");
 		i++;
 	}
-}
+} 
 
 void	ft_pipe(t_pipex *pipex, pid_t *fds[], int nb)
 {
@@ -115,3 +115,4 @@ int	main(int ac, char **av, char **env)
 		err_handler(ERR_MSG);
 	return (0);
 }
+  

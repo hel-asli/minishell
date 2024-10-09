@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:36:02 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/03 00:52:51 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/08 21:01:27 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int handle_redirections(t_redirect *redirects)
 	while (curr)
 	{
 		if (curr->is_ambgious)
-			return (ft_fprintf(2, "Error: Ambiguous redirection for file %s\n", curr->file), -1);
+			return (ft_fprintf(2, "Error: Ambiguous redirection for file.\n"), -1);
 		if (curr->type == OUT_TRUNC)
 		{
 			fd = open(curr->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);

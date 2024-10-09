@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Wayde <Wayde@student.42.fr>                +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:15:23 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/04 04:31:49 by Wayde            ###   ########.fr       */
+/*   Updated: 2024/10/09 20:39:04 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,14 @@ static void	exit_check(char *str)
 	return ;
 }
 
-bool	my_exit(t_commands **cmnds)
+bool	my_exit(t_commands *cmnds)
 {
 	int			i;
 	long long	num;
 	t_commands	*curr;
 
 	i = 1;
-	curr = *cmnds;
+	curr = cmnds;
 	while (curr->args[i])
 		i++;
 	if (i == 1)

@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 17:05:23 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/03 21:24:45 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/09 19:20:59 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,3 +89,6 @@ int	check_executable(t_pipex *pipex)
 	}
 	return (0);
 }
+
+
+// Check executable + find_path + stats_with + ft_strchr2 + ft_strjoin_del

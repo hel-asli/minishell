@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   ft_lst_2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/17 10:43:00 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/08 20:54:45 by oel-feng         ###   ########.fr       */
+/*   Created: 2024/10/09 19:46:54 by oel-feng          #+#    #+#             */
+/*   Updated: 2024/10/09 19:47:41 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-bool	my_pwd(void)
+int	ft_lstsize(t_commands *lst)
 {
-	char	*cwd;
-	char	buff[PATH_MAX + 1];
+	int		len;
+	t_commands	*list;
 
-	cwd = getcwd(buff, PATH_MAX + 1);
-	if (!cwd)
-		return (ft_putendl_fd("Error getting pwd", STDERR_FILENO), true);
-	printf("%s\n", cwd);
-	return (true);
+	len = 0;
+	list = lst;
+	while (list)
+	{
+		len++;
+		list = list->next;
+	}
+	return (len);
 }

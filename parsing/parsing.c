@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/28 02:51:41 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:36:35 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -347,10 +347,11 @@ int	parse_input(t_shell *shell)
 	return (0);
 }
 
-char	*read_input(t_shell *shell, const char *prompt, char **ev)
+char	*read_input(t_shell *shell, const char *prompt)
 {
 	while (true)
 	{
+		shell->commands = NULL;
 		shell->parsing.line = readline(prompt);
 		if (!shell->parsing.line)
 			err_handle("exit");
@@ -362,7 +363,7 @@ char	*read_input(t_shell *shell, const char *prompt, char **ev)
 		}
 		if (parse_input(shell) == 1)
 			continue ;
-		execution_start(shell, ev);
+		execution_start(shell);
 		free(shell->parsing.line);
 	}
 	return (shell->parsing.line);

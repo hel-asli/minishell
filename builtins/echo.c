@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 19:04:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/29 17:33:35 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:38:54 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static bool	ft_opt_check(char *str, char c)
 	return (i == ft_strlen(str));
 }
 
-bool	my_echo(t_commands **cmnds)
+bool	my_echo(t_commands *cmnds)
 {
 	int			i;
 	bool		opt;
@@ -36,7 +36,7 @@ bool	my_echo(t_commands **cmnds)
 	i = 0;
 	opt = false;
 	wrote = false;
-	curr = *cmnds;
+	curr = cmnds;
 	while (curr->args[++i])
 	{
 		if (ft_opt_check(curr->args[i], 'n') && !wrote)
