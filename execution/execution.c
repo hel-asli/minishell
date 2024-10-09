@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/09 22:33:20 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/09 23:26:41 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,8 @@ static int handle_redirections(t_redirect *redirect)
         int fd;
 		
 		fd = -1;
+		if (redirect->is_ambgious)
+			return (ft_fprintf(STDERR_FILENO, "Error: Ambiguous redirection for file.\n"), -1);
         if (redirect->type == INPUT || redirect->type == HEREDOC_INPUT)
         {
 			if (redirect->type == INPUT)
