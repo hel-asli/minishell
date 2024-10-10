@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:55:49 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/10 17:45:31 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:59:17 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,22 +74,22 @@ static bool	env_key_exist(t_env **env, char *key)
 
 static bool is_valid_export(char *str)
 {
-	bool equal;
 	int	i;
 
 	i = 0;
-	equal = false;
 	if (!ft_isalpha(str[i]) && str[i] != '_')
 		return (false);
 	i++;
 	while (str[i])
 	{
-		if (str[i] == '+' && str[i + 1] != '=' && equal != true)
+		if (str[i] == '+' && str[i + 1] == '=')
+			break;
+		if (str[i] == '=')
+			break;
+		if (str[i] == '+' && str[i + 1] != '=')
 			return (false);
-		if (!ft_isalnum(str[i]) && str[i] != '_' && str[i] != '=')
+		if (!ft_isalnum(str[i]) && str[i] != '_')
 			return (false);
-		if (str[i] == '+' && str[i + 1] == '=' && equal == false)
-			equal = true;
 		i++;
 	}
 	return (true);	
@@ -152,7 +152,7 @@ static void export_handler(t_env **export, char *args)
 	if (ft_strstr(args, "+") && env_key_exist(export, key))
 		env_concat(export, key, ft_strdup((char *)ft_strstr(args, "+") + 2));
 	else if (ft_strstr(args, "+") && !env_key_exist(export, key))
-		ft_lstadd_back(export, export_lstnew(key, ft_strdup((char *)ft_strstr(args, "=") + 2)));
+		ft_lstadd_back(export, export_lstnew(key, ft_strdup((char *)ft_strstr(args, "+") + 2)));
 	else if (ft_strstr(args, "=") && env_key_exist(export, key))
 		env_export(export, key, ft_strdup((char *)ft_strstr(args, "=") + 1));
 	else if (ft_strstr(args, "=") && !env_key_exist(export, key))
