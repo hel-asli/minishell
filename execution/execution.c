@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/09 23:26:41 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/10 00:07:23 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,16 @@ bool	builtins_check(t_commands *cmnds, t_env **env)
 		return (my_echo(cmnds));
 	else if (!ft_strcmp(curr->cmd, "env"))
 		return (my_env(env));
-	else if (!ft_strcmp(curr->cmd, "exit"))
-		return (my_exit(cmnds));
 	else if (!ft_strcmp(curr->cmd, "pwd"))
 		return (my_pwd());
+	else if (!ft_strcmp(curr->cmd, "exit"))
+		return (my_exit(cmnds));
+	else if (!ft_strcmp(curr->cmd, "unset"))
+		return (my_unset(cmnds, env));
 	else
 		return (false);
 	// else if (!ft_strcmp(curr->cmd, "export"))
 	// 	return (my_export(cmnds, env));
-	// else if (!ft_strcmp(curr->cmd, "unset"))
-	// 	return (my_unset(cmnds, env));
 }
 
 static void	exec_close(int **fds, int size)
@@ -161,13 +161,11 @@ void execute_command(t_env *env, t_commands *cmnds, t_exec *exec, int i)
     exec_close(exec->fds, exec->nbr);
     if (handle_redirections(cmnds->redirect) == -1)
         exit(EXIT_FAILURE);
-
     if (builtins_check(cmnds, &env))
     {
         free_exec(exec);
         exit(EXIT_SUCCESS);
     }
-
     char *cmd_path = find_command(cmnds->args[0], env);
     if (cmd_path != NULL)
     {
@@ -177,7 +175,6 @@ void execute_command(t_env *env, t_commands *cmnds, t_exec *exec, int i)
         free_exec(exec);
         exit(EXIT_FAILURE);
     }
-    
     ft_fprintf(2, "Error: Command not found: %s\n", cmnds->args[0]);
     free_exec(exec);
     exit(EXIT_FAILURE);
@@ -190,18 +187,19 @@ void execution_start(t_shell *shell)
     t_commands *cmnds;
 	int		i;
 
-    exec.ev_execve = list_arr(shell->env);
+	cmnds = shell->commands;
     exec.nbr = ft_lstsize(shell->commands) - 1;
+	if (exec.nbr == 0 && builtins_check(cmnds, &shell->env))
+			return ;
+    exec.ev_execve = list_arr(shell->env);
     exec.ids = malloc(sizeof(pid_t) * (exec.nbr + 1));
     if (!exec.ids)
         err_handle("Malloc failure.");
     exec.fds = fds_allocation(exec.nbr);
     if (!exec.fds)
         err_handle("Malloc failure.");
-    
     exec_pipe(&exec);
 	i = 0;
-	cmnds = shell->commands;
     while (i <= exec.nbr)
     {
         exec.ids[i] = fork();
@@ -211,15 +209,11 @@ void execution_start(t_shell *shell)
             err_exit("Fork failure");
         }
         if (exec.ids[i] == 0)
-        {
             execute_command(shell->env, cmnds, &exec, i);
-        }
 		i++;
         cmnds = cmnds->next;
     }
-
     exec_close(exec.fds, exec.nbr);
-
 	status = 0;
 	i = 0;
     while (i <= exec.nbr)
@@ -228,8 +222,7 @@ void execution_start(t_shell *shell)
             err_exit("WaitPid");
 		i++;
     }
-
     shell->exit_status = WEXITSTATUS(status);
     free(exec.ids);
-    // Free exec.ev_execve if necessary
+    // Free exec.ev_execve if necessary		
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/09 22:24:15 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/10 00:03:08 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,7 @@ char					*ft_strjoin(char *s1, char *s2);
 bool					ft_strstr(char *str, char *del);
 char					*ft_strcpy(char *dest, char *src);
 char					*ft_strcat(char *dest, char *src);
+t_env					*ft_lstnew(char *key, char *value);
 char					**ft_split_v2(const char *s, char c);
 char					*non_free_strjoin(char *s1, char *s2);
 void					ft_lstadd_back(t_env **lst, t_env *new);
@@ -142,7 +143,6 @@ char					*ft_strndup(const char *str, int index);
 int						ft_strcmp(const char *s1, const char *s2);
 int						ft_fprintf(int fd, const char *format, ...);
 char					*ft_strjoin_char(char *s1, char *s2, char c);
-t_env					*ft_lstnew(char *key, char *value, bool equal);
 int						ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t					ft_strlcpy(char *dest, const char *src, size_t size);
 t_redirect				*ft_new_redir_v2(t_red type, char *file, bool expanded);
@@ -183,12 +183,11 @@ char 					*find_command(char *cmd, t_env *env);
 bool					my_cd(t_commands *cmnds, t_env **env);
 void					export_env(t_env **env, t_env **export);
 void					build_export(t_env **export, char **ev);
-// int 					handle_redirections(t_redirect *redirect);
-void					env_update(t_env **env, char *key, char *value);
-int 					execute(t_shell *shell, t_commands **cmnds, char **ev, int *tmp);
-char					*expand_arg(char *arg, t_env *env, t_shell *shell);
-bool					my_unset(t_commands **cmnds, t_env **env, t_env **export);
-bool				    my_export(t_commands **cmnds, t_env **env, t_env **export);
+bool					my_unset(t_commands *cmnds, t_env **env);
+// bool				    my_export(t_commands *cmnds, t_env **env);
 bool					builtins_check(t_commands *cmnds, t_env **env);
+void					env_update(t_env **env, char *key, char *value);
+char					*expand_arg(char *arg, t_env *env, t_shell *shell);
+int 					execute(t_shell *shell, t_commands **cmnds, char **ev, int *tmp);
 
 #endif

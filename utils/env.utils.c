@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 20:44:19 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/09 20:45:31 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/10 00:07:56 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ char **list_arr(t_env *env)
     tmp = env;
     while (tmp)
     {
-        ptr[i++] = ft_strjoin_char(tmp->key, tmp->value, '=');
+		if (tmp->value != NULL)
+        	ptr[i++] = ft_strjoin_char(tmp->key, tmp->value, '=');
         tmp = tmp->next;
     }
     ptr[i] = NULL;

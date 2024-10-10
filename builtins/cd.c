@@ -6,11 +6,28 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/09 20:38:48 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/10 00:04:04 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	env_update(t_env **env, char *key, char *value)
+{
+	t_env	*curr;
+
+	curr = *env;
+	while (curr)
+	{
+		if (!ft_strcmp(curr->key, key))
+		{
+			free(curr->value);
+			curr->value = ft_strdup(value);
+			return ;
+		}
+		curr = curr->next;
+	}
+}
 
 bool	my_cd(t_commands *cmnds, t_env **env)
 {
@@ -50,7 +67,9 @@ bool	my_cd(t_commands *cmnds, t_env **env)
 	}
 	env_update(env, "OLDPWD", oldpwd);
 	free(oldpwd);
+	oldpwd = NULL;
 	env_update(env, "PWD", pwd);
 	free(pwd);
+	pwd = NULL;
 	return (true);
 }

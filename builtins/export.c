@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:55:49 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/29 17:32:50 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/10 00:35:17 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,6 @@ void	sort_export(t_env **export)
 				tmp->value = value;
 			}
 			tmp = tmp->next;
-		}
-		curr = curr->next;
-	}
-}
-
-void	env_update(t_env **env, char *key, char *value)
-{
-	t_env	*curr;
-
-	curr = *env;
-	while (curr)
-	{
-		if (!ft_strcmp(curr->key, key))
-		{
-			free(curr->value);
-			curr->value = value;
-			return ;
 		}
 		curr = curr->next;
 	}
@@ -116,9 +99,9 @@ void	build_export(t_env **export, char **ev)
 	{
 		sp = ft_env_split(ev[i]);
 		if (sp[1] == NULL) // Check if value is NULL
-			ft_lstadd_back(export, ft_lstnew(ft_strdup(sp[0]), NULL, false));
+			ft_lstadd_back(export, ft_lstnew(ft_strdup(sp[0]), NULL));
 		else
-			ft_lstadd_back(export, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1]), false));
+			ft_lstadd_back(export, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1])));
 		ft_free(sp);
 		i++;
 	}
@@ -131,7 +114,7 @@ void	export_env(t_env **env, t_env **export)
 	curr = *env;
 	while (curr)
 	{
-		ft_lstadd_back(export, ft_lstnew(ft_strdup(curr->key), ft_strdup(curr->value), false));
+		ft_lstadd_back(export, ft_lstnew(ft_strdup(curr->key), ft_strdup(curr->value)));
 		curr = curr->next;
 	}
 }
@@ -165,15 +148,15 @@ bool    my_export(t_commands **cmnds, t_env **env, t_env **export)
 		}
 		if (!env_key_exist(env, key))
 		{
-			ft_lstadd_back(env, ft_lstnew(key, value, true));
-			ft_lstadd_back(export, ft_lstnew(key, value, true));
+			ft_lstadd_back(env, ft_lstnew(key, value));
+			ft_lstadd_back(export, ft_lstnew(key, value));
 		}
 		else
 		{
 			env_update(env, key, value);
 			env_update(export, key, value);
 		}
-		free(key); // Free key to prevent memory leak
+		free(key);
 		if (value)
 			free(value); // Free value if it was allocated
 		i++;
