@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/10 00:03:08 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:37:58 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef struct s_env
 	bool				equal;
 	struct s_env		*next;
 	char				*value;
+	int					exported;
 }						t_env;
 
 
@@ -179,12 +180,12 @@ bool					my_echo(t_commands *cmnds);
 t_env					*export_lstlast(t_env *export);
 void					execution_start(t_shell *shell);
 char					*get_env(char *key, t_env *env);
+// void					export_env(t_env **env, char *args);
 char 					*find_command(char *cmd, t_env *env);
 bool					my_cd(t_commands *cmnds, t_env **env);
-void					export_env(t_env **env, t_env **export);
 void					build_export(t_env **export, char **ev);
 bool					my_unset(t_commands *cmnds, t_env **env);
-// bool				    my_export(t_commands *cmnds, t_env **env);
+bool				    my_export(t_commands *cmnds, t_env **env);
 bool					builtins_check(t_commands *cmnds, t_env **env);
 void					env_update(t_env **env, char *key, char *value);
 char					*expand_arg(char *arg, t_env *env, t_shell *shell);

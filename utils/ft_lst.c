@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 03:10:56 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/09 23:57:30 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:47:28 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ t_env	*ft_lstnew(char *key, char *value)
 		return (NULL);
 	node->key = key;
 	node->value = value;
+	node->exported = 0;
 	node->next = NULL;
 	return (node);
 }

@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/10 00:07:23 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:00:10 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@ bool	builtins_check(t_commands *cmnds, t_env **env)
 		return (my_exit(cmnds));
 	else if (!ft_strcmp(curr->cmd, "unset"))
 		return (my_unset(cmnds, env));
+	else if (!ft_strcmp(curr->cmd, "export"))
+		return (my_export(cmnds, env));
 	else
 		return (false);
-	// else if (!ft_strcmp(curr->cmd, "export"))
-	// 	return (my_export(cmnds, env));
 }
 
 static void	exec_close(int **fds, int size)
