@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/09 20:36:35 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/12 01:57:11 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,7 @@ char	*add_spaces(char *line)
 	size_t	len;
 	char	*new_line ;
 
-	i = 0;
-	j = 0;
-	len = count_len(line);
+	(1) && (i = 0, j = 0, len = count_len(line));
 	new_line = malloc(sizeof(char) * len + 1);
 	if (!new_line)
 		return (free(line), NULL);
@@ -55,14 +53,13 @@ char	*add_spaces(char *line)
 	{
 		if (ft_strstr(&line[i], ">>") || ft_strstr(&line[i], "<<"))
 		{
-			(new_line[j++] = 32, new_line[j++] = line[i++]);
-			(new_line[j++] = line[i++],new_line[j++] = 32);
+			(1) && (new_line[j++] = 32, new_line[j++] = line[i++]);
+			(1) && (new_line[j++] = line[i++],new_line[j++] = 32);
 		}
 		else if (ft_strstr(&line[i], ">")
 			|| ft_strstr(&line[i], "<") || ft_strstr(&line[i], "|"))
 		{
-			new_line[j++] = 32;
-			new_line[j++] = line[i++];
+			(1) && (new_line[j++] = 32, new_line[j++] = line[i++]);
 			new_line[j++] = 32;
 		}
 		else
@@ -174,37 +171,6 @@ bool in_quotes(char *str)
 	return (false);
 }
 
-void del_quotes(t_shell *shell)
-{
-	t_commands *commands;
-	t_redirect *red;
-	int i = 0;
-
-	commands = shell->commands;
-	while (commands)
-	{
-		if (commands->cmd)
-		{
-			commands->cmd = del_quote(commands->cmd);
-		}
-		i = 0;
-		while (commands->args[i])
-		{
-			commands->args[i] =  del_quote(commands->args[i]);
-			i++;
-		}
-		red = commands->redirect;
-		while (red)
-		{
-			if (red->type == HEREDOC_INPUT && !in_quotes(red->file))
-				red->expanded = true;
-			red->file = del_quote(red->file);
-			red = red->next;
-		}
-		commands = commands->next;
-	}
-}
-
 void heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 {
 	char *line;
@@ -239,20 +205,24 @@ void heredoc(t_shell *shell)
 
 	while (cmd)
 	{
-		int *nbr = malloc(sizeof(int));
-		long nb = (long)nbr;
-		char *name = ft_strjoin(ft_strdup("/tmp/.heredoc"), ft_itoa(nb));
-		if (!name)
-			err_handle("malloc");
 		red = cmd->redirect;
 		while (red)
 		{
-			heredoc_write = open(name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-			heredoc_read = open(name, O_RDONLY, 0644);
-			if (unlink(name) < 0)
-				err_exit("unlink");
 			if (red->type == HEREDOC_INPUT)
+			{
+
+				int *nbr = malloc(sizeof(int));
+				char *name = ft_strjoin(ft_strdup("/tmp/.heredoc"), ft_itoa((long)nbr));
+				free(nbr);
+				if (!name)
+					err_handle("malloc");
+				heredoc_write = open(name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+				heredoc_read = open(name, O_RDONLY, 0644);
+				if (unlink(name) < 0)
+					err_exit("unlink");
+				free(name);
 				heredoc_helper(red->file, heredoc_write, red->expanded, shell);
+			}
 			close(heredoc_write);
 			red->heredoc_fd = heredoc_read;
 			red = red->next;
@@ -261,74 +231,12 @@ void heredoc(t_shell *shell)
 	}
 }
 
-int calc_heredoc(t_redirect *redirect)
-{
-	int i = 0;
-	t_redirect *tmp;
-
-	tmp = redirect;
-	while (tmp)
-	{
-		if (tmp->type == HEREDOC_INPUT)
-			i++;
-		tmp = tmp->next;
-	}
-
-	return (i);
-}
-
-t_redirect *heredoc_del(t_redirect *red, int heredoc_lenght)
-{
-	t_redirect *new_red = NULL;
-	int i  = heredoc_lenght;
-
-	while (red)	
-	{
-		if (red->type == HEREDOC_INPUT && i > 1)
-		{
-			red = red->next;
-			i--;
-		}
-		else
-		{
-			ft_lst_add_redir(&new_red, ft_new_redir_v2(red->type, red->file, red->expanded));
-			red = red->next;
-		}
-	}
-	return (new_red);
-}
-
-void redirection_helper(t_shell *shell)
-{
-	t_commands *cmds;
-	t_redirect *red;
-	int heredoc_length;
-	t_redirect  *new_red;
-
-	heredoc_length = 0;
-	cmds = shell->commands;
-	while (cmds)
-	{
-		red = cmds->redirect;
-		if (red)
-			heredoc_length = calc_heredoc(red);
-		if (heredoc_length > 1)
-		{
-			new_red = heredoc_del(red, heredoc_length);
-			// clear old_redirection. 
-			cmds->redirect = new_red;
-		}
-		cmds = cmds->next;
-	}
-}
 int	parse_input(t_shell *shell)
 {
 	char		*new_line;
 	char		**pipes;
 	t_syntax	syntax;
-	// printf("-> %s\n", shell->parsing.line);
-	space_to_gar(shell->parsing.line); // save space and | inside "" . 
-	// printf("-> %s\n", shell->parsing.line);
+	space_to_gar(shell->parsing.line); 
 	new_line = add_spaces(shell->parsing.line);
 	shell->parsing.line = new_line;
 	if (!new_line)
@@ -342,20 +250,24 @@ int	parse_input(t_shell *shell)
 	pipes = ft_split_v2(shell->parsing.line, 124);
 	process_pipe_cmds(&shell, pipes);
 	heredoc(shell);
-	redirection_helper(shell);
-	// print_cmds(shell->commands);
 	return (0);
 }
 
-char	*read_input(t_shell *shell, const char *prompt)
+void	read_input(t_shell *shell, const char *prompt)
 {
 	while (true)
 	{
 		shell->commands = NULL;
+		rl_signal = 1;
 		shell->parsing.line = readline(prompt);
 		if (!shell->parsing.line)
-			err_handle("exit");
-		add_history(shell->parsing.line);
+		{
+			printf("%s%sminishell: exit\n", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
+			break ;
+		}
+		rl_signal = 0;
+		if (shell->parsing.line && *shell->parsing.line)
+			add_history(shell->parsing.line);
 		if (!ft_strlen(shell->parsing.line) || empty_str(shell->parsing.line))
 		{
 			free(shell->parsing.line);
@@ -366,5 +278,5 @@ char	*read_input(t_shell *shell, const char *prompt)
 		execution_start(shell);
 		free(shell->parsing.line);
 	}
-	return (shell->parsing.line);
+
 }

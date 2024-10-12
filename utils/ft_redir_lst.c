@@ -6,23 +6,19 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:29:29 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/24 22:56:11 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/11 21:48:33 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-t_commands	*ft_newlist(char *cmd, char **args, t_redirect *red)
+t_commands	*ft_newlist(char **args, t_redirect *red)
 {
 	t_commands	*node;
 
 	node = malloc(sizeof(t_commands));
 	if (!node)
 		return (NULL);
-	if (!cmd)
-		node->cmd = cmd;
-	else
-		node->cmd = ft_strdup(cmd);
 	node->args = args;
 	node->redirect = red;
 	node->next = NULL;

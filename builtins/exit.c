@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:15:23 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/09 20:39:04 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/11 22:12:25 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ bool	my_exit(t_commands *cmnds)
 
 	i = 1;
 	curr = cmnds;
+	if (handle_redirections(cmnds->redirect) < 0)
+		return (true);
 	while (curr->args[i])
 		i++;
 	if (i == 1)

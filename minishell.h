@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/10 17:37:58 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/12 01:30:58 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <stdio.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
+# include <termios.h>
 # include <sys/wait.h>
 # include <stdbool.h>
 # include <stdlib.h>
@@ -26,8 +28,10 @@
 # include <string.h>
 # include <stdarg.h>
 
+extern int rl_signal;
 
-# define RED "\033[0;31m"
+# define ANSI_CURSOR_UP "\033[1A"
+# define ANSI_ERASE_LINE "\033[2K"
 # define SYNTAX_QUOTES "minishell: Unclosed quotes"
 # define SYNTAX_PIPE "minishell: Invalid pipe usage"
 # define SYNTAX_REDIRECTION "minishell: Invalid redirection"
@@ -74,7 +78,6 @@ typedef struct s_redirect
 
 typedef struct s_commands
 {
-	char				*cmd;
 	t_env				*env;
 	struct s_commands	*next;
 	char				**args;
@@ -148,6 +151,11 @@ int						ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t					ft_strlcpy(char *dest, const char *src, size_t size);
 t_redirect				*ft_new_redir_v2(t_red type, char *file, bool expanded);
 char					*ft_substr(char const *s, unsigned int start, size_t len);
+void setup_signals(void);
+void sigquit_handler(int nb);
+void sigint_handler(int nb);
+
+
 
 //parsing
 bool					is_ascii(char *str);
@@ -165,10 +173,10 @@ bool					check_heredoc(char **tokens, int i);
 t_redirect				*ft_new_redir(char *type, char *file);
 bool					check_redirection(char **tokens, int i);
 void					process_pipe_cmds(t_shell **shell, char **pipes);
-char					*read_input(t_shell *parsing, const char *prompt);
+void					read_input(t_shell *parsing, const char *prompt);
 void					ft_back_addlst(t_commands **lst, t_commands *new);
 void					ft_lst_add_redir(t_redirect **lst, t_redirect *new);
-t_commands				*ft_newlist(char *cmd, char **args, t_redirect *red);
+t_commands				*ft_newlist(char **args, t_redirect *red);
 
 // execution
 bool					my_pwd(void);
@@ -188,6 +196,7 @@ bool					my_unset(t_commands *cmnds, t_env **env);
 bool				    my_export(t_commands *cmnds, t_env **env);
 bool					builtins_check(t_commands *cmnds, t_env **env);
 void					env_update(t_env **env, char *key, char *value);
+int						handle_redirections(t_redirect *redirect);
 char					*expand_arg(char *arg, t_env *env, t_shell *shell);
 int 					execute(t_shell *shell, t_commands **cmnds, char **ev, int *tmp);
 

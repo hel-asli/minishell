@@ -3,18 +3,23 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+         #
+#    By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/30 23:25:40 by hel-asli          #+#    #+#              #
-#    Updated: 2024/10/09 20:49:05 by oel-feng         ###   ########.fr        #
+#    Updated: 2024/10/11 21:43:55 by hel-asli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-INCLUDE_DIR = Include
-LDFLAGS = -g -fsanitize=address
+# INCLUDE_DIR = Include
+LDFLAGS = #-g -fsanitize=address
+READLINE_PREFIX = $(shell brew --prefix readline)
+READLINE_INCLUDE = $(READLINE_PREFIX)/include
+READLINE_LIB = $(READLINE_PREFIX)/lib
+LIBS = -L$(READLINE_LIB) -lreadline
+INCLUDES = -I$(READLINE_INCLUDE)
 
 SRCS = main.c utils/ft_split.c utils/ft_itoa.c utils/ft_strncmp.c \
 		utils/ft_putendl_fd.c utils/ft_strstr.c utils/ft_strlen.c \
@@ -25,7 +30,7 @@ SRCS = main.c utils/ft_split.c utils/ft_itoa.c utils/ft_strncmp.c \
 		execution/execution.c builtins/env.c builtins/pwd.c builtins/echo.c \
 		builtins/unset.c builtins/exit.c builtins/export.c builtins/cd.c \
 		utils/ascii_check.c utils/ft_strtok.c utils/ft_strchr.c execution/exec.c \
-		utils/ft_fprintf.c execution/redirections.c utils/ft_lst_2.c utils/env.utils.c \
+		utils/ft_fprintf.c utils/ft_lst_2.c utils/env.utils.c \
 
 HEADER = minishell.h
 OBJS = $(SRCS:.c=.o)
@@ -33,10 +38,10 @@ OBJS = $(SRCS:.c=.o)
 all : $(NAME)
 
 $(NAME) : $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ -lreadline
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBS)
 
 %.o : %.c  $(HEADER)
-	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) -c $< -o $@
 
 clean :
 	$(RM) $(OBJS) $(UTILS_OBJS) $(PARS_OBJS)

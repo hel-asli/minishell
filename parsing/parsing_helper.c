@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_helper.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/26 02:43:15 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/11 21:48:49 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -359,18 +359,12 @@ char **expand_args (char **args, t_shell *shell)
 			}
 			else
 			{
-				// printf("hello : %s\n", new_arg);
-				// space_to_gar(new_arg);
 				gar_protect(new_arg);
-				// printf("world : %s\n", new_arg);
-				// puts("ook");
 				tab = add_arr(tab, new_arg);
 			}
 		}
 		else
 		{
-			// space_to_gar(args[i]);
-			// printf("kkk: %s\n", args[i]);
 			args[i] = del_quote(args[i]);
 			gar_protect(args[i]);
 			tab = add_arr(tab, args[i]);
@@ -395,18 +389,6 @@ bool check_file(char *file)
 	}
 	return (false);
 }
-
-// bool check_ambgious(char *str)
-// {
-// 	int i = 0;
-// 	bool 
-
-// 	while (str[i])
-// 	{
-
-// 	}
-// }
-
 void expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 {
 	t_redirect *tmp;
@@ -418,7 +400,6 @@ void expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 		if (tmp->type != HEREDOC_INPUT)
 		{
 					new_file = expand_arg(tmp->file, env, shell);
-					// printf("new_file : %s\n", new_file);
 					if (!new_file)
 						tmp->is_ambgious = true;
 					else if (check_var(tmp->file) && ft_strchr(new_file, 32))
@@ -429,19 +410,19 @@ void expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 	}
 }
 
-void print_args(char **args)
-{
-	if (args)
-	{
-		for (int i = 0; args[i]; i++)
-			printf("=> {%s}", args[i]);
-		if (!args[0])
-			printf("--> {%s}\n", args[0]);
-		printf("\n");
-	}
-	else
-		printf("args -> NULL\n");
-}
+// void print_args(char **args)
+// {
+// 	if (args)
+// 	{
+// 		for (int i = 0; args[i]; i++)
+// 			printf("=> {%s}", args[i]);
+// 		if (!args[0])
+// 			printf("--> {%s}\n", args[0]);
+// 		printf("\n");
+// 	}
+// 	else
+// 		printf("args -> NULL\n");
+// }
 void	process_pipe_cmds(t_shell **shell, char **pipes)
 {
 	int			i;
@@ -453,22 +434,18 @@ void	process_pipe_cmds(t_shell **shell, char **pipes)
 	redirect = NULL;
 	while (pipes[++i])
 	{
-		// printf("---> %s\n", pipes[i]);
 		tab = ft_split(pipes[i]);
 		if (!tab)
 			err_handle("Allocation Faile");
 		for (int j = 0; tab[j] ; j++)
 		{
 			gar_protect(tab[j]);
-			// printf("hereeee : %s\n", tab[j]);
 		}
 		redirect = build_redirection(tab);
 		args = args_allocation(tab, count_non_redirection_arg_size(tab)); 
-		// print_args(args);
 		args = expand_args(args, *shell);
-		// print_args(args);
 		expand_redirect(redirect, (*shell)->env, *shell);
-		ft_back_addlst(&(*shell)->commands, ft_newlist(args[0], args, redirect));
+		ft_back_addlst(&(*shell)->commands, ft_newlist(args, redirect));
 		free(tab);
 	}
 }
@@ -481,9 +458,6 @@ void	print_cmds(t_commands *cmds)
 	while (cmds)
 	{
 		printf("----------------------------------------------\n");
-		if (!cmds->cmd)
-			printf("NULL\n");
-		printf("cmd : {%s}\n", cmds->cmd);
 		printf("args : ");
 		if (cmds->args)
 		{

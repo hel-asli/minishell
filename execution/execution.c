@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/10 17:00:10 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/12 02:01:52 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,19 @@ bool	builtins_check(t_commands *cmnds, t_env **env)
 	t_commands	*curr;
 
 	curr = cmnds;
-	if (!ft_strcmp(curr->cmd, "cd"))
+	if (!ft_strcmp(curr->args[0], "cd"))
 		return (my_cd(cmnds, env));
-	else if (!ft_strcmp(curr->cmd, "echo"))
+	else if (!ft_strcmp(curr->args[0], "echo"))
 		return (my_echo(cmnds));
-	else if (!ft_strcmp(curr->cmd, "env"))
+	else if (!ft_strcmp(curr->args[0], "env"))
 		return (my_env(env));
-	else if (!ft_strcmp(curr->cmd, "pwd"))
+	else if (!ft_strcmp(curr->args[0], "pwd"))
 		return (my_pwd());
-	else if (!ft_strcmp(curr->cmd, "exit"))
+	else if (!ft_strcmp(curr->args[0], "exit"))
 		return (my_exit(cmnds));
-	else if (!ft_strcmp(curr->cmd, "unset"))
+	else if (!ft_strcmp(curr->args[0], "unset"))
 		return (my_unset(cmnds, env));
-	else if (!ft_strcmp(curr->cmd, "export"))
+	else if (!ft_strcmp(curr->args[0], "export"))
 		return (my_export(cmnds, env));
 	else
 		return (false);
@@ -91,7 +91,7 @@ void	free_exec(t_exec *exec)
 	if (exec->fds)
 		free(exec->fds);
 }
-static int handle_redirections(t_redirect *redirect)
+int handle_redirections(t_redirect *redirect)
 {
     while (redirect)
     {
@@ -106,16 +106,16 @@ static int handle_redirections(t_redirect *redirect)
 			{
 				fd = open(redirect->file, O_RDONLY);
 				if (fd == -1)
-				{
-					ft_fprintf(2, "Error: Cannot open file for input: %s\n", redirect->file);
+                {
+                    perror("open");
 					return -1;
-				}
+                }
 			}
 			else
 				fd = redirect->heredoc_fd;
             if (dup2(fd, STDIN_FILENO) == -1)
             {
-                ft_fprintf(2, "Error: Failed to redirect input\n");
+                perror("dup2");
                 close(fd);
                 return -1;
             }
@@ -135,12 +135,12 @@ static int handle_redirections(t_redirect *redirect)
             fd = open(redirect->file, flags, 0644);
             if (fd == -1)
             {
-                ft_fprintf(2, "Error: Cannot open file for output: %s\n", redirect->file);
+                perror("open");
                 return -1;
             }
             if (dup2(fd, STDOUT_FILENO) == -1)
             {
-                ft_fprintf(2, "Error: Failed to redirect output\n");
+                perror("dup2");
                 close(fd);
                 return -1;
             }
@@ -154,6 +154,9 @@ static int handle_redirections(t_redirect *redirect)
 
 void execute_command(t_env *env, t_commands *cmnds, t_exec *exec, int i)
 {
+    char *cmd_path;
+
+    cmd_path = NULL;
     if (i > 0 && dup2(exec->fds[i - 1][0], STDIN_FILENO) == -1)
         err_exit("Dup2 Failure");
     if (i < exec->nbr && dup2(exec->fds[i][1], STDOUT_FILENO) == -1)
@@ -161,12 +164,13 @@ void execute_command(t_env *env, t_commands *cmnds, t_exec *exec, int i)
     exec_close(exec->fds, exec->nbr);
     if (handle_redirections(cmnds->redirect) == -1)
         exit(EXIT_FAILURE);
-    if (builtins_check(cmnds, &env))
+    if (cmnds->args[0] && builtins_check(cmnds, &env))
     {
         free_exec(exec);
         exit(EXIT_SUCCESS);
     }
-    char *cmd_path = find_command(cmnds->args[0], env);
+    if (cmnds->args[0])
+        cmd_path = find_command(cmnds->args[0], env);
     if (cmd_path != NULL)
     {
         execve(cmd_path, cmnds->args, exec->ev_execve);
@@ -175,7 +179,8 @@ void execute_command(t_env *env, t_commands *cmnds, t_exec *exec, int i)
         free_exec(exec);
         exit(EXIT_FAILURE);
     }
-    ft_fprintf(2, "Error: Command not found: %s\n", cmnds->args[0]);
+    if (cmnds->args[0])
+        ft_fprintf(2, "Error: Command not found: %s\n", cmnds->args[0]);
     free_exec(exec);
     exit(EXIT_FAILURE);
 }
@@ -189,7 +194,7 @@ void execution_start(t_shell *shell)
 
 	cmnds = shell->commands;
     exec.nbr = ft_lstsize(shell->commands) - 1;
-	if (exec.nbr == 0 && builtins_check(cmnds, &shell->env))
+	if (exec.nbr == 0 && cmnds->args[0] && builtins_check(cmnds, &shell->env))
 			return ;
     exec.ev_execve = list_arr(shell->env);
     exec.ids = malloc(sizeof(pid_t) * (exec.nbr + 1));
@@ -209,7 +214,10 @@ void execution_start(t_shell *shell)
             err_exit("Fork failure");
         }
         if (exec.ids[i] == 0)
+        {
+            rl_signal = 0;
             execute_command(shell->env, cmnds, &exec, i);
+        }
 		i++;
         cmnds = cmnds->next;
     }
@@ -218,11 +226,17 @@ void execution_start(t_shell *shell)
 	i = 0;
     while (i <= exec.nbr)
     {
-        if (waitpid(exec.ids[i], &status, 0) == -1 || errno == ECHILD)
-            err_exit("WaitPid");
-		i++;
+        if (waitpid(exec.ids[i], &status, 0) < 0)
+        {
+            if (errno == ECHILD)
+                err_exit("waitpid");
+        }
+        i++;
     }
-    shell->exit_status = WEXITSTATUS(status);
-    free(exec.ids);
+    if (WIFEXITED(status))
+        shell->exit_status = WEXITSTATUS(status);
+    else if (WIFSIGNALED(status))
+        shell->exit_status = WTERMSIG(status) + 128;
+    // free(exec.ids);
     // Free exec.ev_execve if necessary		
 }

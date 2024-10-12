@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 00:49:12 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/09 20:48:32 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/11 21:31:28 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ char *find_command(char *cmd, t_env *env)
         if (access(cmd, X_OK) == 0)
             return ft_strdup(cmd);
         else
-            return (ft_fprintf(2, "Error: Command not found: %s\n", cmd), NULL);
+            return (NULL);
     }
 	pt = NULL;
 	k = 0;
