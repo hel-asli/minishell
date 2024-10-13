@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/13 03:43:01 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/13 21:18:13 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,6 @@ void heredoc(t_shell *shell)
 		{
 			if (red->type == HEREDOC_INPUT)
 			{
-
 				int *nbr = malloc(sizeof(int));
 				char *name = ft_strjoin(ft_strdup("/tmp/.heredoc"), ft_itoa((long)nbr));
 				free(nbr);
@@ -274,8 +273,8 @@ void	read_input(t_shell *shell, const char *prompt)
 		}
 		if (parse_input(shell) == 1)
 			continue ;
-		rl_signal = 0;
 		restore_terminal_old_attr(&shell->old_attr);
+		rl_signal = 0;
 		execution_start(shell);
 		restore_terminal_old_attr(&shell->copy);
 		free(shell->parsing.line);

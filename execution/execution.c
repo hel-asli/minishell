@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/13 03:56:10 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/13 21:09:34 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,7 @@ void execution_start(t_shell *shell)
     t_commands *cmnds;
 	int		i;
 
-    rl_signal = 0;
+    // rl_signal = 0;
 	cmnds = shell->commands;
     exec.nbr = ft_lstsize(shell->commands) - 1;
 	if (exec.nbr == 0 && cmnds->args[0] && builtins_check(cmnds, &shell->env))
@@ -206,6 +206,7 @@ void execution_start(t_shell *shell)
         err_handle("Malloc failure.");
     exec_pipe(&exec);
 	i = 0;
+    rl_signal = 1;
     while (i <= exec.nbr)
     {
         exec.ids[i] = fork();
@@ -216,7 +217,8 @@ void execution_start(t_shell *shell)
         }
         if (exec.ids[i] == 0)
         {
-            signal(SIGQUIT, SIG_DFL);
+            rl_signal = 1;
+            signal(SIGQUIT, sigquit_handler);
             signal(SIGINT, SIG_DFL);
             execute_command(shell->env, cmnds, &exec, i);
         }
@@ -226,6 +228,8 @@ void execution_start(t_shell *shell)
     exec_close(exec.fds, exec.nbr);
 	status = 0;
 	i = 0;
+    // signal(SIGINT, sigint_handler);
+    rl_signal = 0;
     while (i <= exec.nbr)
     {
         if (waitpid(exec.ids[i], &status, 0) < 0)
@@ -238,16 +242,15 @@ void execution_start(t_shell *shell)
             if (WIFSIGNALED(status))
             {
                 int sig = WTERMSIG(status);
-                if (sig == SIGINT)
+                if (sig == SIGINT && !rl_signal)
                     write(STDOUT_FILENO, "\n", 1);
-                // else if (sig == SIGQUIT)
-                //     write(STDOUT_FILENO, "Quit: 3\n", 8);
+                if (sig == SIGQUIT)
+                    write(STDOUT_FILENO, "Quit: 3\n", 8);
             }
             i++;
         }
         i++;
     }
-    rl_signal = 0;
     if (WIFEXITED(status))
         shell->exit_status = WEXITSTATUS(status);
     else if (WIFSIGNALED(status))

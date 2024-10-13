@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/13 03:56:04 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/13 20:57:47 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ void sigint_handler(int nb)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
+	// else
+	// 	write(1, "\n", 1);
 }
 
 void sigquit_handler(int nb)
@@ -62,7 +64,8 @@ void sigquit_handler(int nb)
 	if (rl_signal)
 		rl_redisplay();
 	if (!rl_signal)
-		write(STDOUT_FILENO, "Quit: 3\n", 8);
+		printf("%s%sQuit: 3\n", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
+		// write(STDOUT_FILENO, "Quit: 3\n", 8);
 }
 
 
@@ -80,8 +83,16 @@ void restore_terminal_old_attr(struct termios *old_attr)
 }
 void setup_signals(void)
 {
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, sigquit_handler);
+    struct sigaction sa_int, sa_quit;
+    sa_int.sa_handler = sigint_handler;
+    sigemptyset(&sa_int.sa_mask);
+    sa_int.sa_flags = SA_RESETHAND | SA_RESTART;
+    sigaction(SIGINT, &sa_int, NULL);
+    
+    sa_quit.sa_handler = SIG_IGN;
+    sigemptyset(&sa_quit.sa_mask);
+    sa_quit.sa_flags = SA_RESTART;
+    sigaction(SIGQUIT, &sa_quit, NULL);
 }
 int	main(int ac, char **av, char **ev)
 {
