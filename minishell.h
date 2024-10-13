@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/12 01:30:58 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/13 01:04:10 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,8 @@ typedef struct s_shell
 	t_parsing			parsing;
 	t_commands			*commands;
 	char				**ev_execve;
+	struct				termios old_attr;
+	struct				termios copy;
 	int					exit_status;
 }						t_shell;
 
@@ -151,9 +153,11 @@ int						ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t					ft_strlcpy(char *dest, const char *src, size_t size);
 t_redirect				*ft_new_redir_v2(t_red type, char *file, bool expanded);
 char					*ft_substr(char const *s, unsigned int start, size_t len);
-void setup_signals(void);
-void sigquit_handler(int nb);
-void sigint_handler(int nb);
+void					set_terminal_new_attr(struct termios *old_attr);
+void restore_terminal_old_attr(struct termios *old_attr);
+void					setup_signals(void);
+void					sigquit_handler(int nb);
+void					sigint_handler(int nb);
 
 
 

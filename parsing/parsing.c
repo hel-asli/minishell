@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/12 01:57:11 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/13 03:43:01 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,6 @@ void	read_input(t_shell *shell, const char *prompt)
 			printf("%s%sminishell: exit\n", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
 			break ;
 		}
-		rl_signal = 0;
 		if (shell->parsing.line && *shell->parsing.line)
 			add_history(shell->parsing.line);
 		if (!ft_strlen(shell->parsing.line) || empty_str(shell->parsing.line))
@@ -275,7 +274,10 @@ void	read_input(t_shell *shell, const char *prompt)
 		}
 		if (parse_input(shell) == 1)
 			continue ;
+		rl_signal = 0;
+		restore_terminal_old_attr(&shell->old_attr);
 		execution_start(shell);
+		restore_terminal_old_attr(&shell->copy);
 		free(shell->parsing.line);
 	}
 
