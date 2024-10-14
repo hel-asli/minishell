@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/13 21:18:13 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/14 13:14:29 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,18 +171,30 @@ bool in_quotes(char *str)
 	return (false);
 }
 
-void heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
+int heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 {
 	char *line;
 	t_env  *env;
 
 	line = NULL;
 	env = shell->env;
+	rl_signal = 2;
 	while (true)
 	{
 			line = readline("> ");
-			if (!line)
-				break ;
+			if (!line || rl_done)
+			{
+				if (rl_done)
+				{
+					shell->exit_status = 130;
+					close(fd);
+					rl_done = 0;
+					printf("\n");
+					free(line);
+					return (1);
+				}
+				break;
+			}
 			if (!ft_strcmp(line, delimter))
 				break ;
 			if (expanded)	
@@ -195,8 +207,10 @@ void heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 			write(fd, line, ft_strlen(line));
 			write(fd, "\n", 1);
 	}
+	rl_signal = 1;
+	return (0);
 }
-void heredoc(t_shell *shell)
+int heredoc(t_shell *shell)
 {
 	t_commands *cmd = shell->commands;
 	t_redirect *red = NULL;
@@ -220,14 +234,16 @@ void heredoc(t_shell *shell)
 				if (unlink(name) < 0)
 					err_exit("unlink");
 				free(name);
-				heredoc_helper(red->file, heredoc_write, red->expanded, shell);
+				if (heredoc_helper(red->file, heredoc_write, red->expanded, shell))
+					return (1);
+				close(heredoc_write);
+				red->heredoc_fd = heredoc_read;
 			}
-			close(heredoc_write);
-			red->heredoc_fd = heredoc_read;
 			red = red->next;
 		}
 		cmd = cmd->next;
 	}
+	return (0);
 }
 
 int	parse_input(t_shell *shell)
@@ -248,7 +264,6 @@ int	parse_input(t_shell *shell)
 		return (syntax_err_msg(syntax), free(new_line), 1);
 	pipes = ft_split_v2(shell->parsing.line, 124);
 	process_pipe_cmds(&shell, pipes);
-	heredoc(shell);
 	return (0);
 }
 
@@ -273,6 +288,8 @@ void	read_input(t_shell *shell, const char *prompt)
 		}
 		if (parse_input(shell) == 1)
 			continue ;
+		if (heredoc(shell))
+			continue;
 		restore_terminal_old_attr(&shell->old_attr);
 		rl_signal = 0;
 		execution_start(shell);

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/13 20:57:47 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/14 13:11:37 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,12 @@ void	set_env(t_env **env)
 void sigint_handler(int nb)
 {
 	(void)nb;
-	if (rl_signal)
+	if (rl_signal == 2)
+	{
+		rl_done = 1;
+		rl_replace_line("", 0);
+	}
+	else if (rl_signal)
 	{
 		printf("\n");
 		rl_on_new_line();
@@ -61,7 +66,7 @@ void sigint_handler(int nb)
 void sigquit_handler(int nb)
 {
 	(void)nb;
-	if (rl_signal)
+	if (rl_signal == 1)
 		rl_redisplay();
 	if (!rl_signal)
 		printf("%s%sQuit: 3\n", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
