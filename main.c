@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 06:14:12 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 06:20:42 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,12 @@ void sigquit_handler(int nb)
 	if (rl_signal == 1)
 		rl_redisplay();
 	if (!rl_signal)
-		printf("%s%sQuit: 3\n", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
+	{
+		printf("Quit: 3\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
 }
 
 

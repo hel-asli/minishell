@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 06:06:03 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 06:36:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 extern int rl_signal;
 
 # define ANSI_CURSOR_UP "\033[1A"
+# define ANSI_CURSOR_DOWN "\033[1B"
 # define ANSI_ERASE_LINE "\033[2K"
 # define SYNTAX_QUOTES "minishell: Unclosed quotes"
 # define SYNTAX_PIPE "minishell: Invalid pipe usage"

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 06:13:26 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 06:41:45 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,7 @@ int heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 			line = readline("> ");
 			if (!line)
 			{
+				shell->ears = 1;
         		printf("%s%s", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
 				rl_on_new_line();
 				rl_replace_line("", 0);
@@ -191,13 +192,15 @@ int heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 			}
 			if (rl_signal == 3)
 			{
-        		printf("%s%s", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
+				if (shell->ears)
+        			printf("%s%s",ANSI_CURSOR_UP, ANSI_ERASE_LINE);
+        		printf("%s%s",ANSI_CURSOR_UP, ANSI_ERASE_LINE);
 				close(fd);
 				free(line);
 				line = NULL;
 				return (1);
 			}
-			
+			shell->ears = 0;	
 			if (!ft_strcmp(line, delimter))
 				break ;
 			if (expanded)	
