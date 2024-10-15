@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 01:48:45 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 02:18:58 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,7 +234,8 @@ int heredoc(t_shell *shell)
 				if (heredoc_helper(red->file, heredoc_write, red->expanded, shell))
 				{
 					close(heredoc_read);
-					return (1);
+            		printf("%s%s", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
+					return 1;
 				}
 				close(heredoc_write);
 				red->heredoc_fd = heredoc_read;

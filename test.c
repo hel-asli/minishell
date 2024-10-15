@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:01:46 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 01:42:18 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 02:12:06 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ void sigint_func(int nb)
 {
     (void)nb;
     n = 1;
-    ioctl(STDIN_FILENO, TI)
+    ioctl(STDIN_FILENO, TIOCSTI, "\n");
+    rl_replace_line("", 0);
 }
 
 int main(int ac, char **av)
