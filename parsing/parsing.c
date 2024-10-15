@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/14 13:14:29 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 01:48:45 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,34 +182,31 @@ int heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 	while (true)
 	{
 			line = readline("> ");
-			if (!line || rl_done)
-			{
-				if (rl_done)
-				{
-					shell->exit_status = 130;
-					close(fd);
-					rl_done = 0;
-					printf("\n");
-					free(line);
-					return (1);
-				}
+			if (!line)
 				break;
+			if (rl_signal == 1)
+			{
+				close(fd);
+				free(line);
+				line = NULL;
+				return (1);
 			}
+			
 			if (!ft_strcmp(line, delimter))
 				break ;
 			if (expanded)	
 			{
 				line = expand_arg(line, env, shell);
 				if (!line)
-					line = ft_strdup("\n");
+					line = ft_strdup("");
 			}
-			printf("line : [%s]\n", line);
 			write(fd, line, ft_strlen(line));
 			write(fd, "\n", 1);
 	}
 	rl_signal = 1;
 	return (0);
 }
+
 int heredoc(t_shell *shell)
 {
 	t_commands *cmd = shell->commands;
@@ -235,7 +232,10 @@ int heredoc(t_shell *shell)
 					err_exit("unlink");
 				free(name);
 				if (heredoc_helper(red->file, heredoc_write, red->expanded, shell))
+				{
+					close(heredoc_read);
 					return (1);
+				}
 				close(heredoc_write);
 				red->heredoc_fd = heredoc_read;
 			}
@@ -264,6 +264,9 @@ int	parse_input(t_shell *shell)
 		return (syntax_err_msg(syntax), free(new_line), 1);
 	pipes = ft_split_v2(shell->parsing.line, 124);
 	process_pipe_cmds(&shell, pipes);
+	if (heredoc(shell))
+		return (-1);
+	print_cmds(shell->commands);
 	return (0);
 }
 
@@ -271,8 +274,8 @@ void	read_input(t_shell *shell, const char *prompt)
 {
 	while (true)
 	{
-		shell->commands = NULL;
 		rl_signal = 1;
+		shell->commands = NULL;
 		shell->parsing.line = readline(prompt);
 		if (!shell->parsing.line)
 		{
@@ -286,10 +289,8 @@ void	read_input(t_shell *shell, const char *prompt)
 			free(shell->parsing.line);
 			continue ;
 		}
-		if (parse_input(shell) == 1)
+		if (parse_input(shell) == -1)
 			continue ;
-		if (heredoc(shell))
-			continue;
 		restore_terminal_old_attr(&shell->old_attr);
 		rl_signal = 0;
 		execution_start(shell);

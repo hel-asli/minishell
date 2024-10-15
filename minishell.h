@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/13 01:04:10 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 01:37:15 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include <fcntl.h>
 # include <string.h>
 # include <stdarg.h>
+# include <sys/ioctl.h>
 
 extern int rl_signal;
 

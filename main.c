@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/14 13:11:37 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 01:52:36 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ void sigint_handler(int nb)
 	(void)nb;
 	if (rl_signal == 2)
 	{
-		rl_done = 1;
-		rl_replace_line("", 0);
+		rl_signal = 1;
+		ioctl(STDIN_FILENO, TIOCSTI, "dd");
 	}
 	else if (rl_signal)
 	{
@@ -59,8 +59,6 @@ void sigint_handler(int nb)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
-	// else
-	// 	write(1, "\n", 1);
 }
 
 void sigquit_handler(int nb)
@@ -70,7 +68,6 @@ void sigquit_handler(int nb)
 		rl_redisplay();
 	if (!rl_signal)
 		printf("%s%sQuit: 3\n", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
-		// write(STDOUT_FILENO, "Quit: 3\n", 8);
 }
 
 
@@ -99,6 +96,7 @@ void setup_signals(void)
     sa_quit.sa_flags = SA_RESTART;
     sigaction(SIGQUIT, &sa_quit, NULL);
 }
+
 int	main(int ac, char **av, char **ev)
 {
 	t_shell		shell;

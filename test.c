@@ -6,11 +6,13 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:01:46 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/20 17:27:26 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 01:42:18 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <sys/ioctl.h>
+volatile int n = 0;
 char* del_quote(char *str)
 {
     int     i;
@@ -53,16 +55,43 @@ char* del_quote(char *str)
     return (ptr);
 }
 
+void sigint_func(int nb)
+{
+    (void)nb;
+    n = 1;
+    ioctl(STDIN_FILENO, TI)
+}
+
 int main(int ac, char **av)
 {
-    // int i = 0;
-    // while (av[i])
-    // {
-    //     printf("{%s} ", av[i]);
-    //     i++;
-    // }
-    // for (int i = 0; i < 5500; i++)
-    //     printf("abc");
-    // printf("\n");
-    printf("%s\n", del_quote(strdup("   \"hello   world\"  ")));
+    // // int i = 0;
+    // // while (av[i])
+    // // {
+    // //     printf("{%s} ", av[i]);
+    // //     i++;
+    // // }
+    // // for (int i = 0; i < 5500; i++)
+    // //     printf("abc");
+    // // printf("\n");
+    // printf("%s\n", del_quote(strdup("   \"hello   world\"  ")));
+    (void)ac;
+    (void)av;
+    char *line;
+   
+    signal(SIGINT, sigint_func);
+    while (true)
+    {
+        line = readline("> ");
+        if (!line)
+        {
+                // rl_replace_line("", 0);
+            break;
+        }
+        if (n)
+        {
+            free(line);
+            break;
+        }
+    }
+    line = readline("hoho :");
 }
