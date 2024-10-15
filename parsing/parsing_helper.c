@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/15 03:23:04 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 22:16:31 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ char *str_add_char(char *str, char c)
 
 bool is_valid(char c)
 {
-	if ((c >= 'a' && c < 'z') || (c >= 'A' && c <= 'Z'))
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		return (true);
 	else if ((c >= '0' && c <= '9') || c == '_' || c == '$')
 		return (true);

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 06:41:45 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/16 00:15:21 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ bool in_quotes(char *str)
 	return (false);
 }
 
-int heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
+void heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 {
 	char *line;
 	t_env  *env;
@@ -183,24 +183,9 @@ int heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 			line = readline("> ");
 			if (!line)
 			{
-				shell->ears = 1;
-        		printf("%s%s", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
-				rl_on_new_line();
-				rl_replace_line("", 0);
-				rl_redisplay();
-				break;
-			}
-			if (rl_signal == 3)
-			{
-				if (shell->ears)
-        			printf("%s%s",ANSI_CURSOR_UP, ANSI_ERASE_LINE);
-        		printf("%s%s",ANSI_CURSOR_UP, ANSI_ERASE_LINE);
-				close(fd);
 				free(line);
-				line = NULL;
-				return (1);
+				break ;
 			}
-			shell->ears = 0;	
 			if (!ft_strcmp(line, delimter))
 				break ;
 			if (expanded)	
@@ -211,9 +196,22 @@ int heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 			}
 			write(fd, line, ft_strlen(line));
 			write(fd, "\n", 1);
+			free(line);
 	}
-	// rl_signal = 1;
-	return (0);
+}
+
+void sigint_heredoc_handler(int nb)
+{
+	if (nb == SIGINT)
+	{
+		write(STDOUT_FILENO, "\n", 1);
+		exit(1);
+	}
+}
+void setup_heredoc_signals(void)
+{
+	signal(SIGINT, sigint_heredoc_handler);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 int heredoc(t_shell *shell)
@@ -222,13 +220,16 @@ int heredoc(t_shell *shell)
 	t_redirect *red = NULL;
 	int heredoc_read;
 	int heredoc_write;
+	int status;
 
+	rl_signal = 0;
 	while (cmd)
 	{
 		shell->ears = 0;
 		red = cmd->redirect;
 		while (red)
 		{
+			status = 0;
 			if (red->type == HEREDOC_INPUT)
 			{
 				int *nbr = malloc(sizeof(int));
@@ -241,21 +242,33 @@ int heredoc(t_shell *shell)
 				if (unlink(name) < 0)
 					err_exit("unlink");
 				free(name);
-				rl_signal = 2;
-				if (heredoc_helper(red->file, heredoc_write, red->expanded, shell))
+				pid_t id = fork();
+				if (id == 0)
 				{
+					setup_heredoc_signals();
+					heredoc_helper(red->file, heredoc_write, red->expanded, shell);
+					close(heredoc_write);
 					close(heredoc_read);
-					rl_signal = 1;
-					return (1);
+					exit(0);
 				}
-				close(heredoc_write);
-				red->heredoc_fd = heredoc_read;
+				else if (id > 0)
+				{
+					waitpid(id, &status, 0);
+					if (WIFEXITED(status) && WEXITSTATUS(status))
+					{
+						close(heredoc_read);
+						close(heredoc_write);
+						shell->exit_status = WEXITSTATUS(status);
+						return (1);
+					}
+					close(heredoc_write);
+					red->heredoc_fd = heredoc_read;
+				}
 			}
 			red = red->next;
 		}
 		cmd = cmd->next;
 	}
-	rl_signal = 1;
 	return (0);
 }
 
@@ -278,11 +291,7 @@ int	parse_input(t_shell *shell)
 	pipes = ft_split_v2(shell->parsing.line, 124);
 	process_pipe_cmds(&shell, pipes);
 	if (heredoc(shell))
-	{
-        // printf("%s%s", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
 		return (-1);
-	}
-	// print_cmds(shell->commands);
 	return (0);
 }
 
@@ -306,16 +315,11 @@ void	read_input(t_shell *shell, const char *prompt)
 			continue ;
 		}
 		if (parse_input(shell) == -1)
-		{
-			// restore_terminal_old_attr(&shell->old_attr);
 			continue ;
-		}
 		rl_signal = 0;
 		restore_terminal_old_attr(&shell->old_attr);
 		execution_start(shell); 
-		// rl_signal = 1;
 		restore_terminal_old_attr(&shell->copy);
 		free(shell->parsing.line);
 	}
-
 }
