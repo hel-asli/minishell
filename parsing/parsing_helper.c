@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/15 22:16:31 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/16 00:36:28 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,11 @@ char *expand_arg(char *arg, t_env *env, t_shell *shell)
 			if (arg[i] == '$')
 			{
 				new_value = ft_strjoin(new_value, ft_strdup("1337"));
+				i++;
+			}
+			else if (arg[i] >= '0' && arg[i] <= '9')
+			{
+				new_value = ft_strdup("");
 				i++;
 			}
 			else if (arg[i] == '?')
