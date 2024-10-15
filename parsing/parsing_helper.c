@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/11 21:48:49 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 03:23:04 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ t_redirect *build_redirection(char **args)
 	redirect = NULL;
 	while (args[i])
 	{
-		if (args[i + 1] && (is_redirection(args[i]) ||  !ft_strcmp(args[i], "<<")))
+		if (is_redirection(args[i]) ||  !ft_strcmp(args[i], "<<"))
 		{
 			ft_lst_add_redir(&redirect, ft_new_redir(args[i], args[i + 1]));
 			i += 2;
@@ -59,7 +59,6 @@ char **args_allocation(char **tab, size_t arg_count)
 	char	**args;
 	int		i;
 	size_t		k;
-	// printf("[%zu]\n", arg_count);
 	args = malloc(sizeof(char *) * (arg_count + 1));
 	if (!args)
 		err_handle("Allocation Faile!!");
@@ -342,9 +341,7 @@ char **expand_args (char **args, t_shell *shell)
 		if (ft_strchr(args[i], '$'))
 		{	
 			space_to_gar(args[i]);
-			// printf("--> %s\n", args[i]);
 			new_arg = expand_arg(args[i], tmp_shell->env, shell);
-			// printf("new_arg: %s\n", new_arg);
 			if (!new_arg)
 			{
 				i++;
@@ -401,28 +398,39 @@ void expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 		{
 					new_file = expand_arg(tmp->file, env, shell);
 					if (!new_file)
+					{
 						tmp->is_ambgious = true;
+					}
 					else if (check_var(tmp->file) && ft_strchr(new_file, 32))
+					{
 						tmp->is_ambgious = true;
+					}
 					tmp->file = new_file;
 		}
 		tmp = tmp->next;
 	}
 }
 
-// void print_args(char **args)
+// void print_args(t_redirect *redirect)
 // {
-// 	if (args)
-// 	{
-// 		for (int i = 0; args[i]; i++)
-// 			printf("=> {%s}", args[i]);
-// 		if (!args[0])
-// 			printf("--> {%s}\n", args[0]);
-// 		printf("\n");
-// 	}
-// 	else
-// 		printf("args -> NULL\n");
+// 	t_redirect *red;
+// 		red = redirect;
+// 		printf("redirections : \n");
+// 		if (!red)
+// 			printf("(None)\n");
+// 		else
+// 		{
+// 			while (red)
+// 			{
+// 				printf("type : %u\n", red->type);
+// 				printf("expanded : %d\n", red->expanded);
+// 				printf("is_ambigous : %d\n", red->is_ambgious);
+// 				printf("file : {%s}\n", red->file);
+// 				red = red->next;
+// 			}
+// 		}
 // }
+
 void	process_pipe_cmds(t_shell **shell, char **pipes)
 {
 	int			i;

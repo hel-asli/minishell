@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 01:37:15 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 06:06:03 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ typedef struct s_shell
 	struct				termios old_attr;
 	struct				termios copy;
 	int					exit_status;
+	int					ears;
 }						t_shell;
 
 //utils

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 02:18:58 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 06:13:26 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,14 +178,20 @@ int heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 
 	line = NULL;
 	env = shell->env;
-	rl_signal = 2;
 	while (true)
 	{
 			line = readline("> ");
 			if (!line)
-				break;
-			if (rl_signal == 1)
 			{
+        		printf("%s%s", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
+				rl_on_new_line();
+				rl_replace_line("", 0);
+				rl_redisplay();
+				break;
+			}
+			if (rl_signal == 3)
+			{
+        		printf("%s%s", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
 				close(fd);
 				free(line);
 				line = NULL;
@@ -203,7 +209,7 @@ int heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 			write(fd, line, ft_strlen(line));
 			write(fd, "\n", 1);
 	}
-	rl_signal = 1;
+	// rl_signal = 1;
 	return (0);
 }
 
@@ -216,6 +222,7 @@ int heredoc(t_shell *shell)
 
 	while (cmd)
 	{
+		shell->ears = 0;
 		red = cmd->redirect;
 		while (red)
 		{
@@ -231,11 +238,12 @@ int heredoc(t_shell *shell)
 				if (unlink(name) < 0)
 					err_exit("unlink");
 				free(name);
+				rl_signal = 2;
 				if (heredoc_helper(red->file, heredoc_write, red->expanded, shell))
 				{
 					close(heredoc_read);
-            		printf("%s%s", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
-					return 1;
+					rl_signal = 1;
+					return (1);
 				}
 				close(heredoc_write);
 				red->heredoc_fd = heredoc_read;
@@ -244,6 +252,7 @@ int heredoc(t_shell *shell)
 		}
 		cmd = cmd->next;
 	}
+	rl_signal = 1;
 	return (0);
 }
 
@@ -262,12 +271,15 @@ int	parse_input(t_shell *shell)
 	else
 		syntax = other_syntax_check(new_line);
 	if (syntax != SYNTAX_OK)
-		return (syntax_err_msg(syntax), free(new_line), 1);
+		return (syntax_err_msg(syntax), free(new_line), -1);
 	pipes = ft_split_v2(shell->parsing.line, 124);
 	process_pipe_cmds(&shell, pipes);
 	if (heredoc(shell))
+	{
+        // printf("%s%s", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
 		return (-1);
-	print_cmds(shell->commands);
+	}
+	// print_cmds(shell->commands);
 	return (0);
 }
 
@@ -291,10 +303,14 @@ void	read_input(t_shell *shell, const char *prompt)
 			continue ;
 		}
 		if (parse_input(shell) == -1)
+		{
+			// restore_terminal_old_attr(&shell->old_attr);
 			continue ;
-		restore_terminal_old_attr(&shell->old_attr);
+		}
 		rl_signal = 0;
-		execution_start(shell);
+		restore_terminal_old_attr(&shell->old_attr);
+		execution_start(shell); 
+		// rl_signal = 1;
 		restore_terminal_old_attr(&shell->copy);
 		free(shell->parsing.line);
 	}

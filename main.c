@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 02:01:18 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 06:14:12 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,12 @@ void sigint_handler(int nb)
 	(void)nb;
 	if (rl_signal == 2)
 	{
-		rl_signal = 1;
+		rl_signal = 3;
+		// rl_replace_line("", 0);
+		// rl_redisplay();
 		ioctl(STDIN_FILENO, TIOCSTI, "\n");
-
 	}
-	else if (rl_signal)
+	if (rl_signal == 1)
 	{
 		printf("\n");
 		rl_on_new_line();

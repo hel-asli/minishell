@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:29:29 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/11 21:48:33 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/15 03:12:30 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ t_redirect	*ft_new_redir(char *type, char *file)
 {
 	t_redirect	*node;
 
-	node = malloc(sizeof(t_commands));
+	node = malloc(sizeof(t_redirect));
 	node->expanded = false;
 	if (!node)
 		return (NULL);
@@ -91,20 +91,6 @@ t_redirect	*ft_new_redir(char *type, char *file)
 		node->type = OUT_APPEND;
 	node->file = file;
 	node->is_ambgious = false;
-	node->next = NULL;
-	return (node);
-}
-
-t_redirect	*ft_new_redir_v2(t_red type, char *file, bool expanded)
-{
-	t_redirect	*node;
-
-	node = malloc(sizeof(t_commands));
-	if (!node)
-		return (NULL);
-	node->type = type;
-	node->file = file;
-	node->expanded = expanded;
 	node->next = NULL;
 	return (node);
 }
