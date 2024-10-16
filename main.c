@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/16 03:10:08 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 00:16:47 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ void	built_env(t_env **env, char **ev)
 	while (ev[i])
 	{
 		sp = ft_env_split(ev[i]);
-		ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1])));
+		if (ft_strcmp(sp[0], "OLDPWD"))
+			ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1])));
 		ft_free(sp);
 		i++;
 	}
@@ -115,7 +116,7 @@ int	main(int ac, char **av, char **ev)
 	setup_signals();
 	shell.env = NULL;
 	shell.commands = NULL;
-	shell.exit_status = -1;
+	shell.exit_status = 0;
 	if (ev == NULL || *ev == NULL)
 		set_env(&shell.env);
 	else

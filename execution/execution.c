@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/16 05:18:00 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 00:12:39 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,16 +175,17 @@ void execute_command(t_env *env, t_commands *cmnds, t_exec *exec, int i)
         cmd_path = find_command(cmnds->args[0], env);
     if (cmd_path != NULL)
     {
+        fprintf(stderr, "%s\n", cmd_path);
         execve(cmd_path, cmnds->args, exec->ev_execve);
-        ft_fprintf(2, "Error: Failed to execute command: %s\n", cmnds->args[0]);
+        // ft_fprintf(2, "Error: Failed to execute command: %s\n", cmnds->args[0]);
         free(cmd_path);
         free_exec(exec);
-        exit(EXIT_FAILURE);
+        err_exit("execve");    
     }
     if (cmnds->args[0])
         ft_fprintf(2, "Error: Command not found: %s\n", cmnds->args[0]);
     free_exec(exec);
-    exit(EXIT_FAILURE);
+    exit(127);
 }
 
 void execution_start(t_shell *shell)
@@ -230,24 +231,21 @@ void execution_start(t_shell *shell)
 	i = 0;
     while (i <= exec.nbr)
     {
-        pid_t wait_pid = waitpid(exec.ids[i], &status, 0);
-        if (wait_pid < 0)
-        {
-            if (errno != EINTR)
-                err_exit("waitpid");
-        }
-        else if (WIFSIGNALED(status) && !WIFEXITED(status))
-        {
-                int sig = WTERMSIG(status);
-                if (sig == SIGINT && !rl_signal)
-                    write(STDOUT_FILENO, "\n", 1);
-                if (sig == SIGQUIT)
-                    write(STDOUT_FILENO, "Quit: 3\n", 8);
-                shell->exit_status = 128 + sig;
-            i++;
-        }
+        if (waitpid(exec.ids[i], &status, 0) < 0 && errno == ECHILD)
+            err_exit("WaitPid");
+        if (WIFEXITED(status))
+            shell->exit_status = WEXITSTATUS(status);
+        else if (WIFSIGNALED(status))
+            break ;
         i++;
     }
-    if (WIFEXITED(status))
-        shell->exit_status = WEXITSTATUS(status);
+    if (WIFSIGNALED(status))
+    {
+        int sig = WTERMSIG(status);
+        if (sig == SIGINT && !rl_signal)
+            write(STDOUT_FILENO, "\n", 1);
+        if (sig == SIGQUIT)
+            write(STDOUT_FILENO, "Quit: 3\n", 8);
+        shell->exit_status = 128 + sig;
+    }
 }
