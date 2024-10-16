@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/16 00:15:21 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/16 06:28:14 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,30 +43,28 @@ char	*add_spaces(char *line)
 	size_t	j;
 	size_t	i;
 	size_t	len;
-	char	*new_line ;
+	char	*nl;
 
 	(1) && (i = 0, j = 0, len = count_len(line));
-	new_line = malloc(sizeof(char) * len + 1);
-	if (!new_line)
+	nl = malloc(sizeof(char) * len + 1);
+	if (!nl)
 		return (free(line), NULL);
 	while (line[i] && j < len)
 	{
 		if (ft_strstr(&line[i], ">>") || ft_strstr(&line[i], "<<"))
 		{
-			(1) && (new_line[j++] = 32, new_line[j++] = line[i++]);
-			(1) && (new_line[j++] = line[i++],new_line[j++] = 32);
+			(1) && (nl[j++] = 32, nl[j++] = line[i++]);
+			(1) && (nl[j++] = line[i++], nl[j++] = 32);
 		}
 		else if (ft_strstr(&line[i], ">")
 			|| ft_strstr(&line[i], "<") || ft_strstr(&line[i], "|"))
 		{
-			(1) && (new_line[j++] = 32, new_line[j++] = line[i++]);
-			new_line[j++] = 32;
+			(1) && (nl[j++] = 32, nl[j++] = line[i++], nl[j++] = 32);
 		}
 		else
-			new_line[j++] = line[i++];
+			nl[j++] = line[i++];
 	}
-	new_line[j] = '\0';
-	return (free(line), new_line);
+	return (nl[j] = 0, free(line), nl);
 }
 
 bool is_special(char c)
@@ -140,7 +138,7 @@ char* del_quote(char *str)
     int j = 0;
 
     in_quote = false;
-    ptr = malloc(sizeof(char) * strlen(str) + 1);
+    ptr = malloc(sizeof(char) * ft_strlen(str) + 1);
     while (str[i])
     {
         if (!in_quote && (str[i] == '\'' || str[i] == '"'))
@@ -225,7 +223,6 @@ int heredoc(t_shell *shell)
 	rl_signal = 0;
 	while (cmd)
 	{
-		shell->ears = 0;
 		red = cmd->redirect;
 		while (red)
 		{
@@ -274,24 +271,24 @@ int heredoc(t_shell *shell)
 
 int	parse_input(t_shell *shell)
 {
-	char		*new_line;
 	char		**pipes;
 	t_syntax	syntax;
 	space_to_gar(shell->parsing.line); 
-	new_line = add_spaces(shell->parsing.line);
-	shell->parsing.line = new_line;
-	if (!new_line)
+	shell->parsing.line = add_spaces(shell->parsing.line);
+	if (!shell->parsing.line)
 		return (-1);
-	if (!quotes_syntax_check(new_line))
+	if (!quotes_syntax_check(shell->parsing.line))
 		syntax = UNCLOSED_QUOTES;
 	else
-		syntax = other_syntax_check(new_line);
+		syntax = other_syntax_check(shell->parsing.line);
 	if (syntax != SYNTAX_OK)
-		return (syntax_err_msg(syntax), free(new_line), -1);
+		return (syntax_err_msg(syntax), free(shell->parsing.line), -1);
 	pipes = ft_split_v2(shell->parsing.line, 124);
+	free(shell->parsing.line);
 	process_pipe_cmds(&shell, pipes);
 	if (heredoc(shell))
 		return (-1);
+	print_cmds(shell->commands);
 	return (0);
 }
 
@@ -314,12 +311,10 @@ void	read_input(t_shell *shell, const char *prompt)
 			free(shell->parsing.line);
 			continue ;
 		}
-		if (parse_input(shell) == -1)
+		if ((parse_input(shell) == -1) || !shell->commands)
 			continue ;
-		rl_signal = 0;
 		restore_terminal_old_attr(&shell->old_attr);
 		execution_start(shell); 
 		restore_terminal_old_attr(&shell->copy);
-		free(shell->parsing.line);
 	}
 }

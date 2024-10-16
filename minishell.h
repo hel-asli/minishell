@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 06:36:48 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/16 06:24:28 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,9 @@ typedef struct s_redirect
 typedef struct s_commands
 {
 	t_env				*env;
-	struct s_commands	*next;
 	char				**args;
 	t_redirect			*redirect;
+	struct s_commands	*next;
 }						t_commands;
 
 typedef struct s_parsing
@@ -109,7 +109,6 @@ typedef struct s_shell
 	struct				termios old_attr;
 	struct				termios copy;
 	int					exit_status;
-	int					ears;
 }						t_shell;
 
 //utils

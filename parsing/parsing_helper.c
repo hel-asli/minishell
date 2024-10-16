@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/16 00:36:28 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/16 05:36:14 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@ size_t arr_len(char **tab)
 	size_t i;
 
 	i = 0;
+	if (!tab)
+		return (0);
 	while (tab[i])
 		i++;
 	return (i);
@@ -187,7 +189,10 @@ char *expand_arg(char *arg, t_env *env, t_shell *shell)
 			}
 			else if (arg[i] >= '0' && arg[i] <= '9')
 			{
-				new_value = ft_strdup("");
+				if (arg[i] == '0')
+					new_value = ft_strdup("minishell");
+				else
+					new_value = ft_strdup("");
 				i++;
 			}
 			else if (arg[i] == '?')
@@ -249,7 +254,7 @@ char ** re_build_arg(char **args, char **sp)
     char **ptr = malloc(sizeof(char *) * (len + 1)); 
     if (!ptr)
         err_handle("malloc");
-    while (args[j])
+    while (args && args[j])
     {
         ptr[j] = args[j];
         j++;
@@ -278,11 +283,17 @@ char **add_arr(char **args, char *str)
 	size_t i = 0;
 	while (i < len)
 	{
-		new[i] = ft_strdup(args[i]);
+		new[i] = args[i];
 		i++;
 	}
 	if (str)
-		new[i++] = ft_strdup(str);
+	{
+		if (!str)
+			new[i] = str;
+		else
+			new[i] = ft_strdup(str);
+		i++;
+	}
 	new[i] = NULL;
 	return (new);
 }
@@ -339,30 +350,28 @@ char **expand_args (char **args, t_shell *shell)
 	tmp_shell = shell; 
 	char *new_arg = NULL;
 	char **sp = NULL;
-	char **tab = malloc(sizeof(char *) * 1);
-	tab[0] = NULL;
+	char **tab = NULL;
+
 	while (args[i])
 	{
 		if (ft_strchr(args[i], '$'))
 		{	
 			space_to_gar(args[i]);
 			new_arg = expand_arg(args[i], tmp_shell->env, shell);
-			if (!new_arg)
+			if (new_arg)
 			{
-				i++;
-				continue;
-			}
-			if (check_var(args[i]) && ft_strchr(new_arg, ' '))
-			{
-				space_to_gar(new_arg);
-				sp = ft_split(new_arg);
-				tab = re_build_arg(tab, sp);
-				ft_free(sp);
-			}
-			else
-			{
-				gar_protect(new_arg);
-				tab = add_arr(tab, new_arg);
+				if (check_var(args[i]) && ft_strchr(new_arg, ' '))
+				{
+					space_to_gar(new_arg);
+					sp = ft_split(new_arg);
+					tab = re_build_arg(tab, sp);
+					ft_free(sp);
+				}
+				else
+				{
+					gar_protect(new_arg);
+					tab = add_arr(tab, new_arg);
+				}
 			}
 		}
 		else
@@ -373,7 +382,7 @@ char **expand_args (char **args, t_shell *shell)
 		}
 		i++;
 	}
-	return (tab);
+	return (ft_free(args), tab);
 }
 
 bool check_file(char *file)
@@ -397,44 +406,24 @@ void expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 	char	*new_file;
 	
 	tmp = redirect;
+	new_file = NULL;
 	while (tmp)
 	{
 		if (tmp->type != HEREDOC_INPUT)
 		{
-					new_file = expand_arg(tmp->file, env, shell);
-					if (!new_file)
-					{
-						tmp->is_ambgious = true;
-					}
-					else if (check_var(tmp->file) && ft_strchr(new_file, 32))
-					{
-						tmp->is_ambgious = true;
-					}
-					tmp->file = new_file;
+			new_file = expand_arg(tmp->file, env, shell);
+			if (!new_file && !ft_strchr(tmp->file, '"') && !ft_strchr(tmp->file, '\''))
+				tmp->is_ambgious = true;
+			else if (new_file && check_var(tmp->file) && ft_strchr(new_file, 32))
+				tmp->is_ambgious = true;
+			free(tmp->file);
+			tmp->file = new_file;
 		}
+		else
+			tmp->file = del_quote(tmp->file);
 		tmp = tmp->next;
 	}
 }
-
-// void print_args(t_redirect *redirect)
-// {
-// 	t_redirect *red;
-// 		red = redirect;
-// 		printf("redirections : \n");
-// 		if (!red)
-// 			printf("(None)\n");
-// 		else
-// 		{
-// 			while (red)
-// 			{
-// 				printf("type : %u\n", red->type);
-// 				printf("expanded : %d\n", red->expanded);
-// 				printf("is_ambigous : %d\n", red->is_ambgious);
-// 				printf("file : {%s}\n", red->file);
-// 				red = red->next;
-// 			}
-// 		}
-// }
 
 void	process_pipe_cmds(t_shell **shell, char **pipes)
 {
@@ -443,24 +432,29 @@ void	process_pipe_cmds(t_shell **shell, char **pipes)
 	char		**args;
 	t_redirect	*redirect;
 
-	i = -1;
+	i = 0;
 	redirect = NULL;
-	while (pipes[++i])
+	while (pipes[i])
 	{
 		tab = ft_split(pipes[i]);
 		if (!tab)
 			err_handle("Allocation Faile");
 		for (int j = 0; tab[j] ; j++)
-		{
 			gar_protect(tab[j]);
-		}
 		redirect = build_redirection(tab);
 		args = args_allocation(tab, count_non_redirection_arg_size(tab)); 
+		ft_free(tab);
 		args = expand_args(args, *shell);
 		expand_redirect(redirect, (*shell)->env, *shell);
+		if (!args && !redirect)
+		{
+			i++;
+			continue;
+		}
 		ft_back_addlst(&(*shell)->commands, ft_newlist(args, redirect));
-		free(tab);
+		i++;
 	}
+	ft_free(pipes);
 }
 
 void	print_cmds(t_commands *cmds)

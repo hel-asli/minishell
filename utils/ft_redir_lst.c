@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:29:29 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/15 03:12:30 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/16 02:39:54 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ t_redirect	*ft_new_redir(char *type, char *file)
 		node->type = OUT_TRUNC;
 	else if (!ft_strcmp(">>", type))
 		node->type = OUT_APPEND;
-	node->file = file;
+	node->file = ft_strdup(file);
 	node->is_ambgious = false;
 	node->next = NULL;
 	return (node);

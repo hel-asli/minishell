@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/16 00:21:47 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/16 03:10:08 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	set_env(t_env **env)
 	pwd = getcwd(NULL, 0);
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("PATH"),
 			ft_strdup("/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:.")));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), pwd));
+	ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), NULL));
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("SHLVL"), ft_strdup("1")));
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("_"), ft_strdup("/usr/bin/env")));
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), NULL));
@@ -66,14 +66,12 @@ void sigint_handler(int nb)
 void sigquit_handler(int nb)
 {
 	(void)nb;
-	// if (rl_signal == 1)
-	// 	rl_redisplay();
 	if (!rl_signal)
 	{
 		printf("Quit: 3\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+		// rl_on_new_line();
+		// rl_replace_line("", 0);
+		// rl_redisplay();
 	}
 }
 
