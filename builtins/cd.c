@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/10 00:04:04 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/17 01:01:05 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,30 @@ bool	my_cd(t_commands *cmnds, t_env **env)
 	tmp = *env;
 	curr = cmnds;
 	oldpwd = get_env("PWD", tmp);
+	fprintf(stderr, "%s\n", oldpwd);
 	if (curr->args[1] == NULL)
 	{
 		char *home = get_env("HOME", tmp);
-		if (home == NULL || chdir(home) == -1)
+		if (!home)
+			return (ft_putstr_fd("minishell: HOME not set\n", STDERR_FILENO), true);
+		else
 		{
-			ft_putstr_fd("minishell: cd: HOME not set or invalid\n", 2);
-			free(oldpwd);
-			return (false);
+			puts("hhh");
+			if (chdir(home) < 0)
+				err_exit("HOME");
+			if (oldpwd)
+			{
+				if (!get_env("OLDPWD", tmp))
+					ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(oldpwd)));
+				else
+					env_update(env, "OLDPWD", oldpwd);
+			}
+			pwd = getcwd(NULL, 0);
+			if (get_env("PWD", tmp))
+				env_update(env, "PWD", pwd);
+			else
+				ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd)));
+			return (free(pwd), true);
 		}
 	}
 	else
@@ -55,21 +71,20 @@ bool	my_cd(t_commands *cmnds, t_env **env)
 		{
 			perror("minishell: cd");
 			free(oldpwd);
-			return (false);
+			return (true);
 		}
+		if (oldpwd)
+		{
+			if (!get_env("OLDPWD", tmp))
+				ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(oldpwd)));
+			else
+				env_update(env, "OLDPWD", oldpwd);
+		}
+		pwd = getcwd(NULL, 0);
+		if (get_env("PWD", tmp))
+			env_update(env, "PWD", pwd);
+		else
+			ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd)));
+		return (free(pwd), true);
 	}
-	pwd = getcwd(NULL, 0);
-	if (pwd == NULL)
-	{
-		perror("minishell: cd");
-		free(oldpwd);
-		return (false);
-	}
-	env_update(env, "OLDPWD", oldpwd);
-	free(oldpwd);
-	oldpwd = NULL;
-	env_update(env, "PWD", pwd);
-	free(pwd);
-	pwd = NULL;
-	return (true);
 }
