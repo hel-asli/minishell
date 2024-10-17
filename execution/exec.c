@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 00:49:12 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/11 21:31:28 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 02:06:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char *find_command(char *cmd, t_env *env)
 	char **pt;
 
 	tmp = env;
-    if (cmd == NULL)
+    if (!cmd || !cmd[0])
         return NULL;
     if (my_strchr_v2(cmd, '/') != NULL)
 	{

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/16 23:45:04 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 02:53:06 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ size_t	count_len(char *line)
 			i += 2;
 		}
 		else if (ft_strstr(&line[i], ">")
-			|| ft_strstr(&line[i], "<") || ft_strstr(&line[i], "|"))
+				|| ft_strstr(&line[i], "<") || ft_strstr(&line[i], "|"))
 		{
 			len += 2;
 			i++;
@@ -57,7 +57,7 @@ char	*add_spaces(char *line)
 			(1) && (nl[j++] = line[i++], nl[j++] = 32);
 		}
 		else if (ft_strstr(&line[i], ">")
-			|| ft_strstr(&line[i], "<") || ft_strstr(&line[i], "|"))
+				|| ft_strstr(&line[i], "<") || ft_strstr(&line[i], "|"))
 		{
 			(1) && (nl[j++] = 32, nl[j++] = line[i++], nl[j++] = 32);
 		}
@@ -96,65 +96,50 @@ void match_char(char *line, int i)
 
 void space_to_gar(char *line)
 {
-    int i = 0;
-    bool in_quotes = false;
-    char quote_type = 0;
+	int		i;
+	bool	in_quotes;
+	char	quote_type;
 
-    while (line[i])
-    {
-        if (line[i] == '"' || line[i] == '\'')
-        {
-            if (!in_quotes)
-            {
-                in_quotes = true;
-                quote_type = line[i];
-            }
-            else if (line[i] == quote_type)
-            {
-                in_quotes = false;
-            }
-            else
-            {
-				if (is_special(line[i]))
-					match_char(line, i);
-            }
-        }
-        else if (in_quotes)
-        {
-			if (is_special(line[i]))
+	(1) && (i = -1 ,in_quotes = false, quote_type = 0);
+	while (line[++i])
+	{
+		if (line[i] == '"' || line[i] == '\'')
+		{
+			if (!in_quotes)
+				(1) && (in_quotes = true, quote_type = line[i]);
+			else if (line[i] == quote_type)
+				in_quotes = false;
+			else if (is_special(line[i]))
 				match_char(line, i);
-        }
-        i++;
-    }
+		}
+		else if (in_quotes && is_special(line[i]))
+			match_char(line, i);
+	}
 }
 
 char* del_quote(char *str)
 {
-    int     i;
-    char *ptr;
-    char    type = '\0';
-    bool    in_quote;
-    i = 0;
-    int j = 0;
+	int     i;
+	int		j;
+	char	*ptr;
+	char	type;
+	bool	in_quote;
 
-    in_quote = false;
-    ptr = malloc(sizeof(char) * ft_strlen(str) + 1);
-    while (str[i])
-    {
-        if (!in_quote && (str[i] == '\'' || str[i] == '"'))
-        {
-            in_quote = !in_quote;
-            type = str[i];
-        }
-        else if (in_quote && type == str[i])
-            in_quote = false;
-        else
-            ptr[j++] = str[i];
-        i++;
-    }
-    ptr[j] = '\0';
-	free(str);
-    return (ptr);
+	(1) && (j = 0, i = 0, in_quote = false, type = 0);
+	ptr = malloc(sizeof(char) * ft_strlen(str) + 1);
+	if (!ptr)
+		err_handle("Malloc Failure");
+	while (str[i])
+	{
+		if (!in_quote && (str[i] == '\'' || str[i] == '"'))
+			(1) && (in_quote = !in_quote, type = str[i]);
+		else if (in_quote && type == str[i])
+			in_quote = false;
+		else
+			ptr[j++] = str[i];
+		i++;
+	}
+	return (ptr[j] = 0, free(str), ptr);
 }
 
 bool in_quotes(char *str)
@@ -171,30 +156,29 @@ bool in_quotes(char *str)
 
 void heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 {
-	char *line;
-	t_env  *env;
+	char	*line;
+	t_env 	*env;
 
-	line = NULL;
-	env = shell->env;
+	(1) && (line = NULL, env = shell->env);
 	while (true)
 	{
-			line = readline("> ");
-			if (!line)
-			{
-				free(line);
-				break ;
-			}
-			if (!ft_strcmp(line, delimter))
-				break ;
-			if (expanded)	
-			{
-				line = expand_arg(line, env, shell);
-				if (!line)
-					line = ft_strdup("");
-			}
-			write(fd, line, ft_strlen(line));
-			write(fd, "\n", 1);
+		line = readline("> ");
+		if (!line)
+		{
 			free(line);
+			break ;
+		}
+		if (!ft_strcmp(line, delimter))
+			break ;
+		if (expanded)	
+		{
+			line = expand_arg(line, env, shell);
+			if (!line)
+				line = ft_strdup("");
+		}
+		write(fd, line, ft_strlen(line));
+		write(fd, "\n", 1);
+		free(line);
 	}
 }
 
@@ -288,7 +272,7 @@ int	parse_input(t_shell *shell)
 	process_pipe_cmds(&shell, pipes);
 	if (heredoc(shell))
 		return (-1);
-	// print_cmds(shell->commands);
+	print_cmds(shell->commands);
 	return (0);
 }
 
