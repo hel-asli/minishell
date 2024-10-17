@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:44:39 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/08 02:38:01 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/17 04:53:57 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ char	*ft_strdup(const char *str)
 	size_t	len;
 	char	*d;
 
+	if (!str)
+		return (NULL);
 	len = ft_strlen(str);
 	d = (char *)malloc(sizeof(char) * len +1);
 	i = 0;

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/17 03:05:51 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 04:56:54 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@ void	env_update(t_env **env, char *key, char *value)
 		if (!ft_strcmp(curr->key, key))
 		{
 			free(curr->value);
-			curr->value = ft_strdup(value);
+			if (!value)
+				curr->value = NULL;
+			else
+				curr->value = ft_strdup(value);
 			return ;
 		}
 		curr = curr->next;
@@ -49,7 +52,6 @@ bool	my_cd(t_commands *cmnds, t_env **env)
 	tmp = *env;
 	curr = cmnds;
 	oldpwd = get_env("PWD", tmp);
-	fprintf(stderr, "%s\n", oldpwd);
 	if (curr->args[1] == NULL)
 	{
 		char *home = get_env("HOME", tmp);

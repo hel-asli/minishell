@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/17 04:11:35 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/17 04:50:26 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,14 +103,6 @@ void setup_signals(void)
     sigaction(SIGQUIT, &sa_quit, NULL);
 }
 
-static void	print_zsh_msg(void)
-{
-	printf("\nThe default interactive shell is now zsh.\n");
-	printf("To update your account to use zsh, please run `chsh -s /bin/zsh`.\n");
-	printf("For more details, please visit https://support.apple.com/kb/HT208050.\n");
-	return ;
-}
-
 int	main(int ac, char **av, char **ev)
 {
 	t_shell		shell;
@@ -129,7 +121,6 @@ int	main(int ac, char **av, char **ev)
 		set_env(&shell.env);
 	else
 		built_env(&shell.env, ev);
-	print_zsh_msg();
 	read_input(&shell, "minishell$ ");
 	restore_terminal_old_attr(&shell.old_attr);
 }

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/16 06:24:28 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 05:07:03 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,8 @@ typedef enum e_red
 typedef struct s_env
 {
 	char				*key;
-	bool				equal;
 	struct s_env		*next;
 	char				*value;
-	int					exported;
 }						t_env;
 
 
@@ -134,6 +132,7 @@ size_t					ft_strlen(const char *str);
 char					*ft_strdup(const char *str);
 int						ft_lstsize(t_commands *lst);
 bool					ft_strchr(char *str, char c);
+bool					ft_lookup(char *str, char c);
 char					*my_strchr_v2(char *s, int c);
 char					*ft_strtok(char *str, char c);
 void					ft_putstr_fd(char *s, int fd);
@@ -155,17 +154,13 @@ int						ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t					ft_strlcpy(char *dest, const char *src, size_t size);
 t_redirect				*ft_new_redir_v2(t_red type, char *file, bool expanded);
 char					*ft_substr(char const *s, unsigned int start, size_t len);
-void					set_terminal_new_attr(struct termios *old_attr);
-void restore_terminal_old_attr(struct termios *old_attr);
-void					setup_signals(void);
-void					sigquit_handler(int nb);
-void					sigint_handler(int nb);
-
-
 
 //parsing
+void					setup_signals(void);
 bool					is_ascii(char *str);
 char					*del_quote(char *str);
+void					sigint_handler(int nb);
+void					sigquit_handler(int nb);
 void					space_to_gar(char *line);
 t_commands				*ft_last(t_commands *node);
 bool					is_redirection(char *token);
@@ -178,11 +173,13 @@ void					print_cmds(t_commands *commands);
 bool					check_heredoc(char **tokens, int i);
 t_redirect				*ft_new_redir(char *type, char *file);
 bool					check_redirection(char **tokens, int i);
+t_commands				*ft_newlist(char **args, t_redirect *red);
+void					set_terminal_new_attr(struct termios *old_attr);
 void					process_pipe_cmds(t_shell **shell, char **pipes);
 void					read_input(t_shell *parsing, const char *prompt);
 void					ft_back_addlst(t_commands **lst, t_commands *new);
 void					ft_lst_add_redir(t_redirect **lst, t_redirect *new);
-t_commands				*ft_newlist(char **args, t_redirect *red);
+void					restore_terminal_old_attr(struct termios *old_attr);
 
 // execution
 bool					my_pwd(void);

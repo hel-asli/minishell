@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/17 02:53:06 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 05:57:41 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,6 @@ int heredoc(t_shell *shell)
 {
 	t_commands *cmd = shell->commands;
 	t_redirect *red = NULL;
-	int heredoc_read;
 	int heredoc_write;
 	int status;
 
@@ -219,7 +218,7 @@ int heredoc(t_shell *shell)
 				if (!name)
 					err_handle("malloc");
 				heredoc_write = open(name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-				heredoc_read = open(name, O_RDONLY, 0644);
+				red->heredoc_fd = open(name, O_RDONLY, 0644);
 				if (unlink(name) < 0)
 					err_exit("unlink");
 				free(name);
@@ -229,21 +228,20 @@ int heredoc(t_shell *shell)
 					setup_heredoc_signals();
 					heredoc_helper(red->file, heredoc_write, red->expanded, shell);
 					close(heredoc_write);
-					close(heredoc_read);
+					close(red->heredoc_fd);
 					exit(0);
 				}
 				else if (id > 0)
 				{
 					waitpid(id, &status, 0);
+					close(heredoc_write);
 					if (WIFEXITED(status) && WEXITSTATUS(status))
 					{
-						close(heredoc_read);
+						close(red->heredoc_fd);
 						close(heredoc_write);
 						shell->exit_status = WEXITSTATUS(status);
 						return (1);
 					}
-					close(heredoc_write);
-					red->heredoc_fd = heredoc_read;
 				}
 			}
 			red = red->next;
@@ -266,13 +264,12 @@ int	parse_input(t_shell *shell)
 	else
 		syntax = other_syntax_check(shell->parsing.line);
 	if (syntax != SYNTAX_OK)
-		return (syntax_err_msg(syntax), free(shell->parsing.line), -1);
+		return (syntax_err_msg(syntax), free(shell->parsing.line), shell->exit_status = 258, 1);
 	pipes = ft_split_v2(shell->parsing.line, 124);
 	free(shell->parsing.line);
 	process_pipe_cmds(&shell, pipes);
 	if (heredoc(shell))
-		return (-1);
-	print_cmds(shell->commands);
+		return (1);
 	return (0);
 }
 
@@ -295,7 +292,7 @@ void	read_input(t_shell *shell, const char *prompt)
 			free(shell->parsing.line);
 			continue ;
 		}
-		if ((parse_input(shell) == -1) || !shell->commands)
+		if (parse_input(shell) || !shell->commands)
 			continue ;
 		restore_terminal_old_attr(&shell->old_attr);
 		execution_start(shell); 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:45:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/26 03:18:24 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/17 05:04:30 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,17 @@ bool	ft_strstr(char *str, char *del)
 	while (str[i] && del[i] && str[i] == del[i])
 		i++;
 	return (i == ft_strlen(del));
+}
+
+bool	ft_lookup(char *str, char c)
+{
+	size_t	i;
+
+	i = -1;
+	while (str[++i])
+	{
+		if (str[i] == c)
+			return (true);
+	}
+	return (false);
 }

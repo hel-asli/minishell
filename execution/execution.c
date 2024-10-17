@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/17 02:10:11 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 05:56:57 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,12 +119,14 @@ int handle_redirections(t_redirect *redirect)
 			}
 			else
 				fd = redirect->heredoc_fd;
+            fprintf(stderr, "%d\n", fd);
             if (dup2(fd, STDIN_FILENO) == -1)
             {
                 perror("dup2");
                 close(fd);
                 return -1;
             }
+            close(fd);
         }
         else if (redirect->type == OUT_TRUNC || redirect->type == OUT_APPEND)
         {
@@ -150,6 +152,7 @@ int handle_redirections(t_redirect *redirect)
                 close(fd);
                 return -1;
             }
+            close(fd);
         }
 		if (fd != -1)
         	close(fd);
