@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/16 05:36:14 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 01:06:02 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,11 @@ char *get_env(char *key, t_env *env)
 	while (env)
 	{
 		if (!ft_strcmp(env->key, key))
+		{
+			if (!env->value)
+				return (NULL);
 			return (ft_strdup(env->value));
+		}
 		env = env->next;
 	}
 	return (NULL);

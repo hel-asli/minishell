@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/17 01:01:05 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 01:10:58 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,16 @@ void	env_update(t_env **env, char *key, char *value)
 		curr = curr->next;
 	}
 }
+bool is_exists(char *key, t_env *env)
+{
+	while (env)
+	{
+		if (!ft_strcmp(env->key, key))
+			return (true);
+		env = env->next;
+	}
+	return (false);
+}
 
 bool	my_cd(t_commands *cmnds, t_env **env)
 {
@@ -47,18 +57,17 @@ bool	my_cd(t_commands *cmnds, t_env **env)
 			return (ft_putstr_fd("minishell: HOME not set\n", STDERR_FILENO), true);
 		else
 		{
-			puts("hhh");
 			if (chdir(home) < 0)
 				err_exit("HOME");
 			if (oldpwd)
 			{
-				if (!get_env("OLDPWD", tmp))
+				if (!is_exists("OLDPWD", tmp))
 					ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(oldpwd)));
 				else
 					env_update(env, "OLDPWD", oldpwd);
 			}
 			pwd = getcwd(NULL, 0);
-			if (get_env("PWD", tmp))
+			if (is_exists("PWD", tmp))
 				env_update(env, "PWD", pwd);
 			else
 				ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd)));
@@ -75,13 +84,13 @@ bool	my_cd(t_commands *cmnds, t_env **env)
 		}
 		if (oldpwd)
 		{
-			if (!get_env("OLDPWD", tmp))
+			if (!is_exists("OLDPWD", tmp))
 				ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(oldpwd)));
 			else
 				env_update(env, "OLDPWD", oldpwd);
 		}
 		pwd = getcwd(NULL, 0);
-		if (get_env("PWD", tmp))
+		if (is_exists("PWD", tmp))
 			env_update(env, "PWD", pwd);
 		else
 			ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd)));
