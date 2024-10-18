@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/18 10:52:25 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 11:18:39 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,42 +209,44 @@ char *get_new_value(t_shell *shell, char *arg, int *i)
 	return (new_value);
 }
 
-
-
-char *expand_arg(char *arg, t_env *env, t_shell *shell)
+void quotes_check(char c, bool *in_single, bool *in_double, int *i)
 {
-	char *new_value = ft_strdup("");
-	bool in_single = false;
-	bool in_double = false;
-	char *env_key = NULL;
-	char *env_value = NULL;
+		if (c == '\'' && !(*in_double))
+		{
+			(*in_single) = !(*in_single);
+			(*i)++;
+		}
+		else if (c == '"' && !(*in_single))
+		{
+			(*in_double) = !(*in_double);
+			(*i)++;
+		}	
+}
+
+char *expand_arg(char *arg, t_env *env, t_shell *shell, char *env_key)
+{
+	char	*new_value;
+	char	*env_value;
+	bool	quotes[2];
+	int		i;
+
+	(1) && (i = 0, quotes[0] = false, quotes[1] = false, env_key = NULL, env_value = NULL);
+	new_value = ft_strdup("");
 	if (!new_value)
 		err_handle("allocation");
-	int i = 0;
 	while (arg[i])
 	{
-		if (arg[i] == '\'' && !in_double)
-		{
-			in_single = !in_single; 
-			i++;
-		}
-		else if (arg[i] == '"' && !in_single)
-		{
-			in_double = !in_double;
-			i++;
-		}
-		else if (arg[i] == '$' && !in_single)
+		if (arg[i] == '\'' || arg[i] == '"')
+			quotes_check(arg[i], &quotes[0], &quotes[1], &i);
+		else if (arg[i] == '$' && !quotes[0])
 		{
 			i++;
-			if ((arg[i] == '"' || arg[i] == '\'') && !in_double && !in_single)
-				continue;
+			if ((arg[i] == '"' || arg[i] == '\'') && !quotes[1] && !quotes[0])
+				continue ;
 			new_value = ft_strjoin(new_value, get_new_value(shell, arg, &i));
 		}
 		else
-		{
-			new_value = str_add_char(new_value, arg[i]);
-			i++;	
-		}
+			(1) && (new_value = str_add_char(new_value, arg[i]), i++);
 	}
 	if (!new_value[0])
 		return (free(new_value), NULL);
@@ -385,7 +387,7 @@ char **expand_args (char **args, t_shell *shell)
 		if (ft_strchr(args[i], '$'))
 		{	
 			space_to_gar(args[i]);
-			new_arg = expand_arg(args[i], tmp_shell->env, shell);
+			new_arg = expand_arg(args[i], tmp_shell->env, shell, NULL);
 			if (new_arg)
 			{
 				if (check_var(args[i]) && ft_strchr(new_arg, ' '))
@@ -441,7 +443,7 @@ void expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 	{
 		if (tmp->type != HEREDOC_INPUT)
 		{
-			new_file = expand_arg(tmp->file, env, shell);
+			new_file = expand_arg(tmp->file, env, shell, NULL);
 			if (!new_file && !ft_strchr(tmp->file, '"') && !ft_strchr(tmp->file, '\''))
 				tmp->is_ambgious = true;
 			else if (new_file && check_var(tmp->file) && ft_strchr(new_file, 32))
