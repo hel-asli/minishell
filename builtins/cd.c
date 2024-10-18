@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/17 04:56:54 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 05:32:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ bool	my_cd(t_commands *cmnds, t_env **env)
 	{
 		char *home = get_env("HOME", tmp);
 		if (!home)
-			return (ft_putstr_fd("minishell: HOME not set\n", STDERR_FILENO), true);
+			return (ft_putstr_fd("minishell: HOME not set\n", STDERR_FILENO), free(oldpwd), true);
 		else
 		{
 			if (chdir(home) < 0)
@@ -73,7 +73,7 @@ bool	my_cd(t_commands *cmnds, t_env **env)
 				env_update(env, "PWD", pwd);
 			else
 				ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd)));
-			return (free(pwd), true);
+			return (free(pwd),free(oldpwd), true);
 		}
 	}
 	else
@@ -96,6 +96,6 @@ bool	my_cd(t_commands *cmnds, t_env **env)
 			env_update(env, "PWD", pwd);
 		else
 			ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd)));
-		return (free(pwd), true);
+		return (free(pwd), free(oldpwd), true);
 	}
 }

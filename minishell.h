@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/17 23:46:15 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 06:03:37 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ typedef struct s_shell
 //utils
 char					*ft_itoa(int n);
 bool					is_space(char c);
+void					fr_args(char **args);
 bool					ft_isalpha(int c);
 bool					ft_isdigit(int c);
 bool					ft_isalnum(int c);
@@ -154,6 +155,7 @@ char					*ft_strjoin_char(char *s1, char *s2, char c);
 int						ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t					ft_strlcpy(char *dest, const char *src, size_t size);
 t_redirect				*ft_new_redir_v2(t_red type, char *file, bool expanded);
+void					free_exec(t_exec *exec);
 char					*ft_substr(char const *s, unsigned int start, size_t len);
 
 //parsing

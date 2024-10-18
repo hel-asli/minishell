@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 19:04:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/09 20:38:54 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/18 06:22:23 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,3 @@ bool	my_echo(t_commands *cmnds)
 		printf("\n");
 	return (true);
 }
-
-/*
-echo "" test  expected: " test" | output: """ test"
-echo '' test  expected: " test" | output: "'' test"
-*/

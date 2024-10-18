@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/18 01:04:00 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 04:47:00 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,9 @@ int		heredoc(t_shell *shell)
 					setup_heredoc_signals();
 					heredoc_helper(red->file, heredoc_write, red->expanded, shell);
 					close(heredoc_write);
-					close(red->heredoc_fd);
+					cmds_clear(&shell->commands);
+					env_clear(&shell->env);
+					// close(red->heredoc_fd);
 					exit(0);
 				}
 				else if (id > 0)

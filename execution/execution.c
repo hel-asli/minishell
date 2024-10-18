@@ -52,7 +52,8 @@ static void	exec_close(int **fds, int size)
 	}
 }
 
-static void	exec_pipe(t_exec *exec)
+
+static int	exec_pipe(t_exec *exec)
 {
 	int	i;
 
@@ -62,11 +63,16 @@ static void	exec_pipe(t_exec *exec)
 		if (pipe(exec->fds[i]) == -1)
 		{
 			// free(all);
+            fprintf(stderr, "fail in -> %d\n", i);
 			exec_close(exec->fds, i);
-			err_exit("Pipe Failure");
+			// err_exit("Pipe Failure");
+            free_exec(exec);
+            perror("pipe Failure");
+            return (1);
 		}
 		i++;
 	}
+    return (0);
 }
 
 void fds_free(int **fd, int nb)
@@ -76,7 +82,7 @@ void fds_free(int **fd, int nb)
     if (fd)
     {
         while (j < nb)
-            free(fd[j]);
+            free(fd[j++]);
         free(fd);
     }
 }
@@ -107,8 +113,9 @@ void	free_exec(t_exec *exec)
 	if (exec->fds)
 		fds_free(exec->fds, exec->nbr);
     if (exec->ev_execve)
-        ft_free(exec->ev_execve);
+        fr_args(exec->ev_execve);
 }
+
 int handle_redirections(t_redirect *redirect)
 {
     while (redirect)
@@ -167,8 +174,6 @@ int handle_redirections(t_redirect *redirect)
             }
             close(fd);
         }
-		if (fd != -1)
-        	close(fd);
         redirect = redirect->next;
     }
     return 0;
@@ -218,17 +223,20 @@ void execution_start(t_shell *shell)
 	int		i;
 
 	cmnds = shell->commands;
+    exec.ev_execve = NULL;
     exec.nbr = ft_lstsize(shell->commands) - 1;
 	if (exec.nbr == 0 && cmnds->args && builtins_check(cmnds, &shell->env))
 			return ;
-    exec.ev_execve = NULL;
     exec.ids = malloc(sizeof(pid_t) * (exec.nbr + 1));
     if (!exec.ids)
         err_handle("Malloc failure.");
     exec.fds = fds_allocation(exec.nbr);
     if (!exec.fds)
         err_handle("Malloc failure.");
-    exec_pipe(&exec);
+    if (exec_pipe(&exec))
+    {
+        return ;
+    }
 	i = 0;
     rl_signal = 0;
     while (i <= exec.nbr)
@@ -237,7 +245,9 @@ void execution_start(t_shell *shell)
         if (exec.ids[i] < 0)
         {
             exec_close(exec.fds, exec.nbr);
-            err_exit("Fork failure");
+            free_exec(&exec);
+            perror("Fork failure");
+            return ;
         }
         if (exec.ids[i] == 0)
         {
@@ -250,6 +260,7 @@ void execution_start(t_shell *shell)
     }
 	status = 0;
 	i = 0;
+    exec_close(exec.fds, exec.nbr);
     while (i <= exec.nbr)
     {
         if (waitpid(exec.ids[i], &status, 0) < 0 && errno == ECHILD)
@@ -260,7 +271,6 @@ void execution_start(t_shell *shell)
             break ;
         i++;
     }
-    exec_close(exec.fds, exec.nbr);
     free_exec(&exec);
     if (WIFSIGNALED(status))
     {

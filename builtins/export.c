@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:55:49 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/17 05:19:42 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 04:38:07 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,10 +139,9 @@ static void	env_export(t_env **env, char *key, char *value)
 	{
 		if (!ft_strcmp(curr->key, key))
 		{
-			fprintf(stderr, "Changing [%s][%s]: [%s] => [%s]\n", curr->key, key, curr->value, value);
 			free(curr->value);
 			curr->value = ft_strdup(value);
-			fprintf(stderr, "Check : [%s]\n", curr->value);
+			free(value);
 			return ;
 		}
 		curr = curr->next;
@@ -201,15 +200,18 @@ static void export_handler(t_env **export, char *args)
 	new_key = copy_key(key[0]);
 	if (env_key_exist(export, new_key))
 	{
+		puts("y");
 		if (ft_lookup(args, '+'))
 			env_concat(export, new_key, ft_quotes(key[1]));
 		else if (ft_lookup(args, '='))
 			env_export(export, new_key, ft_quotes(key[1]));
 		else if (!ft_lookup(args, '='))
-			env_export(export, new_key, "\0");
+			env_export(export, new_key, ft_strdup("\0"));
+		free(new_key);
 	}
 	else
 	{
+		puts("z");
 		if (ft_lookup(args, '+'))
 			ft_lstadd_back(export,ft_lstnew(new_key, ft_quotes(key[1])));
 		else if (ft_lookup(args, '='))
@@ -217,6 +219,7 @@ static void export_handler(t_env **export, char *args)
 		else if (!ft_lookup(args, '='))
 			ft_lstadd_back(export,ft_lstnew(new_key, NULL));	
 	}
+	fr_args(key);
 }	
 	// if (ft_lookup(args, '+') && env_key_exist(export, new_key))
 	// 	env_concat(export, new_key, ft_quotes(key[1]));

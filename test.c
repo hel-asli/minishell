@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:01:46 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/17 23:18:48 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 04:14:29 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ char	**ft_free(char **split)
         }
         free(split);
     }
+    puts("okk");
 	return (NULL);
 }
 void disable_newline_behavior() {

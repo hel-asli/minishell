@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/17 01:06:02 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 05:25:20 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,9 +194,9 @@ char *expand_arg(char *arg, t_env *env, t_shell *shell)
 			else if (arg[i] >= '0' && arg[i] <= '9')
 			{
 				if (arg[i] == '0')
-					new_value = ft_strdup("minishell");
+					(1) && (free(new_value), new_value = ft_strdup("minishell"));
 				else
-					new_value = ft_strdup("");
+					(1) && (free(new_value), new_value = ft_strdup(""));
 				i++;
 			}
 			else if (arg[i] == '?')
@@ -229,7 +229,7 @@ char *expand_arg(char *arg, t_env *env, t_shell *shell)
 		}
 	}
 	if (new_value[0] == 0)
-		return (NULL);
+		return (free(new_value), NULL);
 	return (new_value);
 }
 
@@ -260,7 +260,7 @@ char ** re_build_arg(char **args, char **sp)
         err_handle("malloc");
     while (args && args[j])
     {
-        ptr[j] = args[j];
+        ptr[j] = ft_strdup(args[j]);
         j++;
     }
     while (sp[k])
@@ -270,35 +270,40 @@ char ** re_build_arg(char **args, char **sp)
         k++;
     }
     ptr[j] = NULL;
+	fr_args(args);
     return (ptr);
+}
+
+void fr_args(char **args)
+{
+	int i = -1;
+
+	if (args)
+	{
+		while (args[++i])
+			free(args[i]);
+		free(args);
+	}
 }
 
 char **add_arr(char **args, char *str)
 {
 	size_t len;
 
-	if (!args)
-		len = 0;
-	else
-		len = arr_len(args);
+	len = arr_len(args);
 	char **new = malloc((sizeof(char *) * (len + 2)));
 	if (!new)
 		return (NULL);
 	size_t i = 0;
-	while (i < len)
+	while (i < len && args)
 	{
-		new[i] = args[i];
+		new[i] = ft_strdup(args[i]);
 		i++;
 	}
 	if (str)
-	{
-		if (!str)
-			new[i] = str;
-		else
-			new[i] = ft_strdup(str);
-		i++;
-	}
+		new[i++] = ft_strdup(str);
 	new[i] = NULL;
+	fr_args(args);
 	return (new);
 }
 
@@ -346,6 +351,7 @@ void gar_protect(char *str)
 	}
 }
 
+
 char **expand_args (char **args, t_shell *shell)
 {
 	int i = 0;
@@ -368,6 +374,7 @@ char **expand_args (char **args, t_shell *shell)
 				{
 					space_to_gar(new_arg);
 					sp = ft_split(new_arg);
+					free(new_arg);
 					tab = re_build_arg(tab, sp);
 					ft_free(sp);
 				}
@@ -375,6 +382,7 @@ char **expand_args (char **args, t_shell *shell)
 				{
 					gar_protect(new_arg);
 					tab = add_arr(tab, new_arg);
+					free(new_arg);
 				}
 			}
 		}
@@ -386,7 +394,7 @@ char **expand_args (char **args, t_shell *shell)
 		}
 		i++;
 	}
-	return (ft_free(args), tab);
+	return (fr_args(args), tab);
 }
 
 bool check_file(char *file)
