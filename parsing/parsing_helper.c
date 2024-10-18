@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/18 05:25:20 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 10:52:25 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,15 @@ void	print_env(t_env *env)
 		env = env->next;
 	}
 }
+bool is_valid(char c)
+{
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		return (true);
+	else if ((c >= '0' && c <= '9') || c == '_' || c == '$')
+		return (true);
+
+	return (false);
+}
 
 char *str_add_char(char *str, char c)
 {
@@ -148,15 +157,59 @@ char *str_add_char(char *str, char c)
 	return (ptr);
 }
 
-bool is_valid(char c)
+char *get_from_env(t_shell *shell, char *arg, int *i)
 {
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
-		return (true);
-	else if ((c >= '0' && c <= '9') || c == '_' || c == '$')
-		return (true);
+	int		j;
+	char	*new_value;
+	char	*env_value;
+	char	*key;
 
-	return (false);
+	(1) && (j = *i, new_value = ft_strdup(""), key = NULL, env_value = NULL);
+	while (arg[(*i)] && is_valid(arg[*i]) && arg[(*i)] != '$')
+		(*i)++;
+	if (j == *i)
+		new_value = str_add_char(new_value, '$');
+	else
+	{
+		key = ft_strndup(&arg[j], *i - j);
+		env_value = get_env(key, shell->env);
+		if (!env_value) 
+			env_value = ft_strdup("");
+		new_value = ft_strjoin(new_value, env_value);
+		free(key);
+	}
+	return (new_value);
 }
+
+char *get_new_value(t_shell *shell, char *arg, int *i)
+{
+	char *new_value;
+	new_value = ft_strdup("");
+
+	if (arg[(*i)] == '$')
+	{
+		new_value = ft_strjoin(new_value, ft_strdup("1337"));
+		(*i)++;
+	}
+	else if (arg[*i] >= '0' && arg[*i] <= '9')
+	{
+		if (arg[*i] == '0')
+			(1) && (free(new_value), ft_strdup("minishell"));
+		else
+			(1) && (free(new_value), ft_strdup(""));
+		(*i)++;
+	}
+	else if (arg[(*i)] == '?')
+	{
+		new_value = ft_strjoin(new_value, ft_itoa(shell->exit_status));
+		(*i)++;
+	}
+	else
+		(1) && (free(new_value), new_value = get_from_env(shell, arg, i));
+	return (new_value);
+}
+
+
 
 char *expand_arg(char *arg, t_env *env, t_shell *shell)
 {
@@ -167,7 +220,6 @@ char *expand_arg(char *arg, t_env *env, t_shell *shell)
 	char *env_value = NULL;
 	if (!new_value)
 		err_handle("allocation");
-	int j = 0;
 	int i = 0;
 	while (arg[i])
 	{
@@ -186,41 +238,7 @@ char *expand_arg(char *arg, t_env *env, t_shell *shell)
 			i++;
 			if ((arg[i] == '"' || arg[i] == '\'') && !in_double && !in_single)
 				continue;
-			if (arg[i] == '$')
-			{
-				new_value = ft_strjoin(new_value, ft_strdup("1337"));
-				i++;
-			}
-			else if (arg[i] >= '0' && arg[i] <= '9')
-			{
-				if (arg[i] == '0')
-					(1) && (free(new_value), new_value = ft_strdup("minishell"));
-				else
-					(1) && (free(new_value), new_value = ft_strdup(""));
-				i++;
-			}
-			else if (arg[i] == '?')
-			{
-				new_value = ft_strjoin(new_value, ft_itoa(shell->exit_status));
-				i++;
-			}
-			else
-			{
-				j = i;
-				while (arg[i] && is_valid(arg[i]) && arg[i] != '$')
-					i++;
-				if (i == j)
-					new_value = str_add_char(new_value, '$');
-				else
-				{
-					env_key = ft_strndup(&arg[j], i - j);
-					env_value = get_env(env_key, env);
-					if (!env_value)
-						env_value = ft_strdup("");
-					new_value = ft_strjoin(new_value, env_value);
-					free(env_key);
-				}
-			}
+			new_value = ft_strjoin(new_value, get_new_value(shell, arg, &i));
 		}
 		else
 		{
@@ -228,7 +246,7 @@ char *expand_arg(char *arg, t_env *env, t_shell *shell)
 			i++;	
 		}
 	}
-	if (new_value[0] == 0)
+	if (!new_value[0])
 		return (free(new_value), NULL);
 	return (new_value);
 }
