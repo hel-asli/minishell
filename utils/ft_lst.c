@@ -107,6 +107,8 @@ void	cmds_clear(t_commands **cmds)
 				ft_free(tmp->args);
 			if (tmp->redirect)
 				clear_redirect(&tmp->redirect);
+			free(tmp);
+			tmp = NULL;
 		}
 	}
 	*cmds = NULL;

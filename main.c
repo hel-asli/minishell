@@ -21,6 +21,7 @@ void	built_env(t_env **env, char **ev)
 
 	i = 0;
 	(void)env;
+	sp = NULL;
 	while (ev[i])
 	{
 		sp = ft_env_split(ev[i]);
@@ -39,7 +40,7 @@ void	set_env(t_env **env)
 	pwd = getcwd(NULL, 0);
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("PATH"),
 			ft_strdup("/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:.")));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), NULL));
+	ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), pwd));
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("SHLVL"), ft_strdup("1")));
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("_"), ft_strdup("/usr/bin/env")));
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), NULL));

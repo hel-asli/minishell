@@ -285,6 +285,7 @@ void	read_input(t_shell *shell, const char *prompt)
 		shell->parsing.line = readline(prompt);
 		if (!shell->parsing.line)
 		{
+			cmds_clear(&shell->commands);
 			printf("exit\n");
 			break ;
 		}

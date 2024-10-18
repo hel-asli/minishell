@@ -89,10 +89,11 @@ char *find_command(char *cmd, t_env *env)
 				full_path = NULL;
 				full_path = ft_strjoin_char(pt[k], cmd, '/');
 				if (access(full_path, X_OK) == 0)
-					return (full_path);
+					return (ft_free(pt), full_path);
 				free(full_path);
 				k++;
-			}	
+			}
+			ft_free(pt);
 		}
 		tmp = tmp->next;
 	}

@@ -12,9 +12,9 @@
 
 NAME = minishell
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = #-Wall -Wextra -Werror
 # INCLUDE_DIR = Include
-LDFLAGS = #-g -fsanitize=address
+LDFLAGS = -g -fsanitize=address
 READLINE_PREFIX = $(shell brew --prefix readline)
 READLINE_INCLUDE = $(READLINE_PREFIX)/include
 READLINE_LIB = $(READLINE_PREFIX)/lib

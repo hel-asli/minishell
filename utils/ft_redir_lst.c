@@ -30,15 +30,17 @@ void	env_clear(t_env **env)
 	t_env	*cur;
 	t_env	*tmp;
 
-	cur = *env;
 	if (!env)
 		return ;
+	cur = *env;
 	while (cur)
 	{
 		tmp = cur;
 		cur = cur->next;
 		free(tmp->key);
 		free(tmp->value);
+		free(tmp);
+		tmp = NULL;
 	}
 	*env = NULL;
 }
@@ -85,6 +87,8 @@ void	clear_redirect(t_redirect **redirect)
 		free(tmp->file);
 		if (tmp->heredoc_fd != -1)
 			close(tmp->heredoc_fd);
+		free(tmp);
+		tmp = NULL;
 	}
 	*redirect = NULL;
 }
