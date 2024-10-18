@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/17 05:07:03 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 23:46:15 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ typedef struct s_shell
 	struct				termios old_attr;
 	struct				termios copy;
 	int					exit_status;
+	int					escape;
 }						t_shell;
 
 //utils
@@ -164,6 +165,7 @@ void					sigquit_handler(int nb);
 void					space_to_gar(char *line);
 t_commands				*ft_last(t_commands *node);
 bool					is_redirection(char *token);
+void					cmds_clear(t_commands **cmds);
 t_syntax				other_syntax_check(char *line);
 bool					quotes_syntax_check(char *line);
 void					syntax_err_msg(t_syntax syntax);
@@ -171,6 +173,7 @@ t_redirect				*ft_last_redir(t_redirect *node);
 bool					check_pipe(char **tokens, int i);
 void					print_cmds(t_commands *commands);
 bool					check_heredoc(char **tokens, int i);
+void					clear_redirect(t_redirect **redirect);
 t_redirect				*ft_new_redir(char *type, char *file);
 bool					check_redirection(char **tokens, int i);
 t_commands				*ft_newlist(char **args, t_redirect *red);

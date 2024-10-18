@@ -6,12 +6,14 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:01:46 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/15 02:12:06 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/17 23:18:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <sys/ioctl.h>
+#define RL_S "\1"
+#define RL_E "\2"
 volatile int n = 0;
 char* del_quote(char *str)
 {
@@ -63,6 +65,30 @@ void sigint_func(int nb)
     rl_replace_line("", 0);
 }
 
+char	**ft_free(char **split)
+{
+	int	i;
+
+	i = 0;
+    if (split)
+    {
+        while (split[i])
+        {
+            free(split[i]);
+            i++;
+        }
+        free(split);
+    }
+	return (NULL);
+}
+void disable_newline_behavior() {
+    struct termios term;
+    tcgetattr(STDOUT_FILENO, &term);
+    
+    // Modify terminal attributes to disable automatic newline handling
+    term.c_oflag |= ONLCR;  // Disable carriage return to newline conversion
+    tcsetattr(STDOUT_FILENO, TCSANOW, &term);
+}
 int main(int ac, char **av)
 {
     // // int i = 0;
@@ -78,21 +104,38 @@ int main(int ac, char **av)
     (void)ac;
     (void)av;
     char *line;
-   
-    signal(SIGINT, sigint_func);
+    // int a = 0;
+    // pid_t id = fork();
+
+    // if (id == 0)
+    // {
+    //     fprintf(stderr, "before : %p\n", &a);
+    //     a = 1;
+    //     fprintf(stderr, "before : %p\n", &a);
+    // }
+    // else
+    // {
+    //     waitpid(id, NULL, 0);
+    // }
+
+    rl_initialize();
+    // signal(SIGINT, sigint_func);
+    // disable_newline_behavior();
     while (true)
     {
         line = readline("> ");
         if (!line)
         {
-                // rl_replace_line("", 0);
-            break;
-        }
-        if (n)
-        {
-            free(line);
+            // rl_replace_line("", 0);
+            // rl_clear_visible_line();
+            // ft_free(ev);
+            // ev = NULL;
+            // fflush(stdout);
+            // rl_clear_visible_line(); 
+            rl_crlf();
+            printf("exit\n");
             break;
         }
     }
-    line = readline("hoho :");
+    // line = readline("hoho :");
 }

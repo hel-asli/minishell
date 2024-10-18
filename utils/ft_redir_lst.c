@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:29:29 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/16 02:39:54 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 00:47:17 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ void	env_clear(t_env **env)
 		cur = cur->next;
 		free(tmp->key);
 		free(tmp->value);
-		free(tmp);
 	}
 	*env = NULL;
 }
@@ -69,6 +68,27 @@ t_redirect	*ft_last_redir(t_redirect *node)
 	return (node);
 }
 
+void	clear_redirect(t_redirect **redirect)
+{
+	t_redirect *curr;
+	t_redirect *tmp;
+
+	if (!redirect)
+		return ;
+	puts("ok");
+	curr = *redirect;
+	tmp = NULL;
+	while (curr)
+	{
+		tmp = curr;
+		curr = curr->next;
+		free(tmp->file);
+		if (tmp->heredoc_fd != -1)
+			close(tmp->heredoc_fd);
+	}
+	*redirect = NULL;
+}
+
 t_redirect	*ft_new_redir(char *type, char *file)
 {
 	t_redirect	*node;
@@ -90,6 +110,7 @@ t_redirect	*ft_new_redir(char *type, char *file)
 	else if (!ft_strcmp(">>", type))
 		node->type = OUT_APPEND;
 	node->file = ft_strdup(file);
+	node->heredoc_fd = -1;
 	node->is_ambgious = false;
 	node->next = NULL;
 	return (node);

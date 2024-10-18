@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/17 05:57:41 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 01:04:00 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ size_t	count_len(char *line)
 			i += 2;
 		}
 		else if (ft_strstr(&line[i], ">")
-				|| ft_strstr(&line[i], "<") || ft_strstr(&line[i], "|"))
+			|| ft_strstr(&line[i], "<") || ft_strstr(&line[i], "|"))
 		{
 			len += 2;
 			i++;
@@ -57,7 +57,7 @@ char	*add_spaces(char *line)
 			(1) && (nl[j++] = line[i++], nl[j++] = 32);
 		}
 		else if (ft_strstr(&line[i], ">")
-				|| ft_strstr(&line[i], "<") || ft_strstr(&line[i], "|"))
+			|| ft_strstr(&line[i], "<") || ft_strstr(&line[i], "|"))
 		{
 			(1) && (nl[j++] = 32, nl[j++] = line[i++], nl[j++] = 32);
 		}
@@ -67,17 +67,17 @@ char	*add_spaces(char *line)
 	return (nl[j] = 0, free(line), nl);
 }
 
-bool is_special(char c)
+bool	is_special(char c)
 {
 	return (c == '|' || c == '<' || c == '>' || is_space(c));
 }
 
-bool is_rev_special(char c)
+bool	is_rev_special(char c)
 {
 	return (c == 1 || c == 2 || c == 3 || c == 4 || (c >= 15 && c <= 19));
 }
 
-void match_char(char *line, int i)
+void	match_char(char *line, int i)
 {
 	if (line)
 	{
@@ -94,7 +94,7 @@ void match_char(char *line, int i)
 	}
 }
 
-void space_to_gar(char *line)
+void	space_to_gar(char *line)
 {
 	int		i;
 	bool	in_quotes;
@@ -117,9 +117,9 @@ void space_to_gar(char *line)
 	}
 }
 
-char* del_quote(char *str)
+char	*del_quote(char *str)
 {
-	int     i;
+	int		i;
 	int		j;
 	char	*ptr;
 	char	type;
@@ -142,9 +142,11 @@ char* del_quote(char *str)
 	return (ptr[j] = 0, free(str), ptr);
 }
 
-bool in_quotes(char *str)
+bool	in_quotes(char *str)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '\'' || str[i] == '"')
@@ -154,10 +156,10 @@ bool in_quotes(char *str)
 	return (false);
 }
 
-void heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
+void	heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 {
 	char	*line;
-	t_env 	*env;
+	t_env	*env;
 
 	(1) && (line = NULL, env = shell->env);
 	while (true)
@@ -182,7 +184,7 @@ void heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 	}
 }
 
-void sigint_heredoc_handler(int nb)
+void	sigint_heredoc_handler(int nb)
 {
 	if (nb == SIGINT)
 	{
@@ -190,13 +192,13 @@ void sigint_heredoc_handler(int nb)
 		exit(1);
 	}
 }
-void setup_heredoc_signals(void)
+void	setup_heredoc_signals(void)
 {
 	signal(SIGINT, sigint_heredoc_handler);
 	signal(SIGQUIT, SIG_IGN);
 }
 
-int heredoc(t_shell *shell)
+int		heredoc(t_shell *shell)
 {
 	t_commands *cmd = shell->commands;
 	t_redirect *red = NULL;
@@ -212,7 +214,7 @@ int heredoc(t_shell *shell)
 			status = 0;
 			if (red->type == HEREDOC_INPUT)
 			{
-				int *nbr = malloc(sizeof(int));
+				int *nbr = malloc(sizeof(int) * 1);
 				char *name = ft_strjoin(ft_strdup("/tmp/.heredoc"), ft_itoa((long)nbr));
 				free(nbr);
 				if (!name)
@@ -255,6 +257,7 @@ int	parse_input(t_shell *shell)
 {
 	char		**pipes;
 	t_syntax	syntax;
+
 	space_to_gar(shell->parsing.line); 
 	shell->parsing.line = add_spaces(shell->parsing.line);
 	if (!shell->parsing.line)
@@ -282,7 +285,7 @@ void	read_input(t_shell *shell, const char *prompt)
 		shell->parsing.line = readline(prompt);
 		if (!shell->parsing.line)
 		{
-			printf("%s%sminishell: exit\n", ANSI_CURSOR_UP, ANSI_ERASE_LINE);
+			printf("exit\n");
 			break ;
 		}
 		if (shell->parsing.line && *shell->parsing.line)
@@ -290,12 +293,14 @@ void	read_input(t_shell *shell, const char *prompt)
 		if (!ft_strlen(shell->parsing.line) || empty_str(shell->parsing.line))
 		{
 			free(shell->parsing.line);
+			cmds_clear(&shell->commands);
 			continue ;
 		}
 		if (parse_input(shell) || !shell->commands)
 			continue ;
 		restore_terminal_old_attr(&shell->old_attr);
 		execution_start(shell); 
+		cmds_clear(&shell->commands);
 		restore_terminal_old_attr(&shell->copy);
 	}
 }

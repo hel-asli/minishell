@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 00:49:12 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/17 02:06:48 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 00:30:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ char *find_command(char *cmd, t_env *env)
     }
 	pt = NULL;
 	k = 0;
+	full_path = NULL;
 	while (tmp)
 	{	
 		if (!ft_strcmp(tmp->key, "PATH"))

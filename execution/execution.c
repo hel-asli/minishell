@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/17 05:56:57 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 00:54:44y hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,18 @@ static void	exec_pipe(t_exec *exec)
 	}
 }
 
+void fds_free(int **fd, int nb)
+{
+    int j = 0;
+
+    if (fd)
+    {
+        while (j < nb)
+            free(fd[j]);
+        free(fd);
+    }
+}
+
 int	**fds_allocation(int nb)
 {
 	int		j;
@@ -93,7 +105,9 @@ void	free_exec(t_exec *exec)
 	if (exec->ids)
 		free(exec->ids);
 	if (exec->fds)
-		free(exec->fds);
+		fds_free(exec->fds, exec->nbr);
+    if (exec->ev_execve)
+        ft_free(exec->ev_execve);
 }
 int handle_redirections(t_redirect *redirect)
 {
@@ -119,7 +133,6 @@ int handle_redirections(t_redirect *redirect)
 			}
 			else
 				fd = redirect->heredoc_fd;
-            fprintf(stderr, "%d\n", fd);
             if (dup2(fd, STDIN_FILENO) == -1)
             {
                 perror("dup2");
@@ -166,6 +179,7 @@ void execute_command(t_env *env, t_commands *cmnds, t_exec *exec, int i)
     char *cmd_path;
 
     cmd_path = NULL;
+    exec->ev_execve = list_arr(env);
     if (i > 0 && dup2(exec->fds[i - 1][0], STDIN_FILENO) == -1)
         err_exit("Dup2 Failure");
     if (i < exec->nbr && dup2(exec->fds[i][1], STDOUT_FILENO) == -1)
@@ -184,12 +198,15 @@ void execute_command(t_env *env, t_commands *cmnds, t_exec *exec, int i)
     if (cmd_path)
     {
         execve(cmd_path, cmnds->args, exec->ev_execve);
-        free(cmd_path);
+        if (cmd_path)
+            free(cmd_path);
         free_exec(exec);
+        cmds_clear(&cmnds);
         err_exit("execve");    
     }
     ft_fprintf(2, "Error: Command not found %s\n", cmnds->args[0]);
     free_exec(exec);
+    cmds_clear(&cmnds);
     exit(127);
 }
 
@@ -204,7 +221,7 @@ void execution_start(t_shell *shell)
     exec.nbr = ft_lstsize(shell->commands) - 1;
 	if (exec.nbr == 0 && cmnds->args && builtins_check(cmnds, &shell->env))
 			return ;
-    exec.ev_execve = list_arr(shell->env);
+    exec.ev_execve = NULL;
     exec.ids = malloc(sizeof(pid_t) * (exec.nbr + 1));
     if (!exec.ids)
         err_handle("Malloc failure.");
@@ -231,7 +248,6 @@ void execution_start(t_shell *shell)
 		i++;
         cmnds = cmnds->next;
     }
-    exec_close(exec.fds, exec.nbr);
 	status = 0;
 	i = 0;
     while (i <= exec.nbr)
@@ -244,6 +260,8 @@ void execution_start(t_shell *shell)
             break ;
         i++;
     }
+    exec_close(exec.fds, exec.nbr);
+    free_exec(&exec);
     if (WIFSIGNALED(status))
     {
         int sig = WTERMSIG(status);
