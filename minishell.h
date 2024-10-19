@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/18 11:13:46 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/19 01:43:40 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,25 +187,25 @@ void					ft_lst_add_redir(t_redirect **lst, t_redirect *new);
 void					restore_terminal_old_attr(struct termios *old_attr);
 
 // execution
-bool					my_pwd(void);
-bool					my_env(t_env **env);
+bool					my_pwd(t_commands *cmnds, t_shell *shell, int flag);
+bool					my_env(t_commands *cmnds,  t_shell *env, int flag);
 void					exit_error(int flag);
 void					save_quotes(char *str);
-bool					my_exit(t_commands *cmnds);
-bool					my_echo(t_commands *cmnds);
+bool					my_exit(t_commands *cmnds, t_shell *shell, int flag);
+bool					my_echo(t_commands *cmnds, t_shell *shell, int flag);
 t_env					*export_lstlast(t_env *export);
 void					execution_start(t_shell *shell);
 char					*get_env(char *key, t_env *env);
 // void					export_env(t_env **env, char *args);
 char 					*find_command(char *cmd, t_env *env);
-bool					my_cd(t_commands *cmnds, t_env **env);
-void					build_export(t_env **export, char **ev);
-bool					my_unset(t_commands *cmnds, t_env **env);
-bool				    my_export(t_commands *cmnds, t_env **env);
-bool					builtins_check(t_commands *cmnds, t_env **env);
+bool					my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag);
+// void					build_export(t_env **export, char **ev);
+bool					my_unset(t_commands *cmnds, t_shell *shell, t_env **env, int flag);
+bool				    my_export(t_commands *cmnds, t_shell *shell, t_env **env, int flag);
+bool					builtins_check(t_shell *shell, t_commands *cmnds, t_env **env, int flag);
 void					env_update(t_env **env, char *key, char *value);
 int						handle_redirections(t_redirect *redirect);
-char					*expand_arg(char *arg, t_env *env, t_shell *shell, char *env_key);
-int 					execute(t_shell *shell, t_commands **cmnds, char **ev, int *tmp);
+char					*expand_arg(char *arg, t_env *env, t_shell *shell);
+int 					execute(t_commands *cmnds, t_shell *shell, char **ev, int *tmp);
 
 #endif

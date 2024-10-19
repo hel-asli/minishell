@@ -6,9 +6,10 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 19:04:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/18 06:22:23 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/19 01:20:55 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../minishell.h"
 
@@ -26,7 +27,7 @@ static bool	ft_opt_check(char *str, char c)
 	return (i == ft_strlen(str));
 }
 
-bool	my_echo(t_commands *cmnds)
+bool	my_echo(t_commands *cmnds, t_shell *shell, int flag)
 {
 	int			i;
 	bool		opt;
@@ -37,6 +38,11 @@ bool	my_echo(t_commands *cmnds)
 	opt = false;
 	wrote = false;
 	curr = cmnds;
+	if (curr->redirect && !flag && handle_redirections(curr->redirect) == -1)
+	{
+		shell->exit_status = EXIT_FAILURE;
+		return (true);
+	}
 	while (curr->args[++i])
 	{
 		if (ft_opt_check(curr->args[i], 'n') && !wrote)
@@ -49,6 +55,7 @@ bool	my_echo(t_commands *cmnds)
 				printf(" ");
 		}
 	}
+	shell->exit_status = EXIT_SUCCESS;
 	if (!opt)
 		printf("\n");
 	return (true);

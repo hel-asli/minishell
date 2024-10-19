@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 22:35:27 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/09 23:53:54 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/19 01:28:47 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,20 @@ static void	remove_env(t_env **env, char *key)
 	}
 }
 
-bool	my_unset(t_commands *cmnds, t_env **env)
+bool	my_unset(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 {
 	int			i;
 	t_commands	*curr;
 
 	i = 0;
 	curr = cmnds;
+	if (curr->redirect && !flag && handle_redirections(curr->redirect) == -1)
+	{
+		shell->exit_status = EXIT_FAILURE;
+		return (true);
+	}
 	while (curr->args[++i])
 		remove_env(env, curr->args[i]);
+	shell->exit_status = EXIT_SUCCESS;
 	return (true);
 }

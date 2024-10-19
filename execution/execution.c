@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-bool	builtins_check(t_commands *cmnds, t_env **env)
+bool	builtins_check(t_shell *shell, t_commands *cmnds, t_env **env, int flag)
 {
 	t_commands	*curr;
 
@@ -20,19 +20,19 @@ bool	builtins_check(t_commands *cmnds, t_env **env)
     if (curr->args[0])
     {
         if (!ft_strcmp(curr->args[0], "cd"))
-            return (my_cd(cmnds, env));
+            return (my_cd(cmnds, shell, env, flag));
         else if (!ft_strcmp(curr->args[0], "echo"))
-            return (my_echo(cmnds));
+            return (my_echo(cmnds, shell, flag));
         else if (!ft_strcmp(curr->args[0], "env"))
-            return (my_env(env));
+            return (my_env(cmnds, shell, flag));
         else if (!ft_strcmp(curr->args[0], "pwd"))
-            return (my_pwd());
+            return (my_pwd(cmnds, shell, flag));
         else if (!ft_strcmp(curr->args[0], "exit"))
-            return (my_exit(cmnds));
+            return (my_exit(cmnds, shell, flag));
         else if (!ft_strcmp(curr->args[0], "unset"))
-            return (my_unset(cmnds, env));
+            return (my_unset(cmnds, shell, env, flag));
         else if (!ft_strcmp(curr->args[0], "export"))
-            return (my_export(cmnds, env));
+            return (my_export(cmnds, shell, &shell->env, flag));
         else
             return (false);
     }
@@ -179,12 +179,12 @@ int handle_redirections(t_redirect *redirect)
     return 0;
 }
 
-void execute_command(t_env *env, t_commands *cmnds, t_exec *exec, int i)
+void execute_command(t_commands *cmnds, t_shell *shell, t_exec *exec, int i)
 {
     char *cmd_path;
 
     cmd_path = NULL;
-    exec->ev_execve = list_arr(env);
+    exec->ev_execve = list_arr(shell->env);
     if (i > 0 && dup2(exec->fds[i - 1][0], STDIN_FILENO) == -1)
         err_exit("Dup2 Failure");
     if (i < exec->nbr && dup2(exec->fds[i][1], STDOUT_FILENO) == -1)
@@ -194,24 +194,28 @@ void execute_command(t_env *env, t_commands *cmnds, t_exec *exec, int i)
         exit(EXIT_FAILURE);
     if (!cmnds->args)
         exit(EXIT_SUCCESS);
-    if (builtins_check(cmnds, &env))
+    if (builtins_check(shell, cmnds, &shell->env, 1))
     {
+        cmds_clear(&shell->commands);
         free_exec(exec);
+        env_clear(&shell->env);
         exit(EXIT_SUCCESS);
     }
-    cmd_path = find_command(cmnds->args[0], env);
+    cmd_path = find_command(cmnds->args[0], shell->env);
     if (cmd_path)
     {
         execve(cmd_path, cmnds->args, exec->ev_execve);
         if (cmd_path)
             free(cmd_path);
         free_exec(exec);
-        cmds_clear(&cmnds);
+        env_clear(&shell->env);
+        cmds_clear(&shell->commands);
         err_exit("execve");    
     }
     ft_fprintf(2, "Error: Command not found %s\n", cmnds->args[0]);
     free_exec(exec);
-    cmds_clear(&cmnds);
+    cmds_clear(&shell->commands);
+    env_clear(&shell->env);
     exit(127);
 }
 
@@ -220,13 +224,32 @@ void execution_start(t_shell *shell)
     t_exec	exec;
     int		status;
     t_commands *cmnds;
+    int out;
+    int in;
 	int		i;
 
 	cmnds = shell->commands;
     exec.ev_execve = NULL;
     exec.nbr = ft_lstsize(shell->commands) - 1;
-	if (exec.nbr == 0 && cmnds->args && builtins_check(cmnds, &shell->env))
-			return ;
+    if (exec.nbr == 0 && cmnds->args)
+    {
+            if (cmnds->redirect)
+            {
+	            out = dup(STDOUT_FILENO);
+	            in	= dup(STDIN_FILENO);
+            }
+            if (builtins_check(shell, cmnds, &shell->env, 0))
+			{
+                if (cmnds->redirect)
+                {
+	                dup2(out, STDOUT_FILENO);
+	                dup2(in, STDIN_FILENO);
+	                close(out);
+	                close(in);
+                }
+                return ;
+            }
+    }
     exec.ids = malloc(sizeof(pid_t) * (exec.nbr + 1));
     if (!exec.ids)
         err_handle("Malloc failure.");
@@ -253,7 +276,7 @@ void execution_start(t_shell *shell)
         {
             signal(SIGQUIT, SIG_DFL);
             signal(SIGINT, SIG_DFL);
-            execute_command(shell->env, cmnds, &exec, i);
+            execute_command(cmnds, shell, &exec, i);
         }
 		i++;
         cmnds = cmnds->next;

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:29:29 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/18 00:47:17 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/19 01:46:56 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ void	clear_redirect(t_redirect **redirect)
 
 	if (!redirect)
 		return ;
-	puts("ok");
 	curr = *redirect;
 	tmp = NULL;
 	while (curr)

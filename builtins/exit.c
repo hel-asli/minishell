@@ -6,9 +6,10 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:15:23 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/11 22:12:25 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/19 01:22:01 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../minishell.h"
 
@@ -42,7 +43,7 @@ static void	exit_check(char *str)
 	return ;
 }
 
-bool	my_exit(t_commands *cmnds)
+bool	my_exit(t_commands *cmnds, t_shell *shell, int flag)
 {
 	int			i;
 	long long	num;
@@ -50,8 +51,8 @@ bool	my_exit(t_commands *cmnds)
 
 	i = 1;
 	curr = cmnds;
-	if (handle_redirections(cmnds->redirect) < 0)
-		return (true);
+	if (curr->redirect && !flag && handle_redirections(curr->redirect) < 0)
+		return (shell->exit_status = EXIT_FAILURE ,true);
 	while (curr->args[i])
 		i++;
 	if (i == 1)
