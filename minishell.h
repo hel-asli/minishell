@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/19 01:43:40 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/19 06:12:20 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,13 +154,43 @@ int						ft_fprintf(int fd, const char *format, ...);
 char					*ft_strjoin_char(char *s1, char *s2, char c);
 int						ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t					ft_strlcpy(char *dest, const char *src, size_t size);
-t_redirect				*ft_new_redir_v2(t_red type, char *file, bool expanded);
 void					free_exec(t_exec *exec);
-char					*ft_substr(char const *s, unsigned int start, size_t len);
+bool					is_special(char c);
+bool					is_rev_special(char c);
+bool					in_quotes(char *str);
+bool					ft_strchr(char *str, char c);
+bool					check_file(char *file);
+void					set_env(t_env **env);
+void					match_rev(char *line, int i);
+void					match_char(char *line, int i);
+bool					is_valid(char c);
+bool					check_var(char *arg);
+void					built_env(t_env **env, char **ev);
+char					*ft_substr(char const *s, unsigned int start,
+							size_t len);
+size_t					count_non_redirection_arg_size(char **args);
+size_t					arr_len(char **tab);
+char					*get_env(char *key, t_env *env);
+char					*str_add_char(char *str, char c);
+void					fr_args(char **args);
+char					**add_arr(char **args, char *str);
+void					save_quotes(char *str);
+void					gar_protect(char *str);
+void					protect_tab(char **tab);
+t_redirect				*build_redirection(char **args);
+char					**args_allocation(char **tab, size_t arg_count);
+char					*get_from_env(t_shell *shell, char *arg, int *i);
+char					*get_new_value(t_shell *shell, char *arg, int *i);
+char					**replace_tab(char **tab, char *arg, t_shell *shell);
+char					**re_build_arg(char **args, char **sp);
 
 //parsing
 void					setup_signals(void);
 bool					is_ascii(char *str);
+void					sigint_heredoc_handler(int nb);
+void					setup_heredoc_signals(void);
+int						heredoc(t_shell *shell);
+void					heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell);
 char					*del_quote(char *str);
 void					sigint_handler(int nb);
 void					sigquit_handler(int nb);
@@ -206,6 +236,6 @@ bool					builtins_check(t_shell *shell, t_commands *cmnds, t_env **env, int flag
 void					env_update(t_env **env, char *key, char *value);
 int						handle_redirections(t_redirect *redirect);
 char					*expand_arg(char *arg, t_env *env, t_shell *shell);
-int 					execute(t_commands *cmnds, t_shell *shell, char **ev, int *tmp);
+char					**list_arr(t_env *env);
 
 #endif

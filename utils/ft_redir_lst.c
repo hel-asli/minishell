@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_redir_lst.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:29:29 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/19 01:46:56 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/18 19:37:14 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,26 +23,6 @@ t_commands	*ft_newlist(char **args, t_redirect *red)
 	node->redirect = red;
 	node->next = NULL;
 	return (node);
-}
-
-void	env_clear(t_env **env)
-{
-	t_env	*cur;
-	t_env	*tmp;
-
-	if (!env)
-		return ;
-	cur = *env;
-	while (cur)
-	{
-		tmp = cur;
-		cur = cur->next;
-		free(tmp->key);
-		free(tmp->value);
-		free(tmp);
-		tmp = NULL;
-	}
-	*env = NULL;
 }
 
 void	ft_lst_add_redir(t_redirect **lst, t_redirect *new)
@@ -72,8 +52,8 @@ t_redirect	*ft_last_redir(t_redirect *node)
 
 void	clear_redirect(t_redirect **redirect)
 {
-	t_redirect *curr;
-	t_redirect *tmp;
+	t_redirect	*curr;
+	t_redirect	*tmp;
 
 	if (!redirect)
 		return ;
@@ -100,7 +80,7 @@ t_redirect	*ft_new_redir(char *type, char *file)
 	node->expanded = false;
 	if (!node)
 		return (NULL);
-	if (!ft_strcmp("<<", type))	
+	if (!ft_strcmp("<<", type))
 	{
 		node->type = HEREDOC_INPUT;
 		if (!in_quotes(file))

@@ -62,10 +62,8 @@ static int	exec_pipe(t_exec *exec)
 	{
 		if (pipe(exec->fds[i]) == -1)
 		{
-			// free(all);
             fprintf(stderr, "fail in -> %d\n", i);
 			exec_close(exec->fds, i);
-			// err_exit("Pipe Failure");
             free_exec(exec);
             perror("pipe Failure");
             return (1);

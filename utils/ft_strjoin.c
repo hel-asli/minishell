@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 05:22:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/09 20:46:36 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/18 19:33:06 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		j;
 
 	if (!s1)
-		return (ft_strdup(s2));
+		return (ptr = ft_strdup(s2), free(s2), ptr);
 	ptr = malloc(sizeof(char) * ft_strlen(s1) + ft_strlen(s2) + 1);
 	if (!ptr)
 		err_handle("Malloc Failure");

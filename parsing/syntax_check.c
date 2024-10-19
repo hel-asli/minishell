@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_check.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:45:49 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/08/08 04:55:18 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/19 04:12:40 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,23 +45,14 @@ t_syntax	other_syntax_check(char *line)
 	if (!tokens)
 		err_handle("Allocation Fail");
 	result = SYNTAX_OK;
-	while (tokens[++i])
+	while (tokens[++i] && result == SYNTAX_OK)
 	{
 		if (is_redirection(tokens[i]) && !check_redirection(tokens, i))
-		{
 			result = INVALID_REDIRECTINO;
-			break ;
-		}
 		else if (!ft_strcmp(tokens[i], "<<") && !check_heredoc(tokens, i))
-		{
 			result = INVALID_HEREDOC;
-			break ;
-		}
 		else if (!ft_strcmp(tokens[i], "|") && !check_pipe(tokens, i))
-		{
 			result = INVALIDE_PIPE;
-			break ;
-		}
 	}
 	return (ft_free(tokens), result);
 }

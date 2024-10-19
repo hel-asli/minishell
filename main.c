@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/19 01:45:27 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/19 03:47:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,68 +14,39 @@
 
 int rl_signal = 0;
 
-void	built_env(t_env **env, char **ev)
-{
-	char	**sp;
-	int		i;
+// void	built_env(t_env **env, char **ev)
+// {
+// 	char	**sp;
+// 	int		i;
 
-	i = 0;
-	(void)env;
-	sp = NULL;
-	while (ev[i])
-	{
-		sp = ft_env_split(ev[i]);
-		if (ft_strcmp(sp[0], "OLDPWD"))
-			ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1])));
-		ft_free(sp);
-		i++;
-	}
-}
+// 	i = 0;
+// 	(void)env;
+// 	sp = NULL;
+// 	while (ev[i])
+// 	{
+// 		sp = ft_env_split(ev[i]);
+// 		if (ft_strcmp(sp[0], "OLDPWD"))
+// 			ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1])));
+// 		ft_free(sp);
+// 		i++;
+// 	}
+// }
 
 
-void	set_env(t_env **env)
-{
-	char	*pwd;
+// void	set_env(t_env **env)
+// {
+// 	char	*pwd;
 
-	pwd = getcwd(NULL, 0);
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("PATH"),
-			ft_strdup("/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:.")));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), pwd));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("SHLVL"), ft_strdup("1")));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("_"), ft_strdup("/usr/bin/env")));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), NULL));
-}
+// 	pwd = getcwd(NULL, 0);
+// 	ft_lstadd_back(env, ft_lstnew(ft_strdup("PATH"),
+// 			ft_strdup("/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:.")));
+// 	ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), pwd));
+// 	ft_lstadd_back(env, ft_lstnew(ft_strdup("SHLVL"), ft_strdup("1")));
+// 	ft_lstadd_back(env, ft_lstnew(ft_strdup("_"), ft_strdup("/usr/bin/env")));
+// 	ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), NULL));
+// }
 
-void sigint_handler(int nb)
-{
-	(void)nb;
-	// if (rl_signal == 2)
-	// {
-	// 	// rl_signal = 3;
-	// 	// ioctl(STDIN_FILENO, TIOCSTI, "\n");
-	// 	// write(1, "\n", 1);
-	// 	exit(0);
-	// }
-	if (rl_signal)
-	{
-		printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
 
-void sigquit_handler(int nb)
-{
-	(void)nb;
-	if (!rl_signal)
-	{
-		printf("Quit: 3\n");
-		// rl_on_new_line();
-		// rl_replace_line("", 0);
-		// rl_redisplay();
-	}
-}
 
 
 void set_terminal_new_attr(struct termios *old_attr)

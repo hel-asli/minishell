@@ -6,7 +6,7 @@
 #    By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/30 23:25:40 by hel-asli          #+#    #+#              #
-#    Updated: 2024/10/18 01:38:01 by hel-asli         ###   ########.fr        #
+#    Updated: 2024/10/19 06:06:49 by hel-asli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,9 @@ SRCS = main.c utils/ft_split.c utils/ft_itoa.c utils/ft_strncmp.c \
 		execution/execution.c builtins/env.c builtins/pwd.c builtins/echo.c \
 		builtins/unset.c builtins/exit.c builtins/export.c builtins/cd.c \
 		utils/ascii_check.c utils/ft_strtok.c utils/ft_strchr.c execution/exec.c \
-		utils/ft_fprintf.c utils/ft_lst_2.c utils/env.utils.c \
+		utils/ft_fprintf.c utils/ft_lst_2.c utils/env.utils.c utils/parsing_utils.c \
+		utils/checks.c parsing/signals.c parsing/heredoc.c utils/expand_utils.c \
+		utils/expand_utils_2.c utils/expand_utils_3.c
 
 HEADER = minishell.h
 OBJS = $(SRCS:.c=.o)

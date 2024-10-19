@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 02:56:49 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/08/21 00:43:00 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/18 13:29:39 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@ char	**ft_env_split(char *str)
 	int		i;
 	int		j;
 
-	i = 0;
-	j = 0;
+	(1) && (i = 0, j = 0);
 	sp = malloc(sizeof(char *) * 3);
 	if (!sp)
 		return (NULL);
@@ -39,6 +38,5 @@ char	**ft_env_split(char *str)
 	while (str[i])
 		sp[1][j++] = str[i++];
 	sp[1][j] = '\0';
-	sp[2] = NULL;
-	return (sp);
+	return (sp[2] = NULL, sp);
 }

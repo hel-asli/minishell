@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:36:03 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/09/26 03:15:50 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/18 13:35:04 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ size_t	ft_strlcpy(char *dest, const char *src, size_t size)
 	return (ft_strlen(src));
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_substr(char const *s, unsigned int beg, size_t len)
 {
 	char	*res;
 	size_t	sl;
@@ -53,8 +53,8 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		return (0);
 	sl = ft_strlen(s);
 	a = 0;
-	if (start < sl)
-		a = sl - start;
+	if (beg < sl)
+		a = sl - beg;
 	if (a > len)
 		a = len;
 	res = (char *)malloc(sizeof(char) * (a + 1));
@@ -63,6 +63,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	if (a == 0)
 		res[a] = '\0';
 	else
-		ft_strlcpy(res, s + start, a + 1);
+		ft_strlcpy(res, s + beg, a + 1);
 	return (res);
 }
