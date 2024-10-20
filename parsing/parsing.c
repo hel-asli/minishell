@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/19 04:13:04 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 21:54:51 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ int	parse_input(t_shell *shell)
 	process_pipe_cmds(&shell, pipes);
 	if (heredoc(shell))
 		return (1);
-	print_cmds(shell->commands);
+	// print_cmds(shell->commands);
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/20 07:06:12 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 21:54:43 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,11 @@ int check_wildcard(char *str)
     }
     return (true);
 }
+
 bool check_pattern(const char *pattern, const char *str)
 {
+	if (*pattern == '*' && *str == '.')
+		return (false);
     while (*str && *pattern)
     {
         if (*pattern == '*')
@@ -129,13 +132,11 @@ char **get_files(char *str, char *prefix, DIR *dir)
 
     while (entity)
     {
-        if (ft_strcmp(entity->d_name, ".") &&  ft_strcmp(entity->d_name, ".."))
-        {
             if (str[ft_strlen(str) - 1] == '/')
             {
                 sp = ft_split_v2(str, '/');
                 if (entity->d_type == DT_DIR && check_pattern(sp[arr_len(sp) - 1],entity->d_name))
-                    tab = add_arr(tab, str_add_char(entity->d_name, '/'));
+                    tab = add_arr(tab, str_add_char(ft_strdup(entity->d_name), '/'));
                 fr_args(sp);
             }
             else
@@ -150,9 +151,10 @@ char **get_files(char *str, char *prefix, DIR *dir)
 				}
                 fr_args(sp);
             }
-        }
         entity = readdir(dir);
     }
+	if (!tab)
+		tab = add_arr(tab, str);
     return (tab);
 }
 
@@ -187,7 +189,6 @@ char **wildcard_helper(char *arg)
         char *pwd;
         char *prefix;
 		char **tab;
-		char **new;
 
         pwd = getcwd(NULL, 0);
 		tab = NULL;
@@ -204,11 +205,11 @@ char **wildcard_helper(char *arg)
             return (NULL);
         }
 		if (ft_strchr(arg, '/') && is_not_sub(arg, pwd))
-			tab = add_arr(new, arg);
+			tab = add_arr(tab, arg);
 		else
 		{
 			if (ft_strchr(arg, '/') && (!starts_with(arg, pwd)))
-                prefix = str_add_char(pwd, '/');
+                prefix = str_add_char(ft_strdup(pwd), '/');
 			tab = get_files(arg, prefix, dir);
 		}
 		free(pwd);
@@ -276,7 +277,7 @@ char	**expand_args(char **args, t_shell *shell)
 		if (ft_strchr(args[i], '$'))
 		{
 			tab = replace_tab(tab, args[i], shell);
-			if (check_var(args[i]))
+			if (tab && check_var(args[i]))
 				tab = wildcard_expand(tab);
 			// segfault on "$a" => a = echo *.c
 		}
@@ -285,7 +286,8 @@ char	**expand_args(char **args, t_shell *shell)
 			args[i] = del_quote(args[i]);
 			gar_protect(args[i]);
 			sp = wildcard_helper(args[i]);
-			tab = re_build_arg(tab, sp);
+			if (sp)
+				tab = re_build_arg(tab, sp);
 			fr_args(sp);
 		}
 		else
@@ -315,13 +317,6 @@ void	expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 			if (file && ft_strchr(file, '*') && check_wildcard(tmp->file))
 			{
 				sp = wildcard_helper(file);
-				// if (sp)
-				// {
-				// 	for (int i = 0; sp[i]; i++)
-				// 	{
-				// 		fprintf(stderr, "hel -> %s\n", sp[i]);
-				// 	}
-				// }
 				if (arr_len(sp) != 1)
 				{
 					tmp->is_ambgious = true;
