@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/20 22:15:19 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 00:06:36 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,9 +111,8 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 		pwd = getcwd(NULL, 0);
 		if (!pwd)
 		{
-			perror("getcwd");
-			free(oldpwd);
-			return (true);
+			if (ft_strcmp(curr->args[1], ".") || ft_strcmp(curr->args[1], ".."))
+				pwd =  ft_strjoin_char(get_env("PWD", *env), curr->args[1], '/');
 		}
 		if (is_exists("PWD", tmp))
 			env_update(env, "PWD", pwd);
