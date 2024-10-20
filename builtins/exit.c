@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:15:23 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/19 01:22:01 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 00:31:26 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,16 @@ bool	my_exit(t_commands *cmnds, t_shell *shell, int flag)
 	while (curr->args[i])
 		i++;
 	if (i == 1)
+	{
+		ft_putendl_fd("exit", 2);
 		exit(EXIT_SUCCESS);
+	}
 	if (i >= 2)
 		exit_check(curr->args[1]);
 	if (i > 2)
 		exit_error(2);
 	num = ft_exit_atol(curr->args[1]);
+	ft_putendl_fd("exit", 2);
 	exit(num % 256);
 	return (true);
 }

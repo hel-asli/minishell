@@ -61,9 +61,9 @@ echo ''''''''''$USER''''''''''										--> working
 echo """"""""$USER""""""""											--> working
 echo $USER'$USER'text oui oui     oui  oui $USER oui      $USER ''	--> working
 echo $USER '' $USER $USER '' $USER '' $USER -n $USER				--> working
-echo ' \' ' \'														--> NOT WORKING! (remove quotes)
-echo '\" ' " \"\""													--> NOT WORKING! (remove quotes)
-echo \\\" \\\" \\\" \\\"\\\"\\\" \\\'\\\'\\\'						--> NOT WORKING! (remove quotes)
+echo ' \' ' \'														--> NOT WORKING! (remove quotes) (not required)
+echo '\" ' " \"\""													--> NOT WORKING! (remove quotes) (not required)
+echo \\\" \\\" \\\" \\\"\\\"\\\" \\\'\\\'\\\'						--> NOT WORKING! (remove quotes) (not required)
 echo "$USER""$USER""$USER"											--> working
 echo text"$USER"test												--> working
 echo '$USER' "$USER" "text \' text"									--> working
@@ -96,8 +96,8 @@ exit -12030															--> working
 exit --1239312														--> working
 exit ++++1203020103													--> working
 exit +0																--> working
-exit ++++++0														--> NOT WORING!
-exit -----0															--> NOT WORING!
+exit ++++++0														--> working
+exit -----0															--> working
 exit azerty															--> working
 exit kewkwqke														--> working
 exit a																--> working
@@ -106,9 +106,9 @@ exit "1"															--> working
 exit "2"															--> working
 exit "+102"															--> working
 exit "1230"															--> working
-exit "+++1230"
+exit "+++1230"														--> working
 exit "1"23															--> working
-exit "2"32"32"
+exit "2"32"32"														--> working
 exit "'42'"															--> working
 exit '42'"42"42
 exit +'42'"42"42
