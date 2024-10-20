@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_helper.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/20 23:47:22 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 00:33:37 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,7 +278,6 @@ char	**expand_args(char **args, t_shell *shell)
 		}
 		else if (ft_strchr(args[i], '*') && check_wildcard(args[i]))
 		{
-			puts("ok");
 			args[i] = del_quote(args[i]);
 			gar_protect(args[i]);
 			sp = wildcard_helper(args[i]);
@@ -328,14 +327,12 @@ void	expand_redirect(t_redirect *redirect, t_shell *shell)
 			else if (!file && !ft_strchr(tmp->file, '"')
 				&& !ft_strchr(tmp->file, '\''))
 			{
-				puts("heree");
 				tmp->is_ambgious = true;
 				free(tmp->file);
 				tmp->file = file;
 			}
 			else if (file && check_var(tmp->file) && ft_strchr(file, 32))
 			{
-				puts("here");
 				tmp->is_ambgious = true;
 				free(tmp->file);
 				tmp->file = file;
