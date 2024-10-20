@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/19 06:11:35 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 04:56:10 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,210 @@ char *expand_arg(char *arg, t_env *env, t_shell *shell)
 	return (check_value(value));
 }
 
+int starts_with(char *start, char *str)
+{
+    int i = 0;
+
+    while (str[i] && start[i])
+    {
+        if (str[i] == start[i])
+            i++;
+        else
+            break;
+    }
+    if (!str[i])
+        return (0);
+    return (1);
+}
+
+int check_wildcard(char *str)
+{
+    int i;
+    bool db = false;
+    bool si = false;
+
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] == '\'' && !db)
+            si = !si;
+        else if (str[i] == '"' && !si)
+            db = !db;
+        else if ((db || si) && str[i] == '*')
+            return (false);
+        i++;
+    }
+    return (true);
+}
+bool check_pattern(const char *pattern, const char *str)
+{
+    while (*str && *pattern)
+    {
+        if (*pattern == '*')
+        {
+            while (*pattern == '*')
+                pattern++;
+            if (*pattern == '\0')
+                return true;
+            while (*str)
+            {
+                if (check_pattern(pattern, str))
+                    return true;
+                str++;
+            }
+            return false;
+        }
+        else if (*pattern == *str)
+        {
+            str++;
+            pattern++;
+        }
+        else
+            return false;
+    }
+    while (*pattern == '*')
+        pattern++;
+    return (*str == '\0' && *pattern == '\0');
+}
+
+char **get_files(char *str, char *prefix, DIR *dir)
+{
+    char **tab;
+    struct dirent *entity;
+    DIR *sub;
+
+    tab = NULL;
+    entity = readdir(dir);
+    char *new_str;
+    char **sp;
+    new_str = NULL;
+
+    while (entity)
+    {
+        if (ft_strcmp(entity->d_name, ".") &&  ft_strcmp(entity->d_name, ".."))
+        {
+            if (str[ft_strlen(str) - 1] == '/')
+            {
+                sp = ft_split_v2(str, '/');
+                if (entity->d_type == DT_DIR && check_pattern(sp[arr_len(sp) - 1],entity->d_name))
+                    tab = add_arr(tab, str_add_char(ft_strdup(entity->d_name), '/'));
+                fr_args(sp);
+            }
+            else
+            {
+                sp = ft_split_v2(str, '/');
+                if (check_pattern(sp[arr_len(sp) - 1], entity->d_name))
+                    tab = add_arr(tab, ft_strjoin(ft_strdup(prefix), ft_strdup(entity->d_name)));
+                fr_args(sp);
+            }
+        }
+        entity = readdir(dir);
+    }
+    return (tab);
+}
+
+bool is_not_sub(const char *str, const char *pwd)
+{
+    int i = 0;
+    int j = 0;
+
+    while (str[i] && pwd[j] && str[i] == pwd[j])
+    {
+        i++;
+        j++;
+    }
+    if (!pwd[j] && !str[i])
+        return (true);
+    if (!pwd[j] && str[i] == '/')
+        i++;
+    while (str[i])
+    {
+        if (str[i] == '/' && !str[i + 1])
+            return (false);
+        else if (str[i] == '/' && str[i + 1] != '/')
+            return (true);
+        i++;
+    }
+    return (false);
+}
+
+char **wildcard_helper(char *arg)
+{
+		DIR *dir;
+        char *pwd;
+        char *prefix;
+		char **tab;
+		char **new;
+
+        pwd = getcwd(NULL, 0);
+		tab = NULL;
+        if (!pwd)
+        {
+            perror("getcwd");
+            return (NULL);
+        }
+        prefix = ft_strdup("");
+        dir = opendir(".");
+        if (!dir)
+        {
+            perror("opendir");
+            return (NULL);
+        }
+		if (ft_strchr(arg, '/') && is_not_sub(arg, pwd))
+			tab = add_arr(new, arg);
+		else if (ft_strchr(arg, '/') && (!starts_with(arg, pwd)))
+                prefix = str_add_char(ft_strdup(pwd), '/');
+		tab = get_files(arg, prefix, dir);
+		free(pwd);
+		closedir(dir);
+		return (tab);
+}
+
+char **wildcard_expand(char **args)
+{
+		DIR *dir;
+        char *pwd;
+        char *prefix;
+		char **tab;
+		int i = 0;
+
+        pwd = getcwd(NULL, 0);
+		tab = NULL;
+        if (!pwd)
+        {
+            perror("getcwd");
+            return (NULL);
+        }
+        prefix = ft_strdup("");
+        dir = opendir(".");
+        if (!dir)
+        {
+            perror("opendir");
+            return (NULL);
+        }
+		while (args[i])
+		{
+			if (ft_strchr(args[i], '/') && is_not_sub(args[i], pwd))
+			{
+				tab = add_arr(tab, args[i]);
+			}
+			else if (ft_strchr(args[i], '*') && check_wildcard(args[i]))
+			{
+				if (ft_strchr(args[i], '/') && (!starts_with(args[i], pwd)))
+						prefix = str_add_char(ft_strdup(pwd), '/');
+				tab = re_build_arg(tab, get_files(args[i], prefix, dir));
+			}
+			else
+			{
+				tab = add_arr(tab, args[i]);
+			}
+			i++;
+		}
+		free(pwd);
+		closedir(dir);
+		return (tab);
+}
+
 char	**expand_args(char **args, t_shell *shell)
 {
 	int		i;
@@ -60,7 +264,17 @@ char	**expand_args(char **args, t_shell *shell)
 	while (args[i])
 	{
 		if (ft_strchr(args[i], '$'))
+		{
 			tab = replace_tab(tab, args[i], shell);
+			tab = wildcard_expand(tab);
+		}
+		else if (ft_strchr(args[i], '*') && check_wildcard(args[i]))
+		{
+			args[i] = del_quote(args[i]);
+			gar_protect(args[i]);
+			sp = wildcard_helper(args[i]);
+			tab = re_build_arg(tab, sp);
+		}
 		else
 		{
 			args[i] = del_quote(args[i]);
@@ -76,6 +290,7 @@ void	expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 {
 	t_redirect	*tmp;
 	char		*file;
+	char		**sp;
 
 	(1) && (tmp = redirect, file = NULL);
 	while (tmp)
@@ -83,13 +298,41 @@ void	expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 		if (tmp->type != HEREDOC_INPUT)
 		{
 			file = expand_arg(tmp->file, env, shell);
-			if (!file && !ft_strchr(tmp->file, '"')
+			if (file && ft_strchr(file, '*') && check_wildcard(file))
+			{
+				sp = wildcard_helper(file);
+				if (sp)
+				{
+					for (int i = 0; sp[i]; i++)
+					{
+						fprintf(stderr, "hel -> %s\n", sp[i]);
+					}
+				}
+				if (arr_len(sp) != 1)
+				{
+					tmp->is_ambgious = true;
+					tmp->file = NULL;
+				}
+				else
+				{
+					free(tmp->file);
+					tmp->file = ft_strdup(sp[0]);
+				}
+				fr_args(sp);
+			}
+			else if (!file && !ft_strchr(tmp->file, '"')
 				&& !ft_strchr(tmp->file, '\''))
+			{
 				tmp->is_ambgious = true;
+				free(tmp->file);
+				tmp->file = file;
+			}
 			else if (file && check_var(tmp->file) && ft_strchr(file, 32))
+			{
 				tmp->is_ambgious = true;
-			free(tmp->file);
-			tmp->file = file;
+				free(tmp->file);
+				tmp->file = file;
+			}
 		}
 		else
 			tmp->file = del_quote(tmp->file);

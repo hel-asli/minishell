@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/19 06:12:20 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 03:26:05 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@
 # include <sys/errno.h>
 # include <unistd.h>
 # include <fcntl.h>
-// # include <string.h>
+# include <string.h>
+# include <sys/types.h>
+# include <dirent.h>
 # include <stdarg.h>
 # include <sys/ioctl.h>
 
