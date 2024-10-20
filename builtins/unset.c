@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 22:35:27 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/19 01:28:47 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 00:17:39 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,15 @@ bool	my_unset(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 		return (true);
 	}
 	while (curr->args[++i])
-		remove_env(env, curr->args[i]);
+	{
+		if (!is_valid_export(curr->args[i]))
+		{
+			ft_fprintf(2, "minishell: export: `%s': not a valid identifier\n", curr->args[i]);
+			shell->exit_status = EXIT_FAILURE;
+		}
+		else
+			remove_env(env, curr->args[i]);
+	}
 	shell->exit_status = EXIT_SUCCESS;
 	return (true);
 }

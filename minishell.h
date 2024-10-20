@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/20 23:25:38 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 00:15:44 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,7 @@ size_t					count_non_redirection_arg_size(char **args);
 size_t					arr_len(char **tab);
 char					*get_env(char *key, t_env *env);
 char					*str_add_char(char *str, char c);
+bool					is_valid_export(char *str);
 void					fr_args(char **args);
 char					**add_arr(char **args, char *str);
 void					save_quotes(char *str);
