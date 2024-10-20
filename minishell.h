@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/20 03:26:05 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 05:57:29 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ typedef struct s_env
 {
 	char				*key;
 	struct s_env		*next;
+	bool				exported;
 	char				*value;
 }						t_env;
 
@@ -146,7 +147,7 @@ char					*ft_strjoin(char *s1, char *s2);
 bool					ft_strstr(char *str, char *del);
 char					*ft_strcpy(char *dest, char *src);
 char					*ft_strcat(char *dest, char *src);
-t_env					*ft_lstnew(char *key, char *value);
+t_env					*ft_lstnew(char *key, char *value, int exported);
 char					**ft_split_v2(const char *s, char c);
 char					*non_free_strjoin(char *s1, char *s2);
 void					ft_lstadd_back(t_env **lst, t_env *new);

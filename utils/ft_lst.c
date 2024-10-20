@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lst.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 03:10:56 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/18 13:24:56 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/20 05:54:51 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	ft_lstadd_back(t_env **lst, t_env *new)
 	}
 }
 
-t_env	*ft_lstnew(char *key, char *value)
+t_env	*ft_lstnew(char *key, char *value, int exported)
 {
 	t_env	*node;
 
@@ -41,6 +41,7 @@ t_env	*ft_lstnew(char *key, char *value)
 		return (NULL);
 	node->key = key;
 	node->value = value;
+	node->exported = exported;
 	node->next = NULL;
 	return (node);
 }

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/19 01:20:26 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 05:59:20 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 			if (oldpwd)
 			{
 				if (!is_exists("OLDPWD", tmp))
-					ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(oldpwd)));
+					ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(oldpwd), 0));
 				else
 					env_update(env, "OLDPWD", oldpwd);
 			}
@@ -89,7 +89,7 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 			if (is_exists("PWD", tmp))
 				env_update(env, "PWD", pwd);
 			else
-				ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd)));
+				ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd), 0));
 			return (free(pwd),free(oldpwd), true);
 		}
 	}
@@ -104,7 +104,7 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 		if (oldpwd)
 		{
 			if (!is_exists("OLDPWD", tmp))
-				ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(oldpwd)));
+				ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(oldpwd), 0));
 			else
 				env_update(env, "OLDPWD", oldpwd);
 		}
@@ -118,7 +118,7 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 		if (is_exists("PWD", tmp))
 			env_update(env, "PWD", pwd);
 		else
-			ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd)));
+			ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd), 0));
 		return (free(pwd), free(oldpwd), true);
 	}
 }

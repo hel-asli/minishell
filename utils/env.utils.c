@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 20:44:19 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/18 13:37:20 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/20 05:56:12 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	built_env(t_env **env, char **ev)
 	{
 		sp = ft_env_split(ev[i]);
 		if (ft_strcmp(sp[0], "OLDPWD"))
-			ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1])));
+			ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1]), 0));
 		ft_free(sp);
 		i++;
 	}
@@ -51,11 +51,12 @@ void	set_env(t_env **env)
 
 	pwd = getcwd(NULL, 0);
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("PATH"),
-			ft_strdup("/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:.")));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), pwd));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("SHLVL"), ft_strdup("1")));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("_"), ft_strdup("/usr/bin/env")));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), NULL));
+			ft_strdup("/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:."), 0));
+	ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd), 0));
+	ft_lstadd_back(env, ft_lstnew(ft_strdup("SHLVL"), ft_strdup("1"), 0));
+	ft_lstadd_back(env, ft_lstnew(ft_strdup("_"), ft_strdup("/usr/bin/env"), 0));
+	ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), NULL, 0));
+	free(pwd);
 }
 
 char	**list_arr(t_env *env)

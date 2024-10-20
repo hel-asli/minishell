@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 16:38:37 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/19 01:21:40 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 06:14:37 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ bool	my_env(t_commands *cmnds, t_shell *shell, int flag)
 	while (curr)
 	{
 		if (curr->value)
-			printf("%s=%s\n", curr->key, curr->value);
-		else
-			printf("%s\n", curr->key);
+			ft_fprintf(STDOUT_FILENO, "%s=%s\n", curr->key, curr->value);
+		else if (curr->exported == 0)
+			ft_fprintf(STDOUT_FILENO, "%s\n", curr->key);
 		curr = curr->next;
 	}
 	shell->exit_status = EXIT_SUCCESS;

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 19:04:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/19 01:20:55 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 05:34:22 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,15 @@ bool	my_echo(t_commands *cmnds, t_shell *shell, int flag)
 			opt = true;
 		else
 		{
-			printf("%s", curr->args[i]);
+			ft_putstr_fd(curr->args[i],STDOUT_FILENO);
+			// printf("%s", curr->args[i]);
 			wrote = true;
 			if (curr->args[i + 1] != NULL)
-				printf(" ");
+				ft_putstr_fd(" ", STDOUT_FILENO);
 		}
 	}
 	shell->exit_status = EXIT_SUCCESS;
 	if (!opt)
-		printf("\n");
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	return (true);
 }

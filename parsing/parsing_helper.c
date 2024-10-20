@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/20 04:56:10 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 05:22:16 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,9 +200,12 @@ char **wildcard_helper(char *arg)
         }
 		if (ft_strchr(arg, '/') && is_not_sub(arg, pwd))
 			tab = add_arr(new, arg);
-		else if (ft_strchr(arg, '/') && (!starts_with(arg, pwd)))
+		else
+		{
+			if (ft_strchr(arg, '/') && (!starts_with(arg, pwd)))
                 prefix = str_add_char(ft_strdup(pwd), '/');
-		tab = get_files(arg, prefix, dir);
+			tab = get_files(arg, prefix, dir);
+		}
 		free(pwd);
 		closedir(dir);
 		return (tab);

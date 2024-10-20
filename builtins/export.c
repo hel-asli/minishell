@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:55:49 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/19 03:18:11 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 06:12:26 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ static void    export_print(t_env **exp)
 	while (export)
 	{
 		if (export->value)
-			printf("declare -x %s=\"%s\"\n", export->key, export->value);
+			ft_fprintf(STDOUT_FILENO,"declare -x %s=\"%s\"\n", export->key, export->value);
 		else
-			printf("declare -x %s\n", export->key);
+			ft_fprintf(STDOUT_FILENO ,"declare -x %s\n", export->key);
 		export = export->next;
 	}
 }
@@ -125,13 +125,15 @@ static void	env_concat(t_env **env, char *key, char *value)
 		if (!ft_strcmp(curr->key, key))
 		{
 			curr->value = ft_strjoin(curr->value, value);
+			curr->exported = 0;
 			return ;
 		}
 		curr = curr->next;
 	}
 }
 
-static void	env_export(t_env **env, char *key, char *value)
+
+static void	env_export(t_env **env, char *key, char *value, int exported)
 {
 	t_env *curr;
 
@@ -142,6 +144,7 @@ static void	env_export(t_env **env, char *key, char *value)
 		{
 			free(curr->value);
 			curr->value = ft_strdup(value);
+			curr->exported = exported;
 			free(value);
 			return ;
 		}
@@ -164,27 +167,6 @@ static int	num_count(char *key)
 	}
 	return (num);
 }
-// static char	*ft_quotes(char* org)
-// {
-//     int		i = 0;
-// 	int	 	j = 0;
-//     int 	len;
-//     char	*cpy;
-	
-// 	len = ft_strlen(org);
-// 	cpy = (char *)malloc(sizeof(char) * (len + 1));
-//     while (i < len)
-// 	{
-//         if (org[i] != '"' && org[i] != '\'')
-// 		{
-//             cpy[j] = org[i];
-// 			j++;
-// 		}
-// 		i++;
-//     }
-//     cpy[j] = '\0';
-//     return (cpy);
-// }
 
 static void export_handler(t_env **export, char *args)
 {
@@ -204,19 +186,19 @@ static void export_handler(t_env **export, char *args)
 		if (ft_lookup(args, '+'))
 			env_concat(export, new_key, ft_strdup(key[1]));
 		else if (ft_lookup(args, '='))
-			env_export(export, new_key, ft_strdup(key[1]));
+			env_export(export, new_key, ft_strdup(key[1]), 0);
 		else if (!ft_lookup(args, '='))
-			env_export(export, new_key, ft_strdup("\0"));
+			env_export(export, new_key, NULL, 1);
 		free(new_key);
 	}
 	else
 	{
 		if (ft_lookup(args, '+'))
-			ft_lstadd_back(export,ft_lstnew(new_key, ft_strdup(key[1])));
+			ft_lstadd_back(export,ft_lstnew(new_key, ft_strdup(key[1]), 0));
 		else if (ft_lookup(args, '='))
-			ft_lstadd_back(export,ft_lstnew(new_key, ft_strdup(key[1])));
+			ft_lstadd_back(export,ft_lstnew(new_key, ft_strdup(key[1]), 0));
 		else if (!ft_lookup(args, '='))
-			ft_lstadd_back(export,ft_lstnew(new_key, NULL));	
+			ft_lstadd_back(export,ft_lstnew(new_key, NULL, 1));	
 	}
 	fr_args(key);
 }	
