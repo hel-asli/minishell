@@ -217,6 +217,30 @@ void execute_command(t_commands *cmnds, t_shell *shell, t_exec *exec, int i)
     exit(127);
 }
 
+bool is_builtin(char *str)
+{
+    if (str)
+    {
+        if (!ft_strcmp(str, "cd"))
+            return (true);
+        else if (!ft_strcmp(str, "echo"))
+            return (true);
+        else if (!ft_strcmp(str, "env"))
+            return (true);
+        else if (!ft_strcmp(str, "pwd"))
+            return (true);
+        else if (!ft_strcmp(str, "exit"))
+            return (true);
+        else if (!ft_strcmp(str, "unset"))
+            return (true);
+        else if (!ft_strcmp(str, "export"))
+            return (true);
+        else
+            return (false); 
+    }
+    return (false);
+}
+
 void execution_start(t_shell *shell)
 {
     t_exec	exec;
@@ -229,7 +253,7 @@ void execution_start(t_shell *shell)
 	cmnds = shell->commands;
     exec.ev_execve = NULL;
     exec.nbr = ft_lstsize(shell->commands) - 1;
-    if (exec.nbr == 0 && cmnds->args)
+    if (exec.nbr == 0 && cmnds->args && is_builtin(cmnds->args[0]))
     {
             if (cmnds->redirect)
             {

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/20 05:22:16 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 07:06:12 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,14 +135,19 @@ char **get_files(char *str, char *prefix, DIR *dir)
             {
                 sp = ft_split_v2(str, '/');
                 if (entity->d_type == DT_DIR && check_pattern(sp[arr_len(sp) - 1],entity->d_name))
-                    tab = add_arr(tab, str_add_char(ft_strdup(entity->d_name), '/'));
+                    tab = add_arr(tab, str_add_char(entity->d_name, '/'));
                 fr_args(sp);
             }
             else
             {
                 sp = ft_split_v2(str, '/');
                 if (check_pattern(sp[arr_len(sp) - 1], entity->d_name))
-                    tab = add_arr(tab, ft_strjoin(ft_strdup(prefix), ft_strdup(entity->d_name)));
+				{
+
+					new_str = ft_strjoin(ft_strdup(prefix), ft_strdup(entity->d_name));
+                    tab = add_arr(tab, new_str);
+					free(new_str);
+				}
                 fr_args(sp);
             }
         }
@@ -203,7 +208,7 @@ char **wildcard_helper(char *arg)
 		else
 		{
 			if (ft_strchr(arg, '/') && (!starts_with(arg, pwd)))
-                prefix = str_add_char(ft_strdup(pwd), '/');
+                prefix = str_add_char(pwd, '/');
 			tab = get_files(arg, prefix, dir);
 		}
 		free(pwd);
@@ -215,12 +220,14 @@ char **wildcard_expand(char **args)
 {
 		DIR *dir;
         char *pwd;
+		char **sp;
         char *prefix;
 		char **tab;
 		int i = 0;
 
         pwd = getcwd(NULL, 0);
 		tab = NULL;
+		sp = NULL;
         if (!pwd)
         {
             perror("getcwd");
@@ -243,17 +250,17 @@ char **wildcard_expand(char **args)
 			{
 				if (ft_strchr(args[i], '/') && (!starts_with(args[i], pwd)))
 						prefix = str_add_char(ft_strdup(pwd), '/');
-				tab = re_build_arg(tab, get_files(args[i], prefix, dir));
+				sp = get_files(args[i], prefix, dir);
+				tab = re_build_arg(tab,sp);
+				fr_args(sp);
 			}
 			else
-			{
 				tab = add_arr(tab, args[i]);
-			}
 			i++;
 		}
 		free(pwd);
 		closedir(dir);
-		return (tab);
+		return (fr_args(args), free(prefix), tab);
 }
 
 char	**expand_args(char **args, t_shell *shell)
@@ -269,7 +276,9 @@ char	**expand_args(char **args, t_shell *shell)
 		if (ft_strchr(args[i], '$'))
 		{
 			tab = replace_tab(tab, args[i], shell);
-			tab = wildcard_expand(tab);
+			if (check_var(args[i]))
+				tab = wildcard_expand(tab);
+			// segfault on "$a" => a = echo *.c
 		}
 		else if (ft_strchr(args[i], '*') && check_wildcard(args[i]))
 		{
@@ -277,6 +286,7 @@ char	**expand_args(char **args, t_shell *shell)
 			gar_protect(args[i]);
 			sp = wildcard_helper(args[i]);
 			tab = re_build_arg(tab, sp);
+			fr_args(sp);
 		}
 		else
 		{
@@ -301,16 +311,17 @@ void	expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 		if (tmp->type != HEREDOC_INPUT)
 		{
 			file = expand_arg(tmp->file, env, shell);
-			if (file && ft_strchr(file, '*') && check_wildcard(file))
+			fprintf(stderr, "--%s\n", file);
+			if (file && ft_strchr(file, '*') && check_wildcard(tmp->file))
 			{
 				sp = wildcard_helper(file);
-				if (sp)
-				{
-					for (int i = 0; sp[i]; i++)
-					{
-						fprintf(stderr, "hel -> %s\n", sp[i]);
-					}
-				}
+				// if (sp)
+				// {
+				// 	for (int i = 0; sp[i]; i++)
+				// 	{
+				// 		fprintf(stderr, "hel -> %s\n", sp[i]);
+				// 	}
+				// }
 				if (arr_len(sp) != 1)
 				{
 					tmp->is_ambgious = true;
@@ -326,16 +337,20 @@ void	expand_redirect(t_redirect *redirect, t_env *env, t_shell *shell)
 			else if (!file && !ft_strchr(tmp->file, '"')
 				&& !ft_strchr(tmp->file, '\''))
 			{
+				puts("heree");
 				tmp->is_ambgious = true;
 				free(tmp->file);
 				tmp->file = file;
 			}
 			else if (file && check_var(tmp->file) && ft_strchr(file, 32))
 			{
+				puts("here");
 				tmp->is_ambgious = true;
 				free(tmp->file);
 				tmp->file = file;
 			}
+			else
+				tmp->file = del_quote(tmp->file);
 		}
 		else
 			tmp->file = del_quote(tmp->file);
