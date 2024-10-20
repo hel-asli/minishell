@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 05:47:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/19 06:12:06 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 23:27:40 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ char	**replace_tab(char **tab, char *arg, t_shell *shell)
 
 	(1) && (new_arg = NULL, sp = NULL);
 	space_to_gar(arg);
-	new_arg = expand_arg(arg, shell->env, shell);
+	new_arg = expand_arg(arg, shell);
 	if (new_arg)
 	{
 		if (check_var(arg) && ft_strchr(new_arg, ' '))

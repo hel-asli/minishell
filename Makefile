@@ -6,15 +6,15 @@
 #    By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/30 23:25:40 by hel-asli          #+#    #+#              #
-#    Updated: 2024/10/20 21:14:55 by hel-asli         ###   ########.fr        #
+#    Updated: 2024/10/20 23:25:12 by hel-asli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
-CFLAGS = #-Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 # INCLUDE_DIR = Include
-LDFLAGS = -g -fsanitize=address
+LDFLAGS = #-g -fsanitize=address
 READLINE_PREFIX = $(shell brew --prefix readline)
 READLINE_INCLUDE = $(READLINE_PREFIX)/include
 READLINE_LIB = $(READLINE_PREFIX)/lib

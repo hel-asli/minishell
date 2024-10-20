@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/20 05:57:29 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 23:25:38 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +238,7 @@ bool				    my_export(t_commands *cmnds, t_shell *shell, t_env **env, int flag);
 bool					builtins_check(t_shell *shell, t_commands *cmnds, t_env **env, int flag);
 void					env_update(t_env **env, char *key, char *value);
 int						handle_redirections(t_redirect *redirect);
-char					*expand_arg(char *arg, t_env *env, t_shell *shell);
+char					*expand_arg(char *arg, t_shell *shell);
 char					**list_arr(t_env *env);
 
 #endif

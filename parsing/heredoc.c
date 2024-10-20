@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 04:11:26 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/19 05:28:43 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/20 23:26:54 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 			break ;
 		if (expanded)
 		{
-			line = expand_arg(line, env, shell);
+			line = expand_arg(line, shell);
 			if (!line)
 				line = ft_strdup("");
 		}
