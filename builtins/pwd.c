@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 10:43:00 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/19 01:26:15 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 00:11:58 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,11 @@ bool	my_pwd(t_commands *cmnds, t_shell *shell, int flag)
 	}
 	cwd = getcwd(buff, PATH_MAX + 1);
 	if (!cwd)
-		return (ft_putendl_fd("Error getting pwd", STDERR_FILENO), shell->exit_status = EXIT_FAILURE, true);
+	{
+		cwd = get_env("PWD", shell->env);
+		if (!cwd)
+			return (ft_putendl_fd("Error getting pwd", STDERR_FILENO), shell->exit_status = EXIT_FAILURE, true);
+	}
 	printf("%s\n", cwd);
 	shell->exit_status = EXIT_SUCCESS;
 	return (true);
