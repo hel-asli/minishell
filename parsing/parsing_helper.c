@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 05:27:04 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 15:24:46 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,7 @@ bool check_pattern(const char *pattern, const char *str)
             return false;
         }
         else if (*pattern == *str)
-        {
-            str++;
-            pattern++;
-        }
+			(1) && (str++, pattern++);
         else
             return false;
     }
@@ -260,6 +257,33 @@ char **wildcard_expand(char **args)
 		return (fr_args(args), free(prefix), tab);
 }
 
+// char **expand_wildcard(char **tab, char *arg)
+// {
+// 	char *sp;
+
+// 	arg = del_quote(arg);
+// 	gar_protect(arg);
+// 	sp = wildcard_helper(arg);
+// 	if (sp)
+// 		tab = re_build_arg(tab, sp);
+// 	fr_args(sp);
+	
+// }
+char **wildcard_expand_helper(char **tab, char **args, int i)
+{
+	char **sp;
+	char **new;
+
+	sp = NULL;
+	new = NULL;
+	args[i] = del_quote(args[i]);
+	gar_protect(args[i]);
+	sp = wildcard_helper(args[i]);
+	if (sp)
+		new = re_build_arg(tab, sp);
+	fr_args(sp);
+	return (new);
+}
 char	**expand_args(char **args, t_shell *shell)
 {
 	int		i;
@@ -277,14 +301,7 @@ char	**expand_args(char **args, t_shell *shell)
 				tab = wildcard_expand(tab);
 		}
 		else if (ft_strchr(args[i], '*') && check_wildcard(args[i]))
-		{
-			args[i] = del_quote(args[i]);
-			gar_protect(args[i]);
-			sp = wildcard_helper(args[i]);
-			if (sp)
-				tab = re_build_arg(tab, sp);
-			fr_args(sp);
-		}
+			tab = wildcard_expand_helper(tab, args, i);
 		else
 		{
 			args[i] = del_quote(args[i]);
@@ -296,11 +313,30 @@ char	**expand_args(char **args, t_shell *shell)
 	return (fr_args(args), tab);
 }
 
+void wildcard_redirection(char *file, t_redirect *redirect)
+{
+	char **sp;
+
+	sp = wildcard_helper(file);
+	if (arr_len(sp) != 1)
+	{
+		redirect->is_ambgious = true;
+		free(redirect->file);
+		redirect->file = NULL;
+	}
+	else
+	{
+		free(redirect->file);
+		redirect->file = ft_strdup(sp[0]);
+	}
+	free(file);
+	fr_args(sp);
+}
+
 void	expand_redirect(t_redirect *redirect, t_shell *shell)
 {
 	t_redirect	*tmp;
 	char		*file;
-	char		**sp;
 
 	(1) && (tmp = redirect, file = NULL);
 	while (tmp)
@@ -309,41 +345,14 @@ void	expand_redirect(t_redirect *redirect, t_shell *shell)
 		{
 			file = expand_arg(tmp->file, shell);
 			if (file && ft_strchr(file, '*') && check_wildcard(tmp->file))
-			{
-				sp = wildcard_helper(file);
-				if (arr_len(sp) != 1)
-				{
-					tmp->is_ambgious = true;
-					free(tmp->file);
-					tmp->file = NULL;
-				}
-				else
-				{
-					free(tmp->file);
-					tmp->file = ft_strdup(sp[0]);
-				}
-				free(file);
-				fr_args(sp);
-			}
+				wildcard_redirection(file, tmp);
 			else if (!file && !ft_strchr(tmp->file, '"')
 				&& !ft_strchr(tmp->file, '\''))
-			{
-				tmp->is_ambgious = true;
-				free(tmp->file);
-				tmp->file = file;
-			}
+				(1) && (tmp->is_ambgious = true, free(tmp->file), tmp->file = file);
 			else if (file && check_var(tmp->file) && ft_strchr(file, 32))
-			{
-				tmp->is_ambgious = true;
-				free(tmp->file);
-				tmp->file = file;
-			}
+				(1) && (tmp->is_ambgious = true, free(tmp->file), tmp->file = file);
 			else
-			{
-				// free(file);
-				free(tmp->file);
-				tmp->file = del_quote(file);
-			}
+				(1) && (free(tmp->file), tmp->file = del_quote(file));
 		}
 		else
 			tmp->file = del_quote(tmp->file);
@@ -379,43 +388,43 @@ void	process_pipe_cmds(t_shell **shell, char **pipes)
 	fr_args(pipes);
 }
 
-void	print_cmds(t_commands *cmds)
-{
-	int			i;
-	t_redirect	*red;
+// void	print_cmds(t_commands *cmds)
+// {
+// 	int			i;
+// 	t_redirect	*red;
 
-	while (cmds)
-	{
-		printf("----------------------------------------------\n");
-		printf("args : ");
-		if (cmds->args)
-		{
-			i = 0;
-			while (cmds->args[i])
-			{
-				printf("{%s} ", cmds->args[i]);
-				i++;
-			}
-		}
-		else
-			printf("(None) args . ");
-		printf("\n");
-		red = cmds->redirect;
-		printf("redirections : \n");
-		if (!red)
-			printf("(None)\n");
-		else
-		{
-			while (red)
-			{
-				printf("type : %u\n", red->type);
-				printf("expanded : %d\n", red->expanded);
-				printf("is_ambigous : %d\n", red->is_ambgious);
-				printf("file : {%s}\n", red->file);
-				red = red->next;
-			}
-		}
-		printf("----------------------------------------------\n");
-		cmds = cmds->next;
-	}
-}
+// 	while (cmds)
+// 	{
+// 		printf("----------------------------------------------\n");
+// 		printf("args : ");
+// 		if (cmds->args)
+// 		{
+// 			i = 0;
+// 			while (cmds->args[i])
+// 			{
+// 				printf("{%s} ", cmds->args[i]);
+// 				i++;
+// 			}
+// 		}
+// 		else
+// 			printf("(None) args . ");
+// 		printf("\n");
+// 		red = cmds->redirect;
+// 		printf("redirections : \n");
+// 		if (!red)
+// 			printf("(None)\n");
+// 		else
+// 		{
+// 			while (red)
+// 			{
+// 				printf("type : %u\n", red->type);
+// 				printf("expanded : %d\n", red->expanded);
+// 				printf("is_ambigous : %d\n", red->is_ambgious);
+// 				printf("file : {%s}\n", red->file);
+// 				red = red->next;
+// 			}
+// 		}
+// 		printf("----------------------------------------------\n");
+// 		cmds = cmds->next;
+// 	}
+// }

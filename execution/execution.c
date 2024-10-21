@@ -114,6 +114,62 @@ void	free_exec(t_exec *exec)
         fr_args(exec->ev_execve);
 }
 
+int input_redirection(t_redirect *redirect)
+{
+    int fd;
+
+    fd = -1;
+	if (redirect->type == INPUT)
+	{
+		fd = open(redirect->file, O_RDONLY);
+		if (fd == -1)
+        {
+            perror("open");
+			return -1;
+        }
+	}
+	else
+		fd = redirect->heredoc_fd;
+    if (dup2(fd, STDIN_FILENO) == -1)
+    {
+        perror("dup2");
+        close(fd);
+        return -1;
+    }
+    if (fd != -1)
+        close(fd);
+    return (0);
+}
+
+int out_redirection(t_redirect *redirect)
+{
+    int fd;
+    int flags;
+
+    fd = -1;
+    flags = O_WRONLY | O_CREAT;
+    if (redirect->type == OUT_APPEND)
+        flags |= O_APPEND;
+    else
+        flags |= O_TRUNC;
+    
+    fd = open(redirect->file, flags, 0644);
+    if (fd == -1)
+    {
+        perror("open");
+        return -1;
+    }
+    if (dup2(fd, STDOUT_FILENO) == -1)
+    {
+        perror("dup2");
+        close(fd);
+        return -1;
+    }
+    if (fd != -1)
+        close(fd);
+    return (0);
+}
+
 int handle_redirections(t_redirect *redirect)
 {
     while (redirect)
@@ -127,62 +183,41 @@ int handle_redirections(t_redirect *redirect)
             return (ft_fprintf(STDERR_FILENO, "minishell: No such file or directory\n"), -1);
         if (redirect->type == INPUT || redirect->type == HEREDOC_INPUT)
         {
-			if (redirect->type == INPUT)
-			{
-				fd = open(redirect->file, O_RDONLY);
-				if (fd == -1)
-                {
-                    perror("open");
-					return -1;
-                }
-			}
-			else
-				fd = redirect->heredoc_fd;
-            if (dup2(fd, STDIN_FILENO) == -1)
-            {
-                perror("dup2");
-                close(fd);
-                return -1;
-            }
-            close(fd);
+            if (input_redirection(redirect) == -1)
+                return (-1);
         }
         else if (redirect->type == OUT_TRUNC || redirect->type == OUT_APPEND)
         {
-            int flags = O_WRONLY | O_CREAT;
-            if (redirect->type == OUT_APPEND)
-            {
-                flags |= O_APPEND;
-            }
-            else
-            {
-                flags |= O_TRUNC;
-            }
-            
-            fd = open(redirect->file, flags, 0644);
-            if (fd == -1)
-            {
-                perror("open");
-                return -1;
-            }
-            if (dup2(fd, STDOUT_FILENO) == -1)
-            {
-                perror("dup2");
-                close(fd);
-                return -1;
-            }
-            close(fd);
+            if (out_redirection(redirect) == -1)
+                return (-1);
         }
         redirect = redirect->next;
     }
     return 0;
 }
 
-void execute_command(t_commands *cmnds, t_shell *shell, t_exec *exec, int i)
+void is_stat(char *cmd)
 {
-    char 		*cmd_path;
-	struct stat	statbuf;
+    struct stat statbuf;
+        if (stat(cmd, &statbuf) == -1)
+        {
+            ft_fprintf(2, "minishell: %s: Not a directory\n", cmd);
+            exit(126);
+        }
+        if (S_ISDIR(statbuf.st_mode))
+        {
+            ft_fprintf(2, "minishell: %s: is a directory\n", cmd);
+            exit(126);
+        }
+        if (!(statbuf.st_mode & S_IXUSR))
+        {
+            ft_fprintf(2, "minishell: %s: Permission denied\n", cmd);
+            exit(126);
+        }
+}
 
-    cmd_path = NULL;
+void execute_command_helper(t_commands *cmnds, t_shell *shell, t_exec *exec, int i)
+{
     exec->ev_execve = list_arr(shell->env);
     if (i > 0 && dup2(exec->fds[i - 1][0], STDIN_FILENO) == -1)
         err_exit("Dup2 Failure");
@@ -200,24 +235,16 @@ void execute_command(t_commands *cmnds, t_shell *shell, t_exec *exec, int i)
         env_clear(&shell->env);
         exit(EXIT_SUCCESS);
     }
+}
+
+void execute_command(t_commands *cmnds, t_shell *shell, t_exec *exec, int i)
+{
+    char 		*cmd_path;
+
+    cmd_path = NULL;
+    execute_command_helper(cmnds, shell, exec, i);
 	if (!ft_strncmp(cmnds->args[0], "/", 1) || !ft_strncmp(cmnds->args[0], "./", 2) || !ft_strncmp(cmnds->args[0], "../", 3))
-	{
-    if (stat(cmnds->args[0], &statbuf) == -1)
-    {
-        ft_fprintf(2, "minishell: %s: Not a directory\n", cmnds->args[0]);
-        exit(126);
-    }
-    if (S_ISDIR(statbuf.st_mode))
-    {
-        ft_fprintf(2, "minishell: %s: is a directory\n", cmnds->args[0]);
-        exit(126);
-    }
-    if (!(statbuf.st_mode & S_IXUSR))
-    {
-        ft_fprintf(2, "minishell: %s: Permission denied\n", cmnds->args[0]);
-        exit(126);
-    }
-	}
+        is_stat(cmnds->args[0]);
     cmd_path = find_command(cmnds->args[0], shell->env);
     if (cmd_path)
     {
@@ -259,20 +286,14 @@ bool is_builtin(char *str)
     }
     return (false);
 }
-
-void execution_start(t_shell *shell)
+int builtin_execute(t_shell *shell)
 {
-    t_exec	exec;
-    int		status;
     t_commands *cmnds;
-    int out;
-    int in;
-	int		i;
+    int     out;
+    int     in;
 
-	cmnds = shell->commands;
-    exec.ev_execve = NULL;
-    exec.nbr = ft_lstsize(shell->commands) - 1;
-    if (exec.nbr == 0 && cmnds->args && is_builtin(cmnds->args[0]))
+    cmnds = shell->commands;
+    if (ft_lstsize(cmnds) == 1 && cmnds->args && is_builtin(cmnds->args[0]))
     {
             if (cmnds->redirect)
             {
@@ -288,47 +309,50 @@ void execution_start(t_shell *shell)
 	                close(out);
 	                close(in);
                 }
-                return ;
+                return (1);
             }
     }
-    exec.ids = malloc(sizeof(pid_t) * (exec.nbr + 1));
-    if (!exec.ids)
+    return (0);
+}
+
+void init_exec(t_exec *exec, t_shell *shell)
+{
+    exec->ev_execve = NULL;
+    exec->nbr = ft_lstsize(shell->commands) - 1;
+    exec->ids = malloc(sizeof(pid_t) * (exec->nbr + 1));
+    if (!exec->ids)
         err_handle("Malloc failure.");
-    exec.fds = fds_allocation(exec.nbr);
-    if (!exec.fds)
+    exec->fds = fds_allocation(exec->nbr);
+    if (!exec->fds)
         err_handle("Malloc failure.");
-    if (exec_pipe(&exec))
+}
+
+void signal_helper(t_shell *shell, int status)
+{
+    int sig;
+
+    sig = WTERMSIG(status);
+    if (sig == SIGINT && !rl_signal)
     {
-        return ;
+        write(STDOUT_FILENO, "\n", 1);
+        shell->exit_status = 128 + sig;
     }
-	i = 0;
-    rl_signal = 0;
-    while (i <= exec.nbr)
+    if (sig == SIGQUIT)
     {
-        exec.ids[i] = fork();
-        if (exec.ids[i] < 0)
-        {
-            exec_close(exec.fds, exec.nbr);
-            free_exec(&exec);
-            perror("Fork failure");
-            return ;
-        }
-        if (exec.ids[i] == 0)
-        {
-            signal(SIGQUIT, SIG_DFL);
-            signal(SIGINT, SIG_DFL);
-            execute_command(cmnds, shell, &exec, i);
-        }
-		i++;
-        cmnds = cmnds->next;
+        write(STDOUT_FILENO, "Quit: 3\n", 8);
+        shell->exit_status = 128 + sig;
     }
-	status = 0;
-	i = 0;
-    exec_close(exec.fds, exec.nbr);
-    // printf("before: %d\n", shell->exit_status);
-    while (i <= exec.nbr)
+}
+void cmnds_wait(t_shell *shell, t_exec *exec)
+{
+    int status;
+    int i;
+
+    (1) && (status = 0, i = 0);
+    exec_close(exec->fds, exec->nbr);
+    while (i <= exec->nbr)
     {
-        if (waitpid(exec.ids[i], &status, 0) < 0 && errno == ECHILD)
+        if (waitpid(exec->ids[i], &status, 0) < 0 && errno == ECHILD)
             err_exit("WaitPid");
         if (WIFEXITED(status))
             shell->exit_status = WEXITSTATUS(status);
@@ -336,19 +360,52 @@ void execution_start(t_shell *shell)
             break ;
         i++;
     }
-    free_exec(&exec);
+    free_exec(exec);
     if (WIFSIGNALED(status))
+        signal_helper(shell, status);
+}
+
+void setup_child_signal(void)
+{
+    signal(SIGQUIT, SIG_DFL);
+    signal(SIGINT, SIG_DFL);
+}
+
+void cmnds_fork(t_shell *shell, t_exec *exec)
+{
+    int i;
+    t_commands *cmnds;
+
+    i = 0;
+    cmnds = shell->commands;
+    while (i <= exec->nbr)
     {
-        int sig = WTERMSIG(status);
-        if (sig == SIGINT && !rl_signal)
+        exec->ids[i] = fork();
+        if (exec->ids[i] < 0)
         {
-            write(STDOUT_FILENO, "\n", 1);
-            shell->exit_status = 128 + sig;
+            exec_close(exec->fds, exec->nbr);
+            free_exec(exec);
+            perror("Fork failure");
+            return ;
         }
-        if (sig == SIGQUIT)
+        if (exec->ids[i] == 0)
         {
-            write(STDOUT_FILENO, "Quit: 3\n", 8);
-            shell->exit_status = 128 + sig;
+            setup_child_signal();
+            execute_command(cmnds, shell, exec, i);
         }
+        (1) && (i++, cmnds = cmnds->next);
     }
+}
+void execution_start(t_shell *shell)
+{
+    t_exec	exec;
+
+    if (builtin_execute(shell))
+        return ;
+    init_exec(&exec, shell);
+    if (exec_pipe(&exec))
+        return ;
+    rl_signal = 0;
+    cmnds_fork(shell, &exec);
+    cmnds_wait(shell, &exec);
 }

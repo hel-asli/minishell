@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 19:04:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 02:49:02 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 13:38:50 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,9 @@ bool	my_echo(t_commands *cmnds, t_shell *shell, int flag)
 	bool		wrote;
 	t_commands	*curr;
 
-	i = 0;
-	opt = false;
-	wrote = false;
-	curr = cmnds;
+	(1) && (i = 0, opt = false, wrote = false, curr = cmnds);
 	if (curr->redirect && !flag && handle_redirections(curr->redirect) == -1)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (true);
-	}
+		return (shell->exit_status = EXIT_SUCCESS, true);
 	while (curr->args[++i])
 	{
 		if (ft_opt_check(curr->args[i], 'n') && !wrote)
@@ -57,6 +51,5 @@ bool	my_echo(t_commands *cmnds, t_shell *shell, int flag)
 	}
 	if (!opt)
 		ft_putstr_fd("\n", STDOUT_FILENO);
-	shell->exit_status = EXIT_SUCCESS;
-	return (true);
+	return (shell->exit_status = EXIT_SUCCESS, true);
 }

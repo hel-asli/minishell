@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 05:40:18 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/21 15:28:58 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,8 +150,7 @@ void	read_input(t_shell *shell, const char *prompt)
 {
 	while (true)
 	{
-		rl_signal = 1;
-		shell->commands = NULL;
+		(1) && (rl_signal = 1, shell->commands = NULL);
 		shell->parsing.line = readline(prompt);
 		if (!shell->parsing.line)
 		{

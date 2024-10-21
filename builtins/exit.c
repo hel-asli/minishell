@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:15:23 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 03:27:10 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 13:39:23 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,7 @@ bool	my_exit(t_commands *cmnds, t_shell *shell, int flag)
 	long long	num;
 	t_commands	*curr;
 
-	i = 1;
-	curr = cmnds;
+	(1) && (i = 0, curr = cmnds);
 	if (curr->redirect && !flag && handle_redirections(curr->redirect) < 0)
 		return (shell->exit_status = EXIT_FAILURE ,true);
 	while (curr->args[i])
