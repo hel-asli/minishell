@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 15:59:18 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/21 21:56:31 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ void	env_update(t_env **env, char *key, char *value)
 		curr = curr->next;
 	}
 }
-bool is_exists(char *key, t_env *env)
+
+bool	is_exists(char *key, t_env *env)
 {
 	while (env)
 	{
@@ -48,6 +49,7 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 	t_commands	*curr;
 	char		*oldpwd;
 	char		*pwd;
+	char		*home;
 
 	tmp = *env;
 	curr = cmnds;
@@ -61,54 +63,48 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 	}
 	if (curr->args[1] == NULL)
 	{
-		char *home = get_env("HOME", tmp);
+		home = get_env("HOME", tmp);
 		if (!home)
-			return (ft_putstr_fd("minishell: HOME not set\n", STDERR_FILENO), free(oldpwd), shell->exit_status = EXIT_FAILURE , true);
+			return (ft_putstr_fd("minishell: HOME not set\n", STDERR_FILENO),
+				free(oldpwd), shell->exit_status = EXIT_FAILURE, true);
 		else
 		{
 			if (chdir(home) < 0)
 			{
-				free(oldpwd);
-				free(home);
 				shell->exit_status = EXIT_FAILURE;
-				perror("HOME");
-				return (true);
+				return (perror("HOME"), free(oldpwd), free(home), true);
 			}
 			if (oldpwd)
 			{
 				if (!is_exists("OLDPWD", tmp))
-					ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(oldpwd), 0));
+					ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"),
+							ft_strdup(oldpwd), 0));
 				else
 					env_update(env, "OLDPWD", oldpwd);
 			}
 			pwd = getcwd(NULL, 0);
 			if (!pwd)
-			{
-				perror("getcwd");
-				free(home);
-				free(oldpwd);
-				return (true);
-			}
+				return (perror("getcwd"), free(home), free(oldpwd), true);
 			if (is_exists("PWD", tmp))
 				env_update(env, "PWD", pwd);
 			else
-				ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd), 0));
-			return (free(pwd),free(oldpwd), free(home), true);
+				ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"),
+						ft_strdup(pwd), 0));
+			return (free(pwd), free(oldpwd), free(home), true);
 		}
 	}
 	else
 	{
 		if (chdir(curr->args[1]) == -1)
 		{
-			perror("minishell: cd");
 			shell->exit_status = EXIT_FAILURE;
-			free(oldpwd);
-			return (true);
+			return (perror("minishell: cd"), free(oldpwd), true);
 		}
 		if (oldpwd)
 		{
 			if (!is_exists("OLDPWD", tmp))
-				ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(oldpwd), 0));
+				ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"),
+						ft_strdup(oldpwd), 0));
 			else
 				env_update(env, "OLDPWD", oldpwd);
 		}
@@ -116,7 +112,7 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 		if (!pwd)
 		{
 			if (ft_strcmp(curr->args[1], ".") || ft_strcmp(curr->args[1], ".."))
-				pwd =  ft_strjoin_char(oldpwd, curr->args[1], '/');
+				pwd = ft_strjoin_char(oldpwd, curr->args[1], '/');
 			else
 				return (perror("getcwd"), free(oldpwd), true);
 		}

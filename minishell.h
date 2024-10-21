@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 14:26:21 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:42:43 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 
-extern int rl_signal;
+extern int	g_rl_signal;
 
 # define ANSI_CURSOR_UP "\033[1A"
 # define ANSI_CURSOR_DOWN "\033[1B"
@@ -51,7 +51,7 @@ typedef enum e_syntax
 	UNCLOSED_QUOTES,
 	INVALID_HEREDOC,
 	INVALID_REDIRECTINO,
-}						t_syntax;
+}	t_syntax;
 
 typedef enum e_red
 {
@@ -59,7 +59,7 @@ typedef enum e_red
 	OUT_TRUNC,
 	OUT_APPEND,
 	HEREDOC_INPUT,
-} t_red;
+}	t_red;
 
 typedef struct s_env
 {
@@ -67,8 +67,7 @@ typedef struct s_env
 	struct s_env		*next;
 	bool				exported;
 	char				*value;
-}						t_env;
-
+}	t_env;
 
 typedef struct s_redirect
 {
@@ -78,7 +77,7 @@ typedef struct s_redirect
 	bool				expanded;
 	int					heredoc_fd;
 	bool				is_ambgious;
-}						t_redirect;
+}	t_redirect;
 
 typedef struct s_commands
 {
@@ -86,12 +85,12 @@ typedef struct s_commands
 	char				**args;
 	t_redirect			*redirect;
 	struct s_commands	*next;
-}						t_commands;
+}	t_commands;
 
 typedef struct s_parsing
 {
 	char				*line;
-}						t_parsing;
+}	t_parsing;
 
 typedef struct s_exec
 {
@@ -99,7 +98,7 @@ typedef struct s_exec
 	int					**fds;
 	pid_t				*ids;
 	pid_t				nbr;
-}						t_exec;
+}	t_exec;
 
 typedef struct s_shell
 {
@@ -108,13 +107,13 @@ typedef struct s_shell
 	t_parsing			parsing;
 	t_commands			*commands;
 	char				**ev_execve;
-	struct				termios old_attr;
-	struct				termios copy;
+	struct termios		old_attr;
+	struct termios		copy;
 	int					exit_status;
 	int					escape;
-}						t_shell;
+}	t_shell;
 
-//utils
+char					*check_value(char *value);
 char					*ft_itoa(int n);
 bool					is_space(char c);
 void					fr_args(char **args);
@@ -126,7 +125,7 @@ void					err_exit(char *str);
 bool					in_quotes(char *str);
 bool					empty_str(char *line);
 void					err_handle(char *str);
-char 					**list_arr(t_env *env);
+char					**list_arr(t_env *env);
 bool					is_rev_special(char c);
 void					gar_protect(char *str);
 void					env_clear(t_env **env);
@@ -161,6 +160,8 @@ size_t					ft_strlcpy(char *dest, const char *src, size_t size);
 void					free_exec(t_exec *exec);
 bool					is_special(char c);
 int						check_dots(char *line);
+void					fds_free(int **fd, int nb);
+int						**fds_allocation(int nb);
 bool					is_rev_special(char c);
 bool					in_quotes(char *str);
 bool					ft_strchr(char *str, char c);
@@ -189,27 +190,31 @@ char					*get_from_env(t_shell *shell, char *arg, int *i);
 char					*get_new_value(t_shell *shell, char *arg, int *i);
 char					**replace_tab(char **tab, char *arg, t_shell *shell);
 char					**re_build_arg(char **args, char **sp);
-
-//parsing
 void					setup_signals(void);
 bool					is_ascii(char *str);
 void					sigint_heredoc_handler(int nb);
 void					setup_heredoc_signals(void);
 int						heredoc(t_shell *shell);
-void					heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell);
+void					heredoc_helper(char *delimter, int fd,
+							bool expanded, t_shell *shell);
 char					*del_quote(char *str);
 void					sigint_handler(int nb);
 void					sigquit_handler(int nb);
 void					space_to_gar(char *line);
+int						check_wildcard(char *str);
+char					**wildcard_expand_helper(char **tab, char **args, int i);
+void					wildcard_redirection(char *file, t_redirect *redirect);
+char					**wildcard_helper(char *arg);
 t_commands				*ft_last(t_commands *node);
+bool					is_not_sub(const char *str, const char *pwd);
 bool					is_redirection(char *token);
 void					cmds_clear(t_commands **cmds);
 t_syntax				other_syntax_check(char *line);
 bool					quotes_syntax_check(char *line);
+int						starts_with(char *start, char *str);
 void					syntax_err_msg(t_syntax syntax);
 t_redirect				*ft_last_redir(t_redirect *node);
 bool					check_pipe(char **tokens, int i);
-void					print_cmds(t_commands *commands);
 bool					check_heredoc(char **tokens, int i);
 void					clear_redirect(t_redirect **redirect);
 t_redirect				*ft_new_redir(char *type, char *file);
@@ -221,10 +226,8 @@ void					read_input(t_shell *parsing, const char *prompt);
 void					ft_back_addlst(t_commands **lst, t_commands *new);
 void					ft_lst_add_redir(t_redirect **lst, t_redirect *new);
 void					restore_terminal_old_attr(struct termios *old_attr);
-
-// execution
 bool					my_pwd(t_commands *cmnds, t_shell *shell, int flag);
-bool					my_env(t_commands *cmnds,  t_shell *env, int flag);
+bool					my_env(t_commands *cmnds, t_shell *env, int flag);
 void					exit_error(t_shell *shell, int flag);
 void					save_quotes(char *str);
 bool					my_exit(t_commands *cmnds, t_shell *shell, int flag);
@@ -232,16 +235,28 @@ bool					my_echo(t_commands *cmnds, t_shell *shell, int flag);
 t_env					*export_lstlast(t_env *export);
 void					execution_start(t_shell *shell);
 char					*get_env(char *key, t_env *env);
-// void					export_env(t_env **env, char *args);
-char 					*find_command(char *cmd, t_env *env);
-bool					my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag);
-// void					build_export(t_env **export, char **ev);
-bool					my_unset(t_commands *cmnds, t_shell *shell, t_env **env, int flag);
-bool				    my_export(t_commands *cmnds, t_shell *shell, t_env **env, int flag);
-bool					builtins_check(t_shell *shell, t_commands *cmnds, t_env **env, int flag);
+char					*find_command(char *cmd, t_env *env);
+bool					my_cd(t_commands *cmnds, t_shell *shell,
+							t_env **env, int flag);
+bool					my_unset(t_commands *cmnds, t_shell *shell,
+							t_env **env, int flag);
+bool					my_export(t_commands *cmnds, t_shell *shell,
+							t_env **env, int flag);
+bool					builtins_check(t_shell *shell, t_commands *cmnds,
+							t_env **env, int flag);
 void					env_update(t_env **env, char *key, char *value);
 int						handle_redirections(t_redirect *redirect);
 char					*expand_arg(char *arg, t_shell *shell);
 char					**list_arr(t_env *env);
+void					export_print(t_env **exp);
+char					*copy_key(char *src);
+void					sort_export(t_env **export);
+bool					env_key_exist(t_env **env, char *key);
+int						num_count(char *key);
+int						exec_pipe(t_exec *exec);
+void					exec_close(int **fds, int size);
+int						out_redirection(t_redirect *redirect);
+int						input_redirection(t_redirect *redirect);
+bool					is_builtin(char *str);
 
 #endif

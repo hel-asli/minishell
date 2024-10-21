@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 15:28:58 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:36:27 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	space_to_gar(char *line)
 	bool	in_quotes;
 	char	quote_type;
 
-	(1) && (i = -1 ,in_quotes = false, quote_type = 0);
+	(1) && (i = -1, in_quotes = false, quote_type = 0);
 	while (line[++i])
 	{
 		if (line[i] == '"' || line[i] == '\'')
@@ -89,33 +89,6 @@ void	space_to_gar(char *line)
 			match_char(line, i);
 	}
 }
-
-char	*del_quote(char *str)
-{
-	int		i;
-	int		j;
-	char	*ptr;
-	char	type;
-	bool	in_quote;
-
-	(1) && (j = 0, i = 0, in_quote = false, type = 0);
-	ptr = malloc(sizeof(char) * ft_strlen(str) + 1);
-	if (!ptr)
-		err_handle("Malloc Failure");
-	while (str[i])
-	{
-		if (!in_quote && (str[i] == '\'' || str[i] == '"'))
-			(1) && (in_quote = !in_quote, type = str[i]);
-		else if (in_quote && type == str[i])
-			in_quote = false;
-		else
-			ptr[j++] = str[i];
-		i++;
-	}
-	return (ptr[j] = 0, free(str), ptr);
-}
-
-
 
 int	parse_input(t_shell *shell)
 {
@@ -142,7 +115,6 @@ int	parse_input(t_shell *shell)
 	process_pipe_cmds(&shell, pipes);
 	if (heredoc(shell))
 		return (1);
-	// print_cmds(shell->commands);
 	return (0);
 }
 
@@ -150,7 +122,7 @@ void	read_input(t_shell *shell, const char *prompt)
 {
 	while (true)
 	{
-		(1) && (rl_signal = 1, shell->commands = NULL);
+		(1) && (g_rl_signal = 1, shell->commands = NULL);
 		shell->parsing.line = readline(prompt);
 		if (!shell->parsing.line)
 		{
@@ -169,7 +141,7 @@ void	read_input(t_shell *shell, const char *prompt)
 		if (parse_input(shell) || !shell->commands)
 			continue ;
 		restore_terminal_old_attr(&shell->old_attr);
-		execution_start(shell); 
+		execution_start(shell);
 		cmds_clear(&shell->commands);
 		restore_terminal_old_attr(&shell->copy);
 	}

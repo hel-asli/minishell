@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 04:11:26 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 02:24:13 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:40:00 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int	heredoc(t_shell *shell)
 	t_redirect	*red;
 	int			heredoc_write;
 
-	rl_signal = 0;
+	g_rl_signal = 0;
 	(1) && (cmd = shell->commands, red = NULL);
 	while (cmd)
 	{
@@ -118,4 +118,32 @@ int	heredoc(t_shell *shell)
 		cmd = cmd->next;
 	}
 	return (0);
+}
+
+void	process_pipe_cmds(t_shell **shell, char **pipes)
+{
+	int			i;
+	char		**tab;
+	char		**args;
+	t_redirect	*redirect;
+
+	(1) && (i = 0, redirect = NULL);
+	while (pipes[i])
+	{
+		tab = ft_split(pipes[i]);
+		if (!tab)
+			err_handle("Allocation Faile");
+		(1) && (protect_tab(tab), redirect = build_redirection(tab));
+		args = args_allocation(tab, count_non_redirection_arg_size(tab));
+		(1) && (fr_args(tab), args = expand_args(args, *shell));
+		expand_redirect(redirect, *shell);
+		if (!args && !redirect)
+		{
+			i++;
+			continue ;
+		}
+		ft_back_addlst(&(*shell)->commands, ft_newlist(args, redirect));
+		i++;
+	}
+	fr_args(pipes);
 }

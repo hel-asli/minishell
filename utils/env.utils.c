@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 20:44:19 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 03:36:10 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 21:21:36 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ void	built_env(t_env **env, char **ev)
 		if (!ft_strcmp(sp[0], "OLDPWD"))
 			ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]), NULL, 0));
 		else
-			ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1]), 0));
+			ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]),
+					ft_strdup(sp[1]), 0));
 		ft_free(sp);
 		i++;
 	}
@@ -56,7 +57,8 @@ void	set_env(t_env **env)
 			ft_strdup("/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:."), 0));
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd), 0));
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("SHLVL"), ft_strdup("1"), 0));
-	ft_lstadd_back(env, ft_lstnew(ft_strdup("_"), ft_strdup("/usr/bin/env"), 0));
+	ft_lstadd_back(env, ft_lstnew(ft_strdup("_"),
+			ft_strdup("/usr/bin/env"), 0));
 	ft_lstadd_back(env, ft_lstnew(ft_strdup("OLDPWD"), NULL, 0));
 	free(pwd);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 05:38:22 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/19 05:41:00 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 21:25:13 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,12 @@ size_t	count_non_redirection_arg_size(char **args)
 			i++;
 		}
 	}
-
 	return (count);
 }
 
-size_t arr_len(char **tab)
+size_t	arr_len(char **tab)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	if (!tab)
@@ -45,7 +44,7 @@ size_t arr_len(char **tab)
 	return (i);
 }
 
-char *get_env(char *key, t_env *env)
+char	*get_env(char *key, t_env *env)
 {
 	while (env)
 	{
@@ -60,10 +59,13 @@ char *get_env(char *key, t_env *env)
 	return (NULL);
 }
 
-char *str_add_char(char *str, char c)
+char	*str_add_char(char *str, char c)
 {
-	int i = 0;
-	char *ptr = malloc(sizeof(char) * (ft_strlen(str) + 2));
+	int		i;
+	char	*ptr;
+
+	i = 0;
+	ptr = malloc(sizeof(char) * (ft_strlen(str) + 2));
 	if (!ptr)
 		return (NULL);
 	while (str[i])
@@ -79,25 +81,29 @@ char *str_add_char(char *str, char c)
 
 char	**re_build_arg(char **args, char **sp)
 {
-	size_t len;
-    len = arr_len(args) + arr_len(sp);
-    int j = 0;
-    int k = 0;
-    char **ptr = malloc(sizeof(char *) * (len + 1)); 
-    if (!ptr)
-        err_handle("malloc");
-    while (args && args[j])
-    {
-        ptr[j] = ft_strdup(args[j]);
-        j++;
-    }
-    while (sp[k])
-    {
+	size_t	len;
+	int		j;
+	int		k;
+	char	**ptr;
+
+	j = 0;
+	k = 0;
+	len = arr_len(args) + arr_len(sp);
+	ptr = malloc(sizeof(char *) * (len + 1));
+	if (!ptr)
+		err_handle("malloc");
+	while (args && args[j])
+	{
+		ptr[j] = ft_strdup(args[j]);
+		j++;
+	}
+	while (sp[k])
+	{
 		gar_protect(sp[k]);
-     	ptr[j++] = ft_strdup(sp[k]);
-        k++;
-    }
-    ptr[j] = NULL;
+		ptr[j++] = ft_strdup(sp[k]);
+		k++;
+	}
+	ptr[j] = NULL;
 	fr_args(args);
-    return (ptr);
+	return (ptr);
 }

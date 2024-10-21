@@ -3,24 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   expand_utils_3.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 05:47:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 02:54:41 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 21:19:03 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-t_redirect *build_redirection(char **args)
+t_redirect	*build_redirection(char **args)
 {
-	int i = 0;
-	t_redirect *redirect;
+	int			i;
+	t_redirect	*redirect;
 
+	i = 0;
 	redirect = NULL;
 	while (args[i])
 	{
-		if (is_redirection(args[i]) ||  !ft_strcmp(args[i], "<<"))
+		if (is_redirection(args[i]) || !ft_strcmp(args[i], "<<"))
 		{
 			ft_lst_add_redir(&redirect, ft_new_redir(args[i], args[i + 1]));
 			i += 2;
@@ -28,16 +29,15 @@ t_redirect *build_redirection(char **args)
 		else
 			i++;
 	}
-
 	return (redirect);
 }
 
-
-char **args_allocation(char **tab, size_t arg_count)
+char	**args_allocation(char **tab, size_t arg_count)
 {
 	char	**args;
 	int		i;
-	size_t		k;
+	size_t	k;
+
 	args = malloc(sizeof(char *) * (arg_count + 1));
 	if (!args)
 		err_handle("Allocation Faile!!");
@@ -82,16 +82,16 @@ char	*get_from_env(t_shell *shell, char *arg, int *i)
 	return (new_value);
 }
 
+// if (arg[(*i)] == '$')
+// {
+// 	new_value = ft_strjoin(new_value, ft_strdup("1337"));
+// 	(*i)++;
+// }
 char	*get_new_value(t_shell *shell, char *arg, int *i)
 {
 	char	*new_value;
 
 	new_value = ft_strdup("");
-	// if (arg[(*i)] == '$')
-	// {
-	// 	new_value = ft_strjoin(new_value, ft_strdup("1337"));
-	// 	(*i)++;
-	// }
 	if (arg[*i] >= '0' && arg[*i] <= '9')
 	{
 		if (arg[*i] == '0')

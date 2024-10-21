@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 19:04:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 13:38:50 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:09:14 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../minishell.h"
 
@@ -43,7 +42,7 @@ bool	my_echo(t_commands *cmnds, t_shell *shell, int flag)
 			opt = true;
 		else
 		{
-			ft_putstr_fd(curr->args[i],STDOUT_FILENO);
+			ft_putstr_fd(curr->args[i], STDOUT_FILENO);
 			wrote = true;
 			if (curr->args[i + 1] != NULL)
 				ft_putstr_fd(" ", STDOUT_FILENO);

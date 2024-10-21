@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:15:23 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 13:39:23 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:08:49 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../minishell.h"
 
@@ -56,7 +55,7 @@ bool	my_exit(t_commands *cmnds, t_shell *shell, int flag)
 
 	(1) && (i = 0, curr = cmnds);
 	if (curr->redirect && !flag && handle_redirections(curr->redirect) < 0)
-		return (shell->exit_status = EXIT_FAILURE ,true);
+		return (shell->exit_status = EXIT_FAILURE, true);
 	while (curr->args[i])
 		i++;
 	if (i == 1)

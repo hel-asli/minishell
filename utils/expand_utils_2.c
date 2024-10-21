@@ -3,19 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   expand_utils_2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 05:41:29 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/19 06:03:35 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 21:21:04 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void fr_args(char **args)
+void	fr_args(char **args)
 {
-	int i = -1;
+	int	i;
 
+	i = -1;
 	if (args)
 	{
 		while (args[++i])
@@ -24,15 +25,17 @@ void fr_args(char **args)
 	}
 }
 
-char **add_arr(char **args, char *str)
+char	**add_arr(char **args, char *str)
 {
-	size_t len;
+	size_t	i;
+	size_t	len;
+	char	**new;
 
 	len = arr_len(args);
-	char **new = malloc((sizeof(char *) * (len + 2)));
+	new = malloc((sizeof(char *) * (len + 2)));
 	if (!new)
 		return (NULL);
-	size_t i = 0;
+	i = 0;
 	while (i < len && args)
 	{
 		new[i] = ft_strdup(args[i]);
@@ -45,12 +48,13 @@ char **add_arr(char **args, char *str)
 	return (new);
 }
 
-void save_quotes(char *str)
+void	save_quotes(char *str)
 {
-	int i = 0;
-	char dbl;
-	char sgl; 
+	int		i;
+	char	dbl;
+	char	sgl;
 
+	i = 0;
 	dbl = '"' * -1;
 	sgl = '\'' * -1;
 	while (str[i])
@@ -63,7 +67,7 @@ void save_quotes(char *str)
 	}
 }
 
-void gar_protect(char *str)
+void	gar_protect(char *str)
 {
 	int	i;
 
@@ -76,9 +80,9 @@ void gar_protect(char *str)
 	}
 }
 
-void protect_tab(char **tab)
+void	protect_tab(char **tab)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (tab[i])

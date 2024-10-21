@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:48:28 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/19 06:17:41 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:39:10 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	setup_heredoc_signals(void)
 void	sigint_handler(int nb)
 {
 	(void)nb;
-	if (rl_signal)
+	if (g_rl_signal)
 	{
 		printf("\n");
 		rl_on_new_line();
@@ -42,6 +42,25 @@ void	sigint_handler(int nb)
 void	sigquit_handler(int nb)
 {
 	(void)nb;
-	if (!rl_signal)
+	if (!g_rl_signal)
 		printf("Quit: 3\n");
+}
+
+int	starts_with(char *start, char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str)
+		return (1);
+	while (str[i] && start[i])
+	{
+		if (str[i] == start[i])
+			i++;
+		else
+			break ;
+	}
+	if (!str[i])
+		return (0);
+	return (1);
 }

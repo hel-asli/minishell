@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 16:38:37 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/20 06:14:37 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:09:01 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,15 @@ bool	my_env(t_commands *cmnds, t_shell *shell, int flag)
 	t_env	*curr;
 
 	curr = shell->env;
-	if (cmnds->redirect  && !flag && handle_redirections(cmnds->redirect) == -1)
+	if (cmnds->redirect && !flag && handle_redirections(cmnds->redirect) == -1)
 	{
 		shell->exit_status = EXIT_FAILURE;
 		return (true);
+	}
+	if (cmnds->args[1])
+	{
+		ft_fprintf(2, "Too may arguments.\n");
+		return (shell->exit_status = EXIT_FAILURE, true);
 	}
 	while (curr)
 	{
