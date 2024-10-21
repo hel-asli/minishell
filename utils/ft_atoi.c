@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Wayde <Wayde@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:44:04 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/09/04 04:22:18 by Wayde            ###   ########.fr       */
+/*   Updated: 2024/10/21 03:22:54 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	ft_atoi(char *str)
 	return (result * signe);
 }
 
-long long	ft_exit_atol(char *str)
+long long	ft_exit_atol(t_shell *shell, char *str)
 {
 	int			signe;
 	long long	tmp;
@@ -61,9 +61,9 @@ long long	ft_exit_atol(char *str)
 	{
 		tmp = result * 10 + (*str - 48);
 		if (tmp < result && signe == 1)
-			exit_error(1);
+			exit_error(shell, 1);
 		if (tmp < result && signe == -1)
-			exit_error(1);
+			exit_error(shell, 1);
 		result = tmp;
 		str++;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 00:15:44 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/21 03:23:13 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ bool					is_rev_special(char c);
 void					gar_protect(char *str);
 void					env_clear(t_env **env);
 char					**ft_free(char **split);
-long long				ft_exit_atol(char *str);
+long long				ft_exit_atol(t_shell *shell, char *str);
 char					**ft_env_split(char *str);
 char					**ft_split(char const *s);
 size_t					ft_strlen(const char *str);
@@ -223,7 +223,7 @@ void					restore_terminal_old_attr(struct termios *old_attr);
 // execution
 bool					my_pwd(t_commands *cmnds, t_shell *shell, int flag);
 bool					my_env(t_commands *cmnds,  t_shell *env, int flag);
-void					exit_error(int flag);
+void					exit_error(t_shell *shell, int flag);
 void					save_quotes(char *str);
 bool					my_exit(t_commands *cmnds, t_shell *shell, int flag);
 bool					my_echo(t_commands *cmnds, t_shell *shell, int flag);

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 05:47:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/20 23:27:40 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 02:54:41 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,12 +87,12 @@ char	*get_new_value(t_shell *shell, char *arg, int *i)
 	char	*new_value;
 
 	new_value = ft_strdup("");
-	if (arg[(*i)] == '$')
-	{
-		new_value = ft_strjoin(new_value, ft_strdup("1337"));
-		(*i)++;
-	}
-	else if (arg[*i] >= '0' && arg[*i] <= '9')
+	// if (arg[(*i)] == '$')
+	// {
+	// 	new_value = ft_strjoin(new_value, ft_strdup("1337"));
+	// 	(*i)++;
+	// }
+	if (arg[*i] >= '0' && arg[*i] <= '9')
 	{
 		if (arg[*i] == '0')
 			(1) && (free(new_value), ft_strdup("minishell"));

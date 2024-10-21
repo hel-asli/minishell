@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 19:04:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/20 06:29:04 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 02:49:02 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ bool	my_echo(t_commands *cmnds, t_shell *shell, int flag)
 				ft_putstr_fd(" ", STDOUT_FILENO);
 		}
 	}
-	shell->exit_status = EXIT_SUCCESS;
 	if (!opt)
 		ft_putstr_fd("\n", STDOUT_FILENO);
+	shell->exit_status = EXIT_SUCCESS;
 	return (true);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 00:06:36 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/21 02:47:40 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,9 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 			{
 				free(oldpwd);
 				free(home);
-				err_exit("HOME");
+				shell->exit_status = EXIT_FAILURE;
+				perror("HOME");
+				return (true);
 			}
 			if (oldpwd)
 			{
@@ -90,7 +92,7 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 				env_update(env, "PWD", pwd);
 			else
 				ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd), 0));
-			return (free(pwd),free(oldpwd), true);
+			return (free(pwd),free(oldpwd), free(home), true);
 		}
 	}
 	else
@@ -98,6 +100,7 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 		if (chdir(curr->args[1]) == -1)
 		{
 			perror("minishell: cd");
+			shell->exit_status = EXIT_FAILURE;
 			free(oldpwd);
 			return (true);
 		}
@@ -118,6 +121,7 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 			env_update(env, "PWD", pwd);
 		else
 			ft_lstadd_back(env, ft_lstnew(ft_strdup("PWD"), ft_strdup(pwd), 0));
+		shell->exit_status = 0;
 		return (free(pwd), free(oldpwd), true);
 	}
 }

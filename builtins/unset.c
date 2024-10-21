@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 22:35:27 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 00:17:39 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/21 04:12:36 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,23 @@ static void	remove_env(t_env **env, char *key)
 		curr = curr->next;
 	}
 }
+bool 	unset_check(char *str)
+{
+	int	i;
 
+	i = 0;
+	if (!ft_isalpha(str[i]) && str[i] != '_')
+		return (false);
+	i++;
+	while (str[i])
+	{
+		if (ft_isalnum(str[i]) || str[i] == '_')
+			i++;
+		else
+			return (false);
+	}
+	return (true);	
+}
 bool	my_unset(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 {
 	int			i;
@@ -51,7 +67,7 @@ bool	my_unset(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 	}
 	while (curr->args[++i])
 	{
-		if (!is_valid_export(curr->args[i]))
+		if (!unset_check(curr->args[i]))
 		{
 			ft_fprintf(2, "minishell: export: `%s': not a valid identifier\n", curr->args[i]);
 			shell->exit_status = EXIT_FAILURE;

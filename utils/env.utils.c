@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 20:44:19 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/20 05:56:12 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 03:36:10 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,9 @@ void	built_env(t_env **env, char **ev)
 	while (ev[i])
 	{
 		sp = ft_env_split(ev[i]);
-		if (ft_strcmp(sp[0], "OLDPWD"))
+		if (!ft_strcmp(sp[0], "OLDPWD"))
+			ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]), NULL, 0));
+		else
 			ft_lstadd_back(env, ft_lstnew(ft_strdup(sp[0]), ft_strdup(sp[1]), 0));
 		ft_free(sp);
 		i++;
