@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 22:58:14 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/21 23:00:13 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,8 +179,8 @@ char					*ft_substr(char const *s, unsigned int start,
 							size_t len);
 size_t					count_non_redirection_arg_size(char **args);
 char					**get_files(char *str, char *prefix, DIR *dir);
-void					execute_command_helper(t_commands *cmnds, t_shell *shell,
-							t_exec *exec, int i);
+void					execute_command_helper(t_commands *cmnds,
+							t_shell *shell, t_exec *exec, int i);
 size_t					arr_len(char **tab);
 char					*get_env(char *key, t_env *env);
 char					*str_add_char(char *str, char c);
@@ -211,7 +211,8 @@ void					sigquit_handler(int nb);
 void					space_to_gar(char *line);
 int						check_wildcard(char *str);
 char					**wildcard_expand(char **args, int i);
-char					**wildcard_expand_helper(char **tab, char **args, int i);
+char					**wildcard_expand_helper(char **tab, char **args,
+							int i);
 void					wildcard_redirection(char *file, t_redirect *redirect);
 char					**wildcard_helper(char *arg);
 t_commands				*ft_last(t_commands *node);
