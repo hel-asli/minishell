@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 22:42:43 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:58:14 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,10 +115,13 @@ typedef struct s_shell
 
 char					*check_value(char *value);
 char					*ft_itoa(int n);
+void					is_stat(char *cmd);
+void					setup_child_signal(void);
 bool					is_space(char c);
 void					fr_args(char **args);
 bool					ft_isalpha(int c);
 bool					ft_isdigit(int c);
+void					signal_helper(t_shell *shell, int status);
 bool					ft_isalnum(int c);
 int						ft_atoi(char *str);
 void					err_exit(char *str);
@@ -175,6 +178,9 @@ void					built_env(t_env **env, char **ev);
 char					*ft_substr(char const *s, unsigned int start,
 							size_t len);
 size_t					count_non_redirection_arg_size(char **args);
+char					**get_files(char *str, char *prefix, DIR *dir);
+void					execute_command_helper(t_commands *cmnds, t_shell *shell,
+							t_exec *exec, int i);
 size_t					arr_len(char **tab);
 char					*get_env(char *key, t_env *env);
 char					*str_add_char(char *str, char c);
@@ -186,6 +192,7 @@ void					gar_protect(char *str);
 void					protect_tab(char **tab);
 t_redirect				*build_redirection(char **args);
 char					**args_allocation(char **tab, size_t arg_count);
+int						builtin_execute(t_shell *shell);
 char					*get_from_env(t_shell *shell, char *arg, int *i);
 char					*get_new_value(t_shell *shell, char *arg, int *i);
 char					**replace_tab(char **tab, char *arg, t_shell *shell);
@@ -199,9 +206,11 @@ void					heredoc_helper(char *delimter, int fd,
 							bool expanded, t_shell *shell);
 char					*del_quote(char *str);
 void					sigint_handler(int nb);
+void					expand_redirect(t_redirect *redirect, t_shell *shell);
 void					sigquit_handler(int nb);
 void					space_to_gar(char *line);
 int						check_wildcard(char *str);
+char					**wildcard_expand(char **args, int i);
 char					**wildcard_expand_helper(char **tab, char **args, int i);
 void					wildcard_redirection(char *file, t_redirect *redirect);
 char					**wildcard_helper(char *arg);
@@ -215,6 +224,7 @@ int						starts_with(char *start, char *str);
 void					syntax_err_msg(t_syntax syntax);
 t_redirect				*ft_last_redir(t_redirect *node);
 bool					check_pipe(char **tokens, int i);
+bool					check_pattern(const char *pattern, const char *str);
 bool					check_heredoc(char **tokens, int i);
 void					clear_redirect(t_redirect **redirect);
 t_redirect				*ft_new_redir(char *type, char *file);
@@ -246,6 +256,7 @@ bool					builtins_check(t_shell *shell, t_commands *cmnds,
 							t_env **env, int flag);
 void					env_update(t_env **env, char *key, char *value);
 int						handle_redirections(t_redirect *redirect);
+char					**expand_args(char **args, t_shell *shell);
 char					*expand_arg(char *arg, t_shell *shell);
 char					**list_arr(t_env *env);
 void					export_print(t_env **exp);
