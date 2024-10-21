@@ -339,3 +339,5 @@ bash-3.2$ ls > "$a"
 bash-3.2$ ls > $a
 bash: $a: ambiguous redirect
 ******************
+
+minishell$ echo ls > $12

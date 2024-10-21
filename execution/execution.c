@@ -325,6 +325,7 @@ void execution_start(t_shell *shell)
 	status = 0;
 	i = 0;
     exec_close(exec.fds, exec.nbr);
+    // printf("before: %d\n", shell->exit_status);
     while (i <= exec.nbr)
     {
         if (waitpid(exec.ids[i], &status, 0) < 0 && errno == ECHILD)
@@ -340,9 +341,14 @@ void execution_start(t_shell *shell)
     {
         int sig = WTERMSIG(status);
         if (sig == SIGINT && !rl_signal)
+        {
             write(STDOUT_FILENO, "\n", 1);
+            shell->exit_status = 128 + sig;
+        }
         if (sig == SIGQUIT)
+        {
             write(STDOUT_FILENO, "Quit: 3\n", 8);
-        shell->exit_status = 128 + sig;
+            shell->exit_status = 128 + sig;
+        }
     }
 }

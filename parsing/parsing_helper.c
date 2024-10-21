@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_helper.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 00:33:37 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/21 05:27:04 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,6 +322,7 @@ void	expand_redirect(t_redirect *redirect, t_shell *shell)
 					free(tmp->file);
 					tmp->file = ft_strdup(sp[0]);
 				}
+				free(file);
 				fr_args(sp);
 			}
 			else if (!file && !ft_strchr(tmp->file, '"')
@@ -338,8 +339,11 @@ void	expand_redirect(t_redirect *redirect, t_shell *shell)
 				tmp->file = file;
 			}
 			else
-				tmp->file = del_quote(tmp->file);
-			free(file);
+			{
+				// free(file);
+				free(tmp->file);
+				tmp->file = del_quote(file);
+			}
 		}
 		else
 			tmp->file = del_quote(tmp->file);
