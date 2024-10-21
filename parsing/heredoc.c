@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 04:11:26 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/20 23:26:54 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 02:24:13 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int	file_open(t_redirect *red)
 	if (!nbr)
 		err_handle("Malloc Failure");
 	name = ft_strjoin(ft_strdup("/tmp/.heredoc-"), ft_itoa((long)nbr));
+	free(nbr);
 	if (!name)
 		err_handle("Maloc Failure");
 	fd = open(name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
