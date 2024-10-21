@@ -200,7 +200,7 @@ void execute_command(t_commands *cmnds, t_shell *shell, t_exec *exec, int i)
         env_clear(&shell->env);
         exit(EXIT_SUCCESS);
     }
-	if (!ft_strncmp(cmnds->args[0], "/", 1) || !ft_strncmp(cmnds->args[0], "./", 2) || !ft_strncmp(cmnds->args[0], "../", 3))
+	if (stat_strchr(cmnds->args[0]))
 	{
     	if (stat(cmnds->args[0], &statbuf) == -1)
     	{
