@@ -179,7 +179,8 @@ int handle_redirections(t_redirect *redirect)
 
 void execute_command(t_commands *cmnds, t_shell *shell, t_exec *exec, int i)
 {
-    char *cmd_path;
+    char 		*cmd_path;
+	struct stat	statbuf;
 
     cmd_path = NULL;
     exec->ev_execve = list_arr(shell->env);
@@ -199,6 +200,24 @@ void execute_command(t_commands *cmnds, t_shell *shell, t_exec *exec, int i)
         env_clear(&shell->env);
         exit(EXIT_SUCCESS);
     }
+	if (!ft_strncmp(cmnds->args[0], "/", 1) || !ft_strncmp(cmnds->args[0], "./", 2) || !ft_strncmp(cmnds->args[0], "../", 3))
+	{
+    if (stat(cmnds->args[0], &statbuf) == -1)
+    {
+        ft_fprintf(2, "minishell: %s: Not a directory\n", cmnds->args[0]);
+        exit(126);
+    }
+    if (S_ISDIR(statbuf.st_mode))
+    {
+        ft_fprintf(2, "minishell: %s: is a directory\n", cmnds->args[0]);
+        exit(126);
+    }
+    if (!(statbuf.st_mode & S_IXUSR))
+    {
+        ft_fprintf(2, "minishell: %s: Permission denied\n", cmnds->args[0]);
+        exit(126);
+    }
+}
     cmd_path = find_command(cmnds->args[0], shell->env);
     if (cmd_path)
     {

@@ -6,30 +6,31 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 00:15:44 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/21 05:00:21 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <limits.h>
 # include <stdio.h>
-# include <readline/history.h>
-# include <readline/readline.h>
-# include <signal.h>
-# include <termios.h>
-# include <sys/wait.h>
-# include <stdbool.h>
-# include <stdlib.h>
-# include <sys/errno.h>
-# include <unistd.h>
 # include <fcntl.h>
+# include <limits.h>
+# include <signal.h>
+# include <stdlib.h>
+# include <unistd.h>
 # include <string.h>
-# include <sys/types.h>
 # include <dirent.h>
 # include <stdarg.h>
+# include <termios.h>
+# include <stdbool.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
+# include <sys/errno.h>
+# include <sys/types.h>
 # include <sys/ioctl.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 
 extern int rl_signal;
 
