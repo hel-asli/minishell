@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 05:09:30 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/21 05:32:21 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,7 @@ int						ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t					ft_strlcpy(char *dest, const char *src, size_t size);
 void					free_exec(t_exec *exec);
 bool					is_special(char c);
-bool					stat_strchr(char *s);
+int						check_dots(char *line);
 bool					is_rev_special(char c);
 bool					in_quotes(char *str);
 bool					ft_strchr(char *str, char c);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/20 21:54:51 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/21 05:40:18 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,9 +119,13 @@ char	*del_quote(char *str)
 
 int	parse_input(t_shell *shell)
 {
+	int			exit;
 	char		**pipes;
 	t_syntax	syntax;
 
+	exit = check_dots(shell->parsing.line);
+	if (exit != 0)
+		return (free(shell->parsing.line), (shell->exit_status = exit), 1);
 	space_to_gar(shell->parsing.line);
 	shell->parsing.line = add_spaces(shell->parsing.line);
 	if (!shell->parsing.line)
