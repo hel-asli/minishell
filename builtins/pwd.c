@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 10:43:00 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 21:57:49 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/22 03:24:31 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ bool	my_pwd(t_commands *cmnds, t_shell *shell, int flag)
 			return (free(cwd), true);
 		}
 	}
-	ft_fprintf(STDOUT_FILENO, "%s\n", buff);
+	if (cwd)
+		ft_fprintf(STDOUT_FILENO, "%s\n", cwd);
+	else
+		ft_fprintf(STDOUT_FILENO, "%s\n", buff);
 	free(cwd);
 	shell->exit_status = EXIT_SUCCESS;
 	return (true);
