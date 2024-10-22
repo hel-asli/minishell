@@ -3,21 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 04:11:26 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 22:40:00 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/22 11:18:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+char *heredoc_expand(char *str, t_shell *shell)
+{
+	char *exp;
+	char *ptr;
+
+	ptr = NULL;
+	exp = expand_arg(str, shell);
+	if (!exp)
+	{
+		free(str);
+		free(exp);
+		ptr = ft_strdup("");
+	}
+	else
+	{
+		free(str);
+		ptr = exp;
+	}
+
+	return (ptr);
+}
+
 void	heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 {
 	char	*line;
+	char	*exp;
 	t_env	*env;
 
-	(1) && (line = NULL, env = shell->env);
+	(1) && (line = NULL, exp = NULL, env = shell->env);
 	while (true)
 	{
 		line = readline("> ");
@@ -27,13 +50,12 @@ void	heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 			break ;
 		}
 		if (!ft_strcmp(line, delimter))
-			break ;
-		if (expanded)
 		{
-			line = expand_arg(line, shell);
-			if (!line)
-				line = ft_strdup("");
+			free(line);
+			break ;
 		}
+		if (expanded)
+			line = heredoc_expand(line, shell);
 		write(fd, line, ft_strlen(line));
 		write(fd, "\n", 1);
 		free(line);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 22:36:27 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/22 11:00:41 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ int	parse_input(t_shell *shell)
 	free(shell->parsing.line);
 	process_pipe_cmds(&shell, pipes);
 	if (heredoc(shell))
-		return (1);
+		return (cmds_clear(&shell->commands), 1);
 	return (0);
 }
 

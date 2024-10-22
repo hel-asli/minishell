@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_helper.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 22:54:00 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/22 10:43:09 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,20 +166,20 @@ void	expand_redirect(t_redirect *redirect, t_shell *shell)
 		if (tmp->type != HEREDOC_INPUT)
 		{
 			file = expand_arg(tmp->file, shell);
+			if (!file)
+				file = ft_strdup("");
 			if (file && ft_strchr(file, '*') && check_wildcard(tmp->file))
 				wildcard_redirection(file, tmp);
 			else if (!file && !ft_strchr(tmp->file, '"')
 				&& !ft_strchr(tmp->file, '\''))
-				(1) && (tmp->is_ambgious = true,
-					free(tmp->file), tmp->file = file);
+				(1) && (tmp->is_ambgious = true, free(tmp->file), tmp->file = file);
 			else if (file && check_var(tmp->file) && ft_strchr(file, 32))
-				(1) && (tmp->is_ambgious = true,
-					free(tmp->file), tmp->file = file);
+				(1) && (tmp->is_ambgious = true, free(tmp->file), tmp->file = file);
 			else
 				(1) && (free(tmp->file), tmp->file = del_quote(file));
 		}
 		else
-			tmp->file = del_quote(tmp->file);
+			tmp->file = del_quote(tmp->file); // cat << $'d' 
 		tmp = tmp->next;
 	}
 }

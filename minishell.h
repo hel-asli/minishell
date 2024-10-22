@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/21 23:00:13 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/22 10:52:44 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,5 +270,6 @@ void					exec_close(int **fds, int size);
 int						out_redirection(t_redirect *redirect);
 int						input_redirection(t_redirect *redirect);
 bool					is_builtin(char *str);
+void					ft_exit(t_exec *exec, t_shell *shell, int i);
 
 #endif

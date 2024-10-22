@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helper_functions.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 22:24:18 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 22:28:56 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/22 10:51:32 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,10 @@ void	signal_helper(t_shell *shell, int status)
 	}
 }
 
+
+
 void	execute_command_helper(t_commands *cmnds, t_shell *shell,
-					t_exec *exec, int i)
+		t_exec *exec, int i)
 {
 	exec->ev_execve = list_arr(shell->env);
 	if (i > 0 && dup2(exec->fds[i - 1][0], STDIN_FILENO) == -1)
@@ -66,16 +68,11 @@ void	execute_command_helper(t_commands *cmnds, t_shell *shell,
 		err_exit("Dup2 Failure");
 	exec_close(exec->fds, exec->nbr);
 	if (handle_redirections(cmnds->redirect) == -1)
-		exit(EXIT_FAILURE);
+		ft_exit(exec, shell, EXIT_FAILURE);
 	if (!cmnds->args)
-		exit(EXIT_SUCCESS);
+		ft_exit(exec, shell, EXIT_SUCCESS);
 	if (builtins_check(shell, cmnds, &shell->env, 1))
-	{
-		cmds_clear(&shell->commands);
-		free_exec(exec);
-		env_clear(&shell->env);
-		exit(EXIT_SUCCESS);
-	}
+		ft_exit(exec, shell, EXIT_SUCCESS);
 }
 
 int	builtin_execute(t_shell *shell)
