@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/22 03:48:05 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/22 03:51:15 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,11 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 		if (!pwd)
 		{
 			if (ft_strcmp(curr->args[1], "..") || ft_strcmp(curr->args[1], "."))
+			{
+				ft_fprintf(STDERR_FILENO, "cd: error retrieving current directory: getcwd:");
+				ft_fprintf(STDERR_FILENO, " cannot access parent directories: No such file or directory\n");
 				pwd = ft_strjoin_char(oldpwd, curr->args[1], '/');
+			}
 			else
 				return (perror("getcwd"), free(oldpwd), true);
 		}
