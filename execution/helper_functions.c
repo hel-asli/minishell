@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 22:24:18 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 03:30:11 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 03:30:51 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	setup_child_signal(void)
 void	signal_helper(t_shell *shell, int status)
 {
 	int	sig;
+
 	sig = WTERMSIG(status);
 	if (sig == SIGINT && !g_rl_signal && shell->exit_status != 130)
 	{

@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/23 03:29:17 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 03:36:58 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,7 @@ void					cmds_clear(t_commands **cmds);
 void					match_char(char *line, int i);
 char					*ft_strtok(char *str, char c);
 void					ft_putstr_fd(char *s, int fd);
+int						signal_status(t_shell *shell);
 char					*my_strchr_v2(char *s, int c);
 void					ft_putendl_fd(char *s, int fd);
 t_env					*export_lstlast(t_env *export);
@@ -227,6 +228,7 @@ bool					is_not_sub(const char *str, const char *pwd);
 char					*ft_strjoin_char(char *s1, char *s2, char c);
 char					**get_files(char *str, char *prefix, DIR *dir);
 void					env_update(t_env **env, char *key, char *value);
+char					*wildcard_dir(struct dirent *entity, char *str);
 char					**args_allocation(char **tab, size_t arg_count);
 void					set_terminal_new_attr(struct termios *old_attr);
 t_env					*ft_lstnew(char *key, char *value, int exported);
@@ -250,10 +252,10 @@ void					expand_redirect(t_redirect *redirect, t_shell *shell);
 void					wildcard_redirection(char *file, t_redirect *redirect);
 char					**wildcard_expand_helper(char **tab, char **args,
 							int i);
-char					*ft_substr(char const *s, unsigned int start,
-							size_t len);
 bool					builtins_check(t_shell *shell, t_commands *cmnds,
 							t_env **env, int flag);
+char					*ft_substr(char const *s, unsigned int start,
+							size_t len);
 bool					my_export(t_commands *cmnds, t_shell *shell,
 							t_env **env, int flag);
 bool					my_unset(t_commands *cmnds, t_shell *shell,
@@ -264,5 +266,7 @@ bool					my_cd(t_commands *cmnds, t_shell *shell,
 							t_env **env, int flag);
 void					heredoc_helper(char *delimter, int fd,
 							bool expanded, t_shell *shell);
+char					*wildcard_file(struct dirent *entity,
+							char *str, char *prefix);
 
 #endif

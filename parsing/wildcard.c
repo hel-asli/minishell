@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 22:40:10 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 22:43:53 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 03:35:25 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,29 +97,18 @@ char	**wildcard_helper(char *arg)
 	return (tab);
 }
 
-bool	is_not_sub(const char *str, const char *pwd)
+char	*wildcard_file(struct dirent *entity, char *str, char *prefix)
 {
-	int	i;
-	int	j;
+	char	**sp;
+	char	*new_str;
 
-	i = 0;
-	j = 0;
-	while (str[i] && pwd[j] && str[i] == pwd[j])
+	sp = ft_split_v2(str, '/');
+	new_str = NULL;
+	if (check_pattern(sp[arr_len(sp) - 1], entity->d_name))
 	{
-		i++;
-		j++;
+		new_str = ft_strjoin(ft_strdup(prefix),
+				ft_strdup(entity->d_name));
 	}
-	if (!pwd[j] && !str[i])
-		return (true);
-	if (!pwd[j] && str[i] == '/')
-		i++;
-	while (str[i])
-	{
-		if (str[i] == '/' && !str[i + 1])
-			return (false);
-		else if (str[i] == '/' && str[i + 1] != '/')
-			return (true);
-		i++;
-	}
-	return (false);
+	fr_args(sp);
+	return (new_str);
 }
