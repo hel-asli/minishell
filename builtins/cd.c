@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:14:16 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 09:46:01 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 10:02:40 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ bool	my_cd(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 		free(oldpwd);
 		return (true);
 	}
-	if (cmnds->args[1] == NULL)
-		return (cd_home(env, tmp, oldpwd, &shell->exit_status));
-	return (cd_home(env, tmp, oldpwd, &shell->exit_status));
+	if (cmnds->args[1] == NULL || !ft_strcmp(cmnds->args[1], "~"))
+		return (cd_home(env, oldpwd, &shell->exit_status));
+	return (cd_path(env, cmnds->args[1], oldpwd, &shell->exit_status));
 }

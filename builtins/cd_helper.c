@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 09:25:05 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 09:45:45 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 10:04:27 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,26 +34,25 @@ bool	update_oldpwd(t_env **env, t_env *tmp, char *oldpwd)
 	return (true);
 }
 
-bool	cd_home(t_env **env, t_env *tmp, char *oldpwd, int *status)
+bool	cd_home(t_env **env, char *oldpwd, int *status)
 {
+	t_env	*tmp;
 	char	*home;
 	char	*pwd;
 
+	tmp = *env;
 	home = get_env("HOME", tmp);
 	if (!home)
 	{
 		ft_putstr_fd("minishell: HOME not set\n", STDERR_FILENO);
-		free(oldpwd);
 		*status = EXIT_FAILURE;
-		return (true);
+		return (free(oldpwd), true);
 	}
 	if (chdir(home) < 0)
 	{
 		*status = EXIT_FAILURE;
 		perror("HOME");
-		free(oldpwd);
-		free(home);
-		return (true);
+		return (free(oldpwd), free(home), true);
 	}
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
@@ -63,14 +62,14 @@ bool	cd_home(t_env **env, t_env *tmp, char *oldpwd, int *status)
 	return (free(pwd), free(oldpwd), free(home), true);
 }
 
-bool	cd_path(t_env **env, t_env *tmp, char *oldpwd, int *status)
+bool	cd_path(t_env **env, char *path, char *oldpwd, int *status)
 {
 	char	*pwd;
-	char	*path;
+	t_env	*tmp;
 
-	path = (*env)->value;
+	tmp = *env;
 	if (chdir(path) == -1)
-		return (*status = EXIT_FAILURE, perror(path), free(oldpwd), true);
+		return (*status = EXIT_FAILURE, perror("cd"), free(oldpwd), true);
 	pwd = getcwd(NULL, 0);
 	if (!pwd && (ft_strcmp(path, "..") || ft_strcmp(path, ".")))
 	{
