@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 09:25:05 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 09:33:22 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 09:45:45 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,14 @@ bool	cd_home(t_env **env, t_env *tmp, char *oldpwd, int *status)
 	return (free(pwd), free(oldpwd), free(home), true);
 }
 
-bool	cd_path(t_env **env, t_env *tmp, char *oldpwd, char *path)
+bool	cd_path(t_env **env, t_env *tmp, char *oldpwd, int *status)
 {
 	char	*pwd;
+	char	*path;
 
+	path = (*env)->value;
 	if (chdir(path) == -1)
-		return (perror(path), free(oldpwd), true);
+		return (*status = EXIT_FAILURE, perror(path), free(oldpwd), true);
 	pwd = getcwd(NULL, 0);
 	if (!pwd && (ft_strcmp(path, "..") || ft_strcmp(path, ".")))
 	{
@@ -76,10 +78,12 @@ bool	cd_path(t_env **env, t_env *tmp, char *oldpwd, char *path)
 		ft_fprintf(STDERR_FILENO, "getcwd: cannot access parent directories: ");
 		ft_fprintf(STDERR_FILENO, "No such file or directory\n");
 		pwd = ft_strjoin_char(oldpwd, path, '/');
+		*status = EXIT_FAILURE;
 	}
 	else if (!pwd)
-		return (perror("getcwd"), free(oldpwd), true);
+		return (*status = EXIT_FAILURE, perror("getcwd"), free(oldpwd), true);
 	update_oldpwd(env, tmp, oldpwd);
 	update_pwd(env, tmp, pwd);
+	*status = 0;
 	return (free(pwd), free(oldpwd), true);
 }

@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/23 09:35:21 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 09:42:46 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,7 +272,7 @@ bool					builtins_check(t_shell *shell, t_commands *cmnds,
 void					env_export(t_env **env, char *key, char *value,
 							int exported);
 bool					cd_path(t_env **env, t_env *tmp, char *oldpwd,
-							char *path);
+							int *status);
 bool					cd_home(t_env **env, t_env *tmp, char *oldpwd,
 							int *status);
 char					*ft_substr(char const *s, unsigned int start,
