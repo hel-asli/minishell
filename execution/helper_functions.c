@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 22:24:18 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/22 10:51:32 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/23 01:01:30 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,13 @@ void	setup_child_signal(void)
 void	signal_helper(t_shell *shell, int status)
 {
 	int	sig;
-
 	sig = WTERMSIG(status);
-	if (sig == SIGINT && !g_rl_signal)
+	if (sig == SIGINT && !g_rl_signal && shell->exit_status != 130)
 	{
 		write(STDOUT_FILENO, "\n", 1);
 		shell->exit_status = 128 + sig;
 	}
-	if (sig == SIGQUIT)
+	if (sig == SIGQUIT && shell->exit_status != 131)
 	{
 		write(STDOUT_FILENO, "Quit: 3\n", 8);
 		shell->exit_status = 128 + sig;

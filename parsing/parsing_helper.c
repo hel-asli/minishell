@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/22 10:43:09 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/23 02:21:42 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,43 +42,60 @@ bool	check_pattern(const char *pattern, const char *str)
 	return (*str == '\0' && *pattern == '\0');
 }
 
+char *wildcard_dir(struct dirent *entity, char *str)
+{
+	char **sp;
+	char *new_str;
+
+	sp = ft_split_v2(str, '/');
+	new_str = NULL; 
+	if (entity->d_type == DT_DIR && check_pattern(sp[arr_len(sp) - 1],
+			entity->d_name))
+	{
+		new_str = str_add_char(ft_strdup(entity->d_name), '/');
+	}
+	fr_args(sp);
+	return (new_str);
+}
+
+char *wildcard_file(struct dirent *entity, char *str, char *prefix)
+{
+	char **sp;
+	char *new_str;
+
+	sp = ft_split_v2(str, '/');
+	new_str = NULL;
+	if (check_pattern(sp[arr_len(sp) - 1], entity->d_name))
+	{
+		new_str = ft_strjoin(ft_strdup(prefix),
+				ft_strdup(entity->d_name));
+	}
+	fr_args(sp);
+	return (new_str);
+}
+
 char	**get_files(char *str, char *prefix, DIR *dir)
 {
 	char			**tab;
 	struct dirent	*entity;
 	char			*new_str;
-	char			**sp;
 
-	tab = NULL;
-	entity = readdir(dir);
-	new_str = NULL;
+	(1) && (tab = NULL, entity = readdir(dir), new_str = NULL);
 	if (ft_strchr(str, '/') && is_not_sub(str, prefix))
 		tab = add_arr(tab, str);
 	while (entity)
 	{
 		if (str[ft_strlen(str) - 1] == '/')
 		{
-			sp = ft_split_v2(str, '/');
-			if (entity->d_type == DT_DIR && check_pattern(sp[arr_len(sp) - 1],
-					entity->d_name))
-			{
-				new_str = str_add_char(ft_strdup(entity->d_name), '/');
-				tab = add_arr(tab, new_str);
-				free(new_str);
-			}
-			fr_args(sp);
+			new_str = wildcard_dir(entity, str);
+			tab = add_arr(tab, new_str);
+			free(new_str);
 		}
 		else
 		{
-			sp = ft_split_v2(str, '/');
-			if (check_pattern(sp[arr_len(sp) - 1], entity->d_name))
-			{
-				new_str = ft_strjoin(ft_strdup(prefix),
-						ft_strdup(entity->d_name));
-				tab = add_arr(tab, new_str);
-				free(new_str);
-			}
-			fr_args(sp);
+			new_str = wildcard_file(entity, str, prefix);
+			tab = add_arr(tab, new_str);
+			free(new_str);
 		}
 		entity = readdir(dir);
 	}
