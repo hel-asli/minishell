@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 09:47:10 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 18:10:22 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,9 @@ bool	check_pattern(const char *pattern, const char *str)
 				return (true);
 			while (*str)
 			{
-				if (check_pattern(pattern, str++))
+				if (check_pattern(pattern, str))
 					return (true);
+				str++;
 			}
 			return (false);
 		}
