@@ -6,7 +6,7 @@
 #    By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/30 23:25:40 by hel-asli          #+#    #+#              #
-#    Updated: 2024/10/23 03:32:41 by oel-feng         ###   ########.fr        #
+#    Updated: 2024/10/23 04:47:34 by oel-feng         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,8 @@ SRCS = main.c utils/ft_split.c utils/ft_itoa.c utils/ft_strncmp.c \
 		utils/checks.c parsing/signals.c parsing/heredoc.c utils/expand_utils.c \
 		utils/expand_utils_2.c utils/expand_utils_3.c execution/execution_helper.c \
 		execution/redirection.c builtins/export_helper.c parsing/wildcard.c \
-		execution/helper_functions.c parsing/parse_help.c
+		execution/helper_functions.c parsing/parse_help.c builtins/export_utils.c \
+		parsing/wildcard_helper.c
 
 HEADER = minishell.h
 OBJS = $(SRCS:.c=.o)

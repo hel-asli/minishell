@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/23 04:13:53 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/23 04:46:58 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,11 +102,11 @@ typedef struct s_exec
 
 typedef struct s_wildcard
 {
-	DIR *dir;
-	char *prefix;
-	char *pwd;
-	struct dirent *entity;
-} t_wildcard;
+	DIR					*dir;
+	char				*prefix;
+	char				*pwd;
+	struct dirent		*entity;
+}	t_wildcard;
 
 typedef struct s_shell
 {
@@ -198,6 +198,7 @@ int						builtin_execute(t_shell *shell);
 void					execution_start(t_shell *shell);
 t_redirect				*build_redirection(char **args);
 bool					quotes_syntax_check(char *line);
+void					wild_init(t_wildcard *wildcard);
 bool					check_pipe(char **tokens, int i);
 char					*str_add_char(char *str, char c);
 t_redirect				*ft_last_redir(t_redirect *node);
@@ -207,9 +208,11 @@ char					*ft_strcpy(char *dest, char *src);
 char					*ft_strcat(char *dest, char *src);
 int						starts_with(char *start, char *str);
 bool					check_heredoc(char **tokens, int i);
+bool					wild_conditon(char *arg, char *pwd);
 void					exit_error(t_shell *shell, int flag);
 char					**ft_split_v2(const char *s, char c);
 char					*find_command(char *cmd, t_env *env);
+char					**get_files(char *str, t_wildcard *w);
 t_redirect				*ft_new_redir(char *type, char *file);
 bool					env_key_exist(t_env **env, char *key);
 void					clear_redirect(t_redirect **redirect);
@@ -233,8 +236,9 @@ int						ft_fprintf(int fd, const char *format, ...);
 size_t					count_non_redirection_arg_size(char **args);
 void					ft_exit(t_exec *exec, t_shell *shell, int i);
 bool					is_not_sub(const char *str, const char *pwd);
+void					wild_destory(t_wildcard *wildcard, int flag);
 char					*ft_strjoin_char(char *s1, char *s2, char c);
-char					**get_files(char *str, t_wildcard *w);
+void					env_concat(t_env **env, char *key, char *value);
 void					env_update(t_env **env, char *key, char *value);
 char					*wildcard_dir(struct dirent *entity, char *str);
 char					**args_allocation(char **tab, size_t arg_count);
@@ -262,6 +266,8 @@ char					**wildcard_expand_helper(char **tab, char **args,
 							int i);
 bool					builtins_check(t_shell *shell, t_commands *cmnds,
 							t_env **env, int flag);
+void					env_export(t_env **env, char *key, char *value,
+							int exported);
 char					*ft_substr(char const *s, unsigned int start,
 							size_t len);
 bool					my_export(t_commands *cmnds, t_shell *shell,
@@ -276,7 +282,5 @@ void					heredoc_helper(char *delimter, int fd,
 							bool expanded, t_shell *shell);
 char					*wildcard_file(struct dirent *entity,
 							char *str, char *prefix);
-void					wild_init(t_wildcard *wildcard);
-void					wild_destory(t_wildcard *wildcard, int flag);
 
 #endif
