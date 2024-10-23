@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:55:49 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 22:08:24 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 04:20:59 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,27 @@ static void	env_export(t_env **env, char *key, char *value, int exported)
 	}
 }
 
+void	export_key_exist(t_env **export, char *val, char *key, char *args)
+{
+	if (ft_lookup(args, '+'))
+		env_concat(export, key, ft_strdup(val));
+	else if (ft_lookup(args, '='))
+		env_export(export, key, ft_strdup(val), 0);
+	else if (!ft_lookup(args, '='))
+		env_export(export, key, NULL, 1);
+	free(key);
+}
+
+void	export_key_new(t_env **export, char *val, char *key, char *args)
+{
+	if (ft_lookup(args, '+'))
+		ft_lstadd_back(export, ft_lstnew(key, ft_strdup(val), 0));
+	else if (ft_lookup(args, '='))
+		ft_lstadd_back(export, ft_lstnew(key, ft_strdup(val), 0));
+	else if (!ft_lookup(args, '='))
+		ft_lstadd_back(export, ft_lstnew(key, NULL, 1));
+}
+
 static void	export_handler(t_env **export, char *args)
 {
 	char	**key;
@@ -86,24 +107,9 @@ static void	export_handler(t_env **export, char *args)
 	}
 	new_key = copy_key(key[0]);
 	if (env_key_exist(export, new_key))
-	{
-		if (ft_lookup(args, '+'))
-			env_concat(export, new_key, ft_strdup(key[1]));
-		else if (ft_lookup(args, '='))
-			env_export(export, new_key, ft_strdup(key[1]), 0);
-		else if (!ft_lookup(args, '='))
-			env_export(export, new_key, NULL, 1);
-		free(new_key);
-	}
+		export_key_exist(export, key[1], new_key, args);
 	else
-	{
-		if (ft_lookup(args, '+'))
-			ft_lstadd_back(export, ft_lstnew(new_key, ft_strdup(key[1]), 0));
-		else if (ft_lookup(args, '='))
-			ft_lstadd_back(export, ft_lstnew(new_key, ft_strdup(key[1]), 0));
-		else if (!ft_lookup(args, '='))
-			ft_lstadd_back(export, ft_lstnew(new_key, NULL, 1));
-	}
+		export_key_new(export, key[1], new_key, args);
 	fr_args(key);
 }
 

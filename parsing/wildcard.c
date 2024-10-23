@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 22:40:10 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 03:35:25 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 04:19:30 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,28 +72,17 @@ void	wildcard_redirection(char *file, t_redirect *redirect)
 
 char	**wildcard_helper(char *arg)
 {
-	DIR		*dir;
-	char	*pwd;
-	char	*prefix;
-	char	**tab;
+	t_wildcard	wildcard;
+	char		**tab;
 
 	tab = NULL;
-	pwd = NULL;
-	prefix = ft_strdup("");
-	dir = opendir(".");
-	if (!dir)
-	{
-		perror("opendir");
-		return (NULL);
-	}
+	wild_init(&wildcard);
 	if (arg && arg[0] == '/')
-		pwd = getcwd(NULL, 0);
-	if (ft_strchr(arg, '/') && (!starts_with(arg, pwd)))
-		prefix = str_add_char(ft_strdup(pwd), '/');
-	tab = get_files(arg, prefix, dir);
-	free(prefix);
-	free(pwd);
-	closedir(dir);
+		wildcard.pwd = getcwd(NULL, 0);
+	if (ft_strchr(arg, '/') && (!starts_with(arg, wildcard.pwd)))
+		wildcard.prefix = str_add_char(ft_strdup(wildcard.pwd), '/');
+	tab = get_files(arg, &wildcard);
+	wild_destory(&wildcard, 1);
 	return (tab);
 }
 

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 01:17:43 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/23 04:20:14 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,7 @@ void	cmnds_wait(t_shell *shell, t_exec *exec)
 			env_clear(&shell->env);
 		}
 		if (WIFEXITED(status))
-		{
 			shell->exit_status = WEXITSTATUS(status);
-		}
 		else if (WIFSIGNALED(status))
 			signal_helper(shell, status);
 		i++;

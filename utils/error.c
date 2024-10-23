@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:55:58 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/23 03:29:21 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 04:10:34 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	ft_exit(t_exec *exec, t_shell *shell, int i)
 	exit(i);
 }
 
-void	ambihious_check(t_redirect *redirect, char	*file)
+void	ambigious_check(t_redirect *redirect, char	*file)
 {
 	redirect->is_ambgious = true;
 	free(redirect->file);
