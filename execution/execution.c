@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 09:53:15 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 22:28:56 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 01:17:43 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,21 +56,27 @@ void	cmnds_wait(t_shell *shell, t_exec *exec)
 	int	status;
 	int	i;
 
-	(1) && (status = 0, i = 0);
+	(1) && (i = 0, shell->exit_status = 0);
 	exec_close(exec->fds, exec->nbr);
 	while (i <= exec->nbr)
 	{
+		status = 0;
 		if (waitpid(exec->ids[i], &status, 0) < 0 && errno == ECHILD)
-			err_exit("WaitPid");
+		{
+			perror("WaitPid");
+			free_exec(exec);
+			cmds_clear(&shell->commands);
+			env_clear(&shell->env);
+		}
 		if (WIFEXITED(status))
+		{
 			shell->exit_status = WEXITSTATUS(status);
+		}
 		else if (WIFSIGNALED(status))
-			break ;
+			signal_helper(shell, status);
 		i++;
 	}
 	free_exec(exec);
-	if (WIFSIGNALED(status))
-		signal_helper(shell, status);
 }
 
 void	cmnds_fork(t_shell *shell, t_exec *exec)

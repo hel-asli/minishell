@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/22 11:00:41 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/23 01:55:19 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,18 +118,30 @@ int	parse_input(t_shell *shell)
 	return (0);
 }
 
+int signal_status(t_shell *shell)
+{
+	if (g_rl_signal == 3)
+	{
+		shell->exit_status = 1;
+		g_rl_signal = 1;
+	}
+	if (!shell->parsing.line)
+	{
+		cmds_clear(&shell->commands);
+		printf("exit\n");
+		return (0);
+	}
+	return (1);
+}
+
 void	read_input(t_shell *shell, const char *prompt)
 {
 	while (true)
 	{
 		(1) && (g_rl_signal = 1, shell->commands = NULL);
 		shell->parsing.line = readline(prompt);
-		if (!shell->parsing.line)
-		{
-			cmds_clear(&shell->commands);
-			printf("exit\n");
+		if (!signal_status(shell))
 			break ;
-		}
 		if (shell->parsing.line && *shell->parsing.line)
 			add_history(shell->parsing.line);
 		if (!ft_strlen(shell->parsing.line) || empty_str(shell->parsing.line))
