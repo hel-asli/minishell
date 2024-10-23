@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard_helper.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 04:42:32 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 04:43:23 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 23:44:40 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,10 @@ void	wild_init(t_wildcard *wildcard)
 	wildcard->pwd = NULL;
 }
 
-void	wild_destory(t_wildcard *wildcard, int flag)
+void	wild_destory(t_wildcard *wildcard)
 {
 	closedir(wildcard->dir);
-	if (flag)
-		free(wildcard->pwd);
+	free(wildcard->pwd);
 	free(wildcard->prefix);
 }
 
@@ -45,8 +44,7 @@ char	**wildcard_expand(char **args, int i)
 	char		**sp;
 	char		**tab;
 
-	tab = NULL;
-	sp = NULL;
+	(1) && (tab = NULL, sp = NULL);
 	wild_init(&wildcard);
 	while (args[i])
 	{
@@ -55,8 +53,10 @@ char	**wildcard_expand(char **args, int i)
 			if (args[i] && args[i][0] == '/')
 				wildcard.pwd = getcwd(NULL, 0);
 			if (wild_conditon(args[i], wildcard.pwd))
+			{
+				free(wildcard.prefix);
 				wildcard.prefix = str_add_char(ft_strdup(wildcard.pwd), '/');
-			free(wildcard.pwd);
+			}
 			sp = get_files(args[i], &wildcard);
 			tab = re_build_arg(tab, sp);
 			fr_args(sp);
@@ -65,5 +65,5 @@ char	**wildcard_expand(char **args, int i)
 			tab = add_arr(tab, args[i]);
 		i++;
 	}
-	return (wild_destory(&wildcard, 0), fr_args(args), tab);
+	return (wild_destory(&wildcard), fr_args(args), tab);
 }

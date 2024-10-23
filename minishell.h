@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/23 10:04:03 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 23:45:39 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,7 @@ int						ft_fprintf(int fd, const char *format, ...);
 size_t					count_non_redirection_arg_size(char **args);
 void					ft_exit(t_exec *exec, t_shell *shell, int i);
 bool					is_not_sub(const char *str, const char *pwd);
-void					wild_destory(t_wildcard *wildcard, int flag);
+void					wild_destory(t_wildcard *wildcard);
 char					*ft_strjoin_char(char *s1, char *s2, char c);
 bool					update_pwd(t_env **env, t_env *tmp, char *pwd);
 bool					cd_home(t_env **env, char *oldpwd, int *status);
