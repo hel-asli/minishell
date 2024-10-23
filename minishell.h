@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/23 04:46:58 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/23 09:35:21 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,6 +199,7 @@ void					execution_start(t_shell *shell);
 t_redirect				*build_redirection(char **args);
 bool					quotes_syntax_check(char *line);
 void					wild_init(t_wildcard *wildcard);
+bool					is_exists(char *key, t_env *env);
 bool					check_pipe(char **tokens, int i);
 char					*str_add_char(char *str, char c);
 t_redirect				*ft_last_redir(t_redirect *node);
@@ -238,6 +239,7 @@ void					ft_exit(t_exec *exec, t_shell *shell, int i);
 bool					is_not_sub(const char *str, const char *pwd);
 void					wild_destory(t_wildcard *wildcard, int flag);
 char					*ft_strjoin_char(char *s1, char *s2, char c);
+bool					update_pwd(t_env **env, t_env *tmp, char *pwd);
 void					env_concat(t_env **env, char *key, char *value);
 void					env_update(t_env **env, char *key, char *value);
 char					*wildcard_dir(struct dirent *entity, char *str);
@@ -259,6 +261,7 @@ bool					my_exit(t_commands *cmnds, t_shell *shell, int flag);
 bool					my_echo(t_commands *cmnds, t_shell *shell, int flag);
 int						ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t					ft_strlcpy(char *dest, const char *src, size_t size);
+bool					update_oldpwd(t_env **env, t_env *tmp, char *oldpwd);
 char					**replace_tab(char **tab, char *arg, t_shell *shell);
 void					expand_redirect(t_redirect *redirect, t_shell *shell);
 void					wildcard_redirection(char *file, t_redirect *redirect);
@@ -268,6 +271,10 @@ bool					builtins_check(t_shell *shell, t_commands *cmnds,
 							t_env **env, int flag);
 void					env_export(t_env **env, char *key, char *value,
 							int exported);
+bool					cd_path(t_env **env, t_env *tmp, char *oldpwd,
+							char *path);
+bool					cd_home(t_env **env, t_env *tmp, char *oldpwd,
+							int *status);
 char					*ft_substr(char const *s, unsigned int start,
 							size_t len);
 bool					my_export(t_commands *cmnds, t_shell *shell,
