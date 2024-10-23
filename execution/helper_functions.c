@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helper_functions.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 22:24:18 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/22 10:51:32 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/23 03:29:37 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ void	signal_helper(t_shell *shell, int status)
 		shell->exit_status = 128 + sig;
 	}
 }
-
-
 
 void	execute_command_helper(t_commands *cmnds, t_shell *shell,
 		t_exec *exec, int i)

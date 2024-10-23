@@ -3,36 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 04:11:26 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/22 11:18:48 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/23 03:29:31 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-char *heredoc_expand(char *str, t_shell *shell)
-{
-	char *exp;
-	char *ptr;
-
-	ptr = NULL;
-	exp = expand_arg(str, shell);
-	if (!exp)
-	{
-		free(str);
-		free(exp);
-		ptr = ft_strdup("");
-	}
-	else
-	{
-		free(str);
-		ptr = exp;
-	}
-
-	return (ptr);
-}
 
 void	heredoc_helper(char *delimter, int fd, bool expanded, t_shell *shell)
 {
