@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/24 03:44:24 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/24 04:35:15 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,8 @@ char	*del_quote_heredoc(char *str)
 		err_handle("Malloc");
 	while (str[i])
 	{
-		if (i == 0 && str[i] == '$' && str[i + 1] != '$')
+		if (i == 0 && str[i] == '$'
+			&& (str[i + 1] == 39 || str[i + 1] == 39))
 			i++;
 		if ((str[i] == '\'' || str[i] == '"') && (!in_quote || c == str[i]))
 		{
