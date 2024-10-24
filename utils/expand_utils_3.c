@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_utils_3.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 05:47:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/23 23:33:47 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/24 01:18:03 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,11 +82,6 @@ char	*get_from_env(t_shell *shell, char *arg, int *i)
 	return (new_value);
 }
 
-// if (arg[(*i)] == '$')
-// {
-// 	new_value = ft_strjoin(new_value, ft_strdup("1337"));
-// 	(*i)++;
-// }
 char	*get_new_value(t_shell *shell, char *arg, int *i)
 {
 	char	*new_value;

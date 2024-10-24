@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/23 23:45:39 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/24 01:15:43 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,6 +207,7 @@ void					built_env(t_env **env, char **ev);
 char					**add_arr(char **args, char *str);
 char					*ft_strcpy(char *dest, char *src);
 char					*ft_strcat(char *dest, char *src);
+void					wild_destory(t_wildcard *wildcard);
 int						starts_with(char *start, char *str);
 bool					check_heredoc(char **tokens, int i);
 bool					wild_conditon(char *arg, char *pwd);
@@ -237,7 +238,6 @@ int						ft_fprintf(int fd, const char *format, ...);
 size_t					count_non_redirection_arg_size(char **args);
 void					ft_exit(t_exec *exec, t_shell *shell, int i);
 bool					is_not_sub(const char *str, const char *pwd);
-void					wild_destory(t_wildcard *wildcard);
 char					*ft_strjoin_char(char *s1, char *s2, char c);
 bool					update_pwd(t_env **env, t_env *tmp, char *pwd);
 bool					cd_home(t_env **env, char *oldpwd, int *status);
