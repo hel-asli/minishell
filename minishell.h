@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/24 01:15:43 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/24 06:41:58 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ char					*get_new_value(t_shell *shell, char *arg, int *i);
 void					ft_back_addlst(t_commands **lst, t_commands *new);
 void					ambigious_check(t_redirect *redirect, char	*file);
 bool					my_pwd(t_commands *cmnds, t_shell *shell, int flag);
-bool					check_pattern(const char *pattern, const char *str);
+bool					check_pattern(char *pattern, char *str);
 void					ft_lst_add_redir(t_redirect **lst, t_redirect *new);
 void					restore_terminal_old_attr(struct termios *old_attr);
 bool					my_exit(t_commands *cmnds, t_shell *shell, int flag);

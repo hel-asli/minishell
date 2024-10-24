@@ -3,3 +3,5 @@ minishell
 .vscode
 TODO
 *.tldr
+*.out
+est.c

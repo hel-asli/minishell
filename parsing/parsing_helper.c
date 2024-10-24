@@ -6,40 +6,38 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/24 04:35:15 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/24 06:43:51 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-bool	check_pattern(const char *pattern, const char *str)
+bool	check_pattern(char *pattern, char *str)
 {
-	if (*pattern == '*' && *str == '.')
+	int	i;
+	int	j;
+	int	x;
+	int	k;
+
+	(1) && (i = 0, j = 0, x = 0, k = 0);
+	if (pattern[j] != '.' && str[i] == '.')
 		return (false);
-	while (*str && *pattern)
+	while (str[i])
 	{
-		if (*pattern == '*')
+		if (pattern[j] == '*')
 		{
-			while (*pattern == '*')
-				pattern++;
-			if (*pattern == '\0')
+			while (pattern[j] && pattern[j] == '*')
+				j++;
+			if (!pattern[j])
 				return (true);
-			while (*str)
-			{
-				if (check_pattern(pattern, str))
-					return (true);
-				str++;
-			}
-			return (false);
+			(1) && (k = i, x = j);
 		}
-		else if (*pattern == *str)
-			(1) && (str++, pattern++);
+		if (pattern[j] == str[i])
+			(1) && (j++, i++);
 		else
-			return (false);
+			(1) && (i = ++k, j = x);
 	}
-	while (*pattern == '*')
-		pattern++;
-	return (*str == '\0' && *pattern == '\0');
+	return (!pattern[j] && !str[i]);
 }
 
 char	**get_files(char *str, t_wildcard *w)
