@@ -6,7 +6,7 @@
 /*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/24 01:28:31 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/24 01:34:13 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ char	**expand_args(char **args, t_shell *shell)
 				tab = wildcard_expand(tab, -1);
 		}
 		else if (ft_strchr(args[i], '*') && check_wildcard(args[i]))
-			tab = wildcard_expand_helper(tab, args, i - 1);
+			tab = wildcard_expand_helper(tab, args, i);
 		else
 		{
 			args[i] = del_quote(args[i]);
