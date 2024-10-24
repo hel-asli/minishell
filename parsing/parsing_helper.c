@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_helper.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/24 01:34:13 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/24 03:44:24 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,34 @@ char	**expand_args(char **args, t_shell *shell)
 	return (fr_args(args), tab);
 }
 
+char	*del_quote_heredoc(char *str)
+{
+	char	*ptr;
+	int		i;
+	int		j;
+	bool	in_quote;
+	char	c;
+
+	(1) && (i = 0, c = 0, j = 0);
+	ptr = malloc(sizeof(char) * (ft_strlen(str) + 1));
+	if (!ptr)
+		err_handle("Malloc");
+	while (str[i])
+	{
+		if (i == 0 && str[i] == '$' && str[i + 1] != '$')
+			i++;
+		if ((str[i] == '\'' || str[i] == '"') && (!in_quote || c == str[i]))
+		{
+			c = str[i++];
+			in_quote = !in_quote;
+		}
+		else
+			ptr[j++] = str[i++];
+	}
+	ptr[j] = 0;
+	return (free(str), ptr);
+}
+
 void	expand_redirect(t_redirect *redirect, t_shell *shell)
 {
 	t_redirect	*tmp;
@@ -124,7 +152,7 @@ void	expand_redirect(t_redirect *redirect, t_shell *shell)
 				(1) && (free(tmp->file), tmp->file = del_quote(file));
 		}
 		else
-			tmp->file = del_quote(tmp->file);
+			tmp->file = del_quote_heredoc(tmp->file);
 		tmp = tmp->next;
 	}
 }
