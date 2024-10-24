@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard_helper.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 04:42:32 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 23:44:40 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/24 01:17:25 by oel-feng         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char	**wildcard_expand(char **args, int i)
 
 	(1) && (tab = NULL, sp = NULL);
 	wild_init(&wildcard);
-	while (args[i])
+	while (args[++i])
 	{
 		if (ft_strchr(args[i], '*') && check_wildcard(args[i]))
 		{
@@ -63,7 +63,6 @@ char	**wildcard_expand(char **args, int i)
 		}
 		else
 			tab = add_arr(tab, args[i]);
-		i++;
 	}
 	return (wild_destory(&wildcard), fr_args(args), tab);
 }
