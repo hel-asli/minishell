@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/24 06:43:51 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/24 07:26:37 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,8 +138,6 @@ void	expand_redirect(t_redirect *redirect, t_shell *shell)
 		if (tmp->type != HEREDOC_INPUT)
 		{
 			file = expand_arg(tmp->file, shell);
-			if (!file)
-				file = ft_strdup("");
 			if (file && ft_strchr(file, '*') && check_wildcard(tmp->file))
 				wildcard_redirection(file, tmp);
 			else if (!file && !ft_strchr(tmp->file, '"')
@@ -148,7 +146,7 @@ void	expand_redirect(t_redirect *redirect, t_shell *shell)
 			else if (file && check_var(tmp->file) && ft_strchr(file, 32))
 				ambigious_check(tmp, file);
 			else
-				(1) && (free(tmp->file), tmp->file = del_quote(file));
+				file_change(tmp, file);
 		}
 		else
 			tmp->file = del_quote_heredoc(tmp->file);

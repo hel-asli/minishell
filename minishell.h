@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/30 23:08:12 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/24 06:41:58 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/24 07:27:10 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,6 +266,7 @@ bool					update_oldpwd(t_env **env, t_env *tmp, char *oldpwd);
 char					**replace_tab(char **tab, char *arg, t_shell *shell);
 void					expand_redirect(t_redirect *redirect, t_shell *shell);
 void					wildcard_redirection(char *file, t_redirect *redirect);
+void					file_change(t_redirect *tmp, char *file);
 char					**wildcard_expand_helper(char **tab, char **args,
 							int i);
 bool					builtins_check(t_shell *shell, t_commands *cmnds,

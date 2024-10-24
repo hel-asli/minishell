@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 03:32:22 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 04:15:23 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/24 07:26:56 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,4 +72,18 @@ char	*wildcard_dir(struct dirent *entity, char *str)
 	}
 	fr_args(sp);
 	return (new_str);
+}
+
+void	file_change(t_redirect *tmp, char *file)
+{
+	if (!file)
+	{
+		free(tmp->file);
+		tmp->file = ft_strdup("");
+	}
+	else
+	{
+		free(tmp->file);
+		tmp->file = del_quote(file);
+	}
 }
