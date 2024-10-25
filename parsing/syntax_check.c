@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_check.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:45:49 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 22:36:54 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/25 04:29:25 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ bool	quotes_syntax_check(char *line)
 	int		i;
 
 	i = 0;
+	in_quotes = false;
 	quote_type = 0;
 	while (line[i])
 	{

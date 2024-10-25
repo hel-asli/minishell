@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 03:48:06 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/23 04:40:02 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/25 04:47:13 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,9 +136,9 @@ void	read_input(t_shell *shell, const char *prompt)
 		}
 		if (parse_input(shell) || !shell->commands)
 			continue ;
-		restore_terminal_old_attr(&shell->old_attr);
+		rl_catch_signals = 1;
 		execution_start(shell);
+		rl_catch_signals = 0;
 		cmds_clear(&shell->commands);
-		restore_terminal_old_attr(&shell->copy);
 	}
 }

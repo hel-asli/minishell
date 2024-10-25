@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 00:20:44 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/10/23 04:40:33 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/25 04:47:07 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,17 +39,8 @@ void	restore_terminal_old_attr(struct termios *old_attr)
 
 void	setup_signals(void)
 {
-	struct sigaction	sa_int;
-	struct sigaction	sa_quit;
-
-	sa_int.sa_handler = sigint_handler;
-	sigemptyset(&sa_int.sa_mask);
-	sa_int.sa_flags = SA_RESETHAND | SA_RESTART;
-	sigaction(SIGINT, &sa_int, NULL);
-	sa_quit.sa_handler = SIG_IGN;
-	sigemptyset(&sa_quit.sa_mask);
-	sa_quit.sa_flags = SA_RESTART;
-	sigaction(SIGQUIT, &sa_quit, NULL);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, sigint_handler);
 }
 
 int	main(int ac, char **av, char **ev)
@@ -59,10 +50,7 @@ int	main(int ac, char **av, char **ev)
 	(void)av;
 	if (!isatty(STDIN_FILENO) || ac != 1)
 		exit(EXIT_FAILURE);
-	tcgetattr(STDIN_FILENO, &shell.old_attr);
-	tcgetattr(STDIN_FILENO, &shell.copy);
-	shell.copy.c_lflag &= ~(ECHOCTL);
-	tcsetattr(STDIN_FILENO, TCSANOW, &shell.copy);
+	rl_catch_signals = 0;
 	setup_signals();
 	shell.env = NULL;
 	shell.commands = NULL;
@@ -75,5 +63,4 @@ int	main(int ac, char **av, char **ev)
 	print_zsh_msg();
 	read_input(&shell, "minishell$ ");
 	env_clear(&shell.env);
-	restore_terminal_old_attr(&shell.old_attr);
 }
