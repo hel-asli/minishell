@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 22:35:27 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/21 22:08:14 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/25 01:58:39 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,12 @@ bool	unset_check(char *str)
 bool	my_unset(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 {
 	int			i;
+	int			status;
 	t_commands	*curr;
 
 	i = 0;
 	curr = cmnds;
+	status = EXIT_SUCCESS;
 	if (curr->redirect && !flag && handle_redirections(curr->redirect) == -1)
 	{
 		shell->exit_status = EXIT_FAILURE;
@@ -89,12 +91,11 @@ bool	my_unset(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 		{
 			ft_fprintf(2, "minishell: unset: `%s': not a valid identifier\n",
 				curr->args[i]);
-			shell->exit_status = EXIT_FAILURE;
-			return (true);
+			status = EXIT_FAILURE;
 		}
 		else
 			remove_env(env, curr->args[i]);
 	}
-	shell->exit_status = EXIT_SUCCESS;
+	shell->exit_status = status;
 	return (true);
 }

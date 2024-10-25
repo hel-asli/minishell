@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 22:40:10 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 23:45:59 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/25 02:19:08 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ char	**wildcard_expand_helper(char **tab, char **args, int i)
 	args[i] = del_quote(args[i]);
 	gar_protect(args[i]);
 	sp = wildcard_helper(args[i]);
+	if (sp && !sp[0])
+		sp = add_arr(sp, args[i]);
 	if (sp)
 		new = re_build_arg(tab, sp);
 	fr_args(sp);
