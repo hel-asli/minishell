@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_help.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 03:32:22 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/24 08:00:39 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/25 01:14:10 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,23 @@ void	file_change(t_redirect *tmp, char *file)
 		free(tmp->file);
 		tmp->file = del_quote(file);
 	}
+}
+
+char	**wildcard_expanded(char **tab, char **args, int i)
+{
+	char	**new;
+
+	new = NULL;
+	if (i == 0)
+		new = wildcard_expand_helper(tab, args, i);
+	else if (args && !ft_strcmp(args[0], "export"))
+	{
+		if (ft_strchr(args[i], '='))
+			new = add_arr(tab, args[i]);
+		else
+			new = wildcard_expand_helper(tab, args, i);
+	}
+	else
+		new = wildcard_expand_helper(tab, args, i);
+	return (new);
 }

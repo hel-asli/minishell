@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oel-feng <oel-feng@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 17:55:49 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/23 04:45:50 by oel-feng         ###   ########.fr       */
+/*   Updated: 2024/10/25 01:15:16 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,10 +82,9 @@ bool	my_export(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 	t_env		**export;
 	t_commands	*curr;
 	int			i;
+	int			status;
 
-	i = 1;
-	curr = cmnds;
-	export = env;
+	(1) && (i = 1, status = 0, curr = cmnds, export = env);
 	if (curr->redirect && !flag && handle_redirections(curr->redirect))
 		return (shell->exit_status = EXIT_FAILURE, true);
 	if (!curr->args[i])
@@ -96,11 +95,11 @@ bool	my_export(t_commands *cmnds, t_shell *shell, t_env **env, int flag)
 		{
 			ft_fprintf(2, "minishell: export: `%s': not a valid identifier\n",
 				curr->args[i]);
-			return (shell->exit_status = EXIT_FAILURE, true);
+			status = EXIT_FAILURE;
 		}
 		export_handler(export, curr->args[i]);
 		i++;
 	}
 	env = export;
-	return (shell->exit_status = EXIT_SUCCESS, true);
+	return (shell->exit_status = status, true);
 }
