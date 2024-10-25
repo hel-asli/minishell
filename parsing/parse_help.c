@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 03:32:22 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/25 02:25:51 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/25 02:39:52 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,11 @@ bool	is_not_sub(const char *str, const char *pwd)
 	int	i;
 	int	j;
 
-	i = 0;
-	j = 0;
+	(1) && (i = 0, j = 0);
+	if (str[i] == '/' && str[i + 1] && str[i + 1] == '*')
+		return (true);
 	while (str[i] && pwd[j] && str[i] == pwd[j])
-	{
-		i++;
-		j++;
-	}
+		(1) && (i++, j++);
 	if (!pwd[j] && !str[i])
 		return (true);
 	if (!pwd[j] && str[i] == '/')

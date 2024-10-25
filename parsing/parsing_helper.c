@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 02:46:47 by oel-feng          #+#    #+#             */
-/*   Updated: 2024/10/25 02:19:25 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/10/25 02:45:38 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char	**get_files(char *str, t_wildcard *w)
 
 	(1) && (tab = NULL, new_str = NULL);
 	if (ft_strchr(str, '/') && is_not_sub(str, w->prefix))
-		tab = add_arr(tab, str);
+		return (tab = add_arr(tab, str), tab);
 	while (w->entity)
 	{
 		if (str[ft_strlen(str) - 1] == '/')
