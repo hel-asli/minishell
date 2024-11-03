@@ -38,6 +38,8 @@ void	env_export(t_env **env, char *key, char *value, int exported)
 	{
 		if (!ft_strcmp(curr->key, key))
 		{
+			if (value == NULL)
+				return ;
 			free(curr->value);
 			curr->value = ft_strdup(value);
 			curr->exported = exported;
