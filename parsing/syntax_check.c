@@ -49,7 +49,7 @@ t_syntax	other_syntax_check(char *line)
 	while (tokens[++i] && result == SYNTAX_OK)
 	{
 		if (is_redirection(tokens[i]) && !check_redirection(tokens, i))
-			result = INVALID_REDIRECTINO;
+			result = INVALID_REDIRECTION;
 		else if (!ft_strcmp(tokens[i], "<<") && !check_heredoc(tokens, i))
 			result = INVALID_HEREDOC;
 		else if (!ft_strcmp(tokens[i], "|") && !check_pipe(tokens, i))

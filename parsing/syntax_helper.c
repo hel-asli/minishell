@@ -51,7 +51,7 @@ bool	check_pipe(char **tokens, int i)
 
 void	syntax_err_msg(t_syntax syntax)
 {
-	if (syntax == INVALID_REDIRECTINO)
+	if (syntax == INVALID_REDIRECTION)
 		ft_putendl_fd(SYNTAX_REDIRECTION, STDERR_FILENO);
 	else if (syntax == UNCLOSED_QUOTES)
 		ft_putendl_fd(SYNTAX_QUOTES, STDERR_FILENO);

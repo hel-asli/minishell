@@ -50,7 +50,7 @@ typedef enum e_syntax
 	INVALID_APPEND,
 	UNCLOSED_QUOTES,
 	INVALID_HEREDOC,
-	INVALID_REDIRECTINO,
+	INVALID_REDIRECTION,
 }	t_syntax;
 
 typedef enum e_red
@@ -225,9 +225,11 @@ char					*expand_arg(char *arg, t_shell *shell);
 char					**re_build_arg(char **args, char **sp);
 char					*ft_strndup(const char *str, int index);
 long long				ft_exit_atol(t_shell *shell, char *str);
+bool					check_pattern(char *pattern, char *str);
 void					ft_lstadd_back(t_env **lst, t_env *new);
 int						input_redirection(t_redirect *redirect);
 bool					check_redirection(char **tokens, int i);
+void					file_change(t_redirect *tmp, char *file);
 int						ft_strcmp(const char *s1, const char *s2);
 t_commands				*ft_newlist(char **args, t_redirect *red);
 void					signal_helper(t_shell *shell, int status);
@@ -255,8 +257,8 @@ char					*get_new_value(t_shell *shell, char *arg, int *i);
 void					ft_back_addlst(t_commands **lst, t_commands *new);
 void					ambigious_check(t_redirect *redirect, char	*file);
 bool					my_pwd(t_commands *cmnds, t_shell *shell, int flag);
-bool					check_pattern(char *pattern, char *str);
 void					ft_lst_add_redir(t_redirect **lst, t_redirect *new);
+char					**wildcard_expanded(char **tab, char **args, int i);
 void					restore_terminal_old_attr(struct termios *old_attr);
 bool					my_exit(t_commands *cmnds, t_shell *shell, int flag);
 bool					my_echo(t_commands *cmnds, t_shell *shell, int flag);
@@ -266,8 +268,6 @@ bool					update_oldpwd(t_env **env, t_env *tmp, char *oldpwd);
 char					**replace_tab(char **tab, char *arg, t_shell *shell);
 void					expand_redirect(t_redirect *redirect, t_shell *shell);
 void					wildcard_redirection(char *file, t_redirect *redirect);
-void					file_change(t_redirect *tmp, char *file);
-char					**wildcard_expanded(char **tab, char **args, int i);
 char					**wildcard_expand_helper(char **tab, char **args,
 							int i);
 bool					builtins_check(t_shell *shell, t_commands *cmnds,
